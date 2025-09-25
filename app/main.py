@@ -6,6 +6,9 @@ from starlette.requests import Request
 
 app = FastAPI(title="Bike Tracker")
 
-@app.get('/')
-def hello_root():
-    return {'message': 'Привет, спортсмен!'}
+templates = Jinja2Templates(directory='app/templates')
+
+
+@app.get('/', response_class=HTMLResponse)
+async def hello_root(request: Request):
+    return templates.TemplateResponse('index.html', {'request': request, 'user': 'Спортсмен'})
