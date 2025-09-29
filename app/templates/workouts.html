@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои тренировки</title>
+</head>
+<body>
+     <h1>Список тренировок</h1>
+<table border="1">
+    <tr>
+        <th>Дата</th>
+        <th>Тип</th>
+        <th>Длительность (мин)</th>
+        <th>Дистанция (км)</th>
+    </tr>
+    {% for w in workouts %}
+    <tr>
+        <td>{{ w.date }}</td>
+        <td>{{ w.type }}</td>
+        <td>{{ w.duration }}</td>
+        <td>{{ w.distance }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>
