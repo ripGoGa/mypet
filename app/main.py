@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -23,3 +23,13 @@ async def hello_root(request: Request):
 @app.get('/workouts', response_class=HTMLResponse)
 async def list_workouts(request: Request):
     return templates.TemplateResponse('workouts.html', {'request': request, 'workouts': workouts})
+
+
+@app.get('/imports', response_class=HTMLResponse)
+async def imports(request: Request):
+    return templates.TemplateResponse('imports.html', {'request': request})
+
+
+@app.post('/imports')
+async def import_csv(file: UploadFile = File(...)):
+    return {'filename': file.filename}
