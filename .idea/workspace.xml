@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="add workouts route and template with table">
-      <change afterPath="$PROJECT_DIR$/app/templates/imports.html" afterDir="false" />
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="add imports route and test file upload">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
     </list>
@@ -107,7 +106,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759138390634</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="add imports route and test file upload">
+      <option name="closed" value="true" />
+      <created>1759255667286</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1759255667286</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -125,6 +132,7 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="Create project structure and requirements" />
     <MESSAGE value="add workouts route and template with table" />
-    <option name="LAST_COMMIT_MESSAGE" value="add workouts route and template with table" />
+    <MESSAGE value="add imports route and test file upload" />
+    <option name="LAST_COMMIT_MESSAGE" value="add imports route and test file upload" />
   </component>
 </project>

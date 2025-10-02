@@ -1,8 +1,11 @@
+import hashlib
+
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from starlette.requests import Request
+from pathlib import Path
 
 app = FastAPI(title="Bike Tracker")
 
@@ -13,6 +16,10 @@ workouts = [
     {"date": "2025-09-22", "type": "Интервалы", "duration": 60, "distance": 30},
     {"date": "2025-09-24", "type": "Легкая", "duration": 120, "distance": 55},
 ]
+
+
+def ensure_data_store():
+    Path('data/csv').mkdir(parents=True, exist_ok=True)
 
 
 @app.get('/', response_class=HTMLResponse)
@@ -32,4 +39,13 @@ async def imports(request: Request):
 
 @app.post('/imports')
 async def import_csv(file: UploadFile = File(...)):
-    return {'filename': file.filename}
+    if not file.filename.endswith('.csv'):
+        return {'error': 'Можно загрузать только csv файлы!'}
+    ensure_data_store()
+    content = await file.read()
+    hash_content = hashlib.sha256(content).hexdigest()
+    path = Path('data/csv') / f'{hash_content}.csv'
+    if path.exists():
+        return {'error': 'Такой файл уже импортирован'}
+    path.write_bytes(content)
+
