@@ -22,5 +22,18 @@
     </tr>
     {% endfor %}
 </table>
+     <h2>Недавние загрузки</h2>
+<table border="1">
+    <tr>
+        <th>Имя файла</th>
+        <th>Время загрузки</th>
+    </tr>
+    {% for u in uploaded_workouts %}
+    <tr>
+        <td>{{ u.original_name }}</td>
+        <td>{{ u.uploaded_at }}</td>
+    </tr>
+    {% endfor %}
+</table>
 </body>
 </html>

@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 
 from fastapi import FastAPI, UploadFile, File
@@ -16,6 +17,7 @@ workouts = [
     {"date": "2025-09-22", "type": "Интервалы", "duration": 60, "distance": 30},
     {"date": "2025-09-24", "type": "Легкая", "duration": 120, "distance": 55},
 ]
+uploaded_workouts = []
 
 
 def ensure_data_store():
@@ -29,7 +31,9 @@ async def hello_root(request: Request):
 
 @app.get('/workouts', response_class=HTMLResponse)
 async def list_workouts(request: Request):
-    return templates.TemplateResponse('workouts.html', {'request': request, 'workouts': workouts})
+    return templates.TemplateResponse('workouts.html', {'request': request,
+                                                        'workouts': workouts,
+                                                        'uploaded_workouts': uploaded_workouts})
 
 
 @app.get('/imports', response_class=HTMLResponse)
@@ -48,4 +52,7 @@ async def import_csv(file: UploadFile = File(...)):
     if path.exists():
         return {'error': 'Такой файл уже импортирован'}
     path.write_bytes(content)
-
+    uploaded_workouts.append({'hash': hash_content,
+                              'original_name': file.filename,
+                              'uploaded_at': datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+                              })
