@@ -5,21 +5,27 @@
     <title>Импорт тренировки</title>
 </head>
 <body>
+    {% if message %}
+        <p style="color: {{ 'red' if is_error else 'green' }};">{{ message }}</p>
+    {% endif %}
+
+
     <a href="/workouts"
-   style="display: inline-block;
-          padding: 10px 20px;
-          margin-bottom: 10px;
-          background-color: #4CAF50;
-          color: white;
-          text-decoration: none;
-          border-radius: 5px;">
-   К списку тренировок
-</a>
-     <h1>Список тренировок</h1>
+       style="display: inline-block;
+              padding: 10px 20px;
+              margin-bottom: 10px;
+              background-color: #4CAF50;
+              color: white;
+              text-decoration: none;
+              border-radius: 5px;">
+       К списку тренировок
+    </a>
+
     <h1>Загрузка CSV</h1>
+
+    <form method="post" action="/imports" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".csv">
+        <button type="submit">Загрузить</button>
+    </form>
 </body>
 </html>
-<form method="post" action="/imports" enctype="multipart/form-data">
-    <input type="file" name="file" accept=".csv">
-    <button type="submit">Загрузить</button>
-</form>

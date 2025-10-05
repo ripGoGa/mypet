@@ -2,7 +2,7 @@ import datetime
 import hashlib
 
 from fastapi import FastAPI, UploadFile, File
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from starlette.requests import Request
@@ -38,21 +38,39 @@ async def list_workouts(request: Request):
 
 @app.get('/imports', response_class=HTMLResponse)
 async def imports(request: Request):
-    return templates.TemplateResponse('imports.html', {'request': request})
+    ok = request.query_params.get('ok')
+    err = request.query_params.get('err')
+
+    message = None
+    is_error = False
+    if ok == '1':
+        message = 'Файл успешно сохранен'
+    elif err == 'dup':
+        message = 'Такой файл уже импортирован'
+        is_error = True
+    elif err == 'type':
+        message = 'Можно загружать только CSV-файлы!'
+        is_error = True
+
+    return templates.TemplateResponse('imports.html', {'request': request, 'message': message, 'is_error': is_error})
+
 
 
 @app.post('/imports')
 async def import_csv(file: UploadFile = File(...)):
-    if not file.filename.endswith('.csv'):
-        return {'error': 'Можно загрузать только csv файлы!'}
+    ct = (file.content_type or '').lower()
+    allowed_ct = {'text/csv', 'application/vnd.ms-excel'}
+    if not file.filename.lower().endswith('.csv') and ct not in allowed_ct:
+        return RedirectResponse(url='/imports?err=type', status_code=303)
     ensure_data_store()
     content = await file.read()
     hash_content = hashlib.sha256(content).hexdigest()
     path = Path('data/csv') / f'{hash_content}.csv'
     if path.exists():
-        return {'error': 'Такой файл уже импортирован'}
+        return RedirectResponse(url='/imports?err=dup', status_code=303)
     path.write_bytes(content)
     uploaded_workouts.append({'hash': hash_content,
                               'original_name': file.filename,
                               'uploaded_at': datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
                               })
+    return RedirectResponse(url="/imports?ok=1", status_code=303)
