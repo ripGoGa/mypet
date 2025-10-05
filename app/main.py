@@ -1,6 +1,7 @@
 import datetime
 import hashlib
 
+from app.db import create_db_and_tables, get_session
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -12,6 +13,11 @@ app = FastAPI(title="Bike Tracker")
 
 templates = Jinja2Templates(directory='app/templates')
 
+
+def on_startup() -> None:
+    create_db_and_tables()
+
+
 workouts = [
     {"date": "2025-09-20", "type": "Велотренировка", "duration": 90, "distance": 45},
     {"date": "2025-09-22", "type": "Интервалы", "duration": 60, "distance": 30},
@@ -20,7 +26,7 @@ workouts = [
 uploaded_workouts = []
 
 
-def ensure_data_store():
+def ensure_data_store() -> None:
     Path('data/csv').mkdir(parents=True, exist_ok=True)
 
 
@@ -53,7 +59,6 @@ async def imports(request: Request):
         is_error = True
 
     return templates.TemplateResponse('imports.html', {'request': request, 'message': message, 'is_error': is_error})
-
 
 
 @app.post('/imports')
