@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="Create models for UploadedFile and Workout">
-      <change afterPath="$PROJECT_DIR$/app/services/file_validator.py" afterDir="false" />
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="Prep for refactoring: created separate 'services' folder and added 'file_validator' function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/file_validator.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/file_service.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -163,7 +163,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759774948613</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Prep for refactoring: created separate 'services' folder and added 'file_validator' function">
+      <option name="closed" value="true" />
+      <created>1759864560089</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1759864560089</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -188,6 +196,7 @@
     <MESSAGE value="add success and error message with PRG" />
     <MESSAGE value="Create SQLite setup and db engine with SQLModel" />
     <MESSAGE value="Create models for UploadedFile and Workout" />
-    <option name="LAST_COMMIT_MESSAGE" value="Create models for UploadedFile and Workout" />
+    <MESSAGE value="Prep for refactoring: created separate 'services' folder and added 'file_validator' function" />
+    <option name="LAST_COMMIT_MESSAGE" value="Prep for refactoring: created separate 'services' folder and added 'file_validator' function" />
   </component>
 </project>
