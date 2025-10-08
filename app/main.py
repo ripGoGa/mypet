@@ -1,6 +1,11 @@
 import datetime
 import hashlib
-
+from app.services.file_service import (
+    validate_file_type,
+    save_file_with_hash,
+    FileValidationError,
+    FileAlreadyExistsError
+)
 from app.db import create_db_and_tables, get_session
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -63,19 +68,15 @@ async def imports(request: Request):
 
 @app.post('/imports')
 async def import_csv(file: UploadFile = File(...)):
-    ct = (file.content_type or '').lower()
-    allowed_ct = {'text/csv', 'application/vnd.ms-excel'}
-    if not file.filename.lower().endswith('.csv') and ct not in allowed_ct:
+    try:
+        validate_file_type(filename=file.filename, content_type=file.content_type)
+        content = await file.read()
+        file_path = save_file_with_hash(content)
+        return RedirectResponse(url='/imports?ok=1', status_code=303)
+
+    except FileValidationError:
         return RedirectResponse(url='/imports?err=type', status_code=303)
-    ensure_data_store()
-    content = await file.read()
-    hash_content = hashlib.sha256(content).hexdigest()
-    path = Path('data/csv') / f'{hash_content}.csv'
-    if path.exists():
+    except FileAlreadyExistsError:
         return RedirectResponse(url='/imports?err=dup', status_code=303)
-    path.write_bytes(content)
-    uploaded_workouts.append({'hash': hash_content,
-                              'original_name': file.filename,
-                              'uploaded_at': datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
-                              })
-    return RedirectResponse(url="/imports?ok=1", status_code=303)
+    except OSError:
+        return RedirectResponse(url='/imports?err=write', status_code=303)

@@ -24,8 +24,7 @@ def validate_file_type(filename: str, content_type: str) -> None:
 
 def save_file_with_hash(content: bytes) -> str:
     hash_value = hashlib.sha256(content).hexdigest()
-    timestamp = datetime.datetime.now(datetime.UTC).strftime('%Y%m%dT%H%M%SZ')
-    filename = f"{hash_value}_{timestamp}.csv"
+    filename = f"{hash_value}.csv"
     path = Path('data/csv') / f'{filename}'
     if path.exists():
         raise FileAlreadyExistsError('Файл с таким содержимым уже существует')
