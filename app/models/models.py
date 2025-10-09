@@ -9,6 +9,7 @@ class UploadedFile(SQLModel, table=True):
     sha256: str = Field(unique=True)
     uploaded_at: datetime
 
+
 class Workout(SQLModel, table=True):
     id: int = Field(primary_key=True, default=None)
     date: date
@@ -16,4 +17,4 @@ class Workout(SQLModel, table=True):
     duration_min: float
     distance_km: float
     effort: Optional[float] = None
-    source_file_id:Optional[int] = Field(default=None, foreign_key='uploadedfile.id')
+    source_file_id: Optional[int] = Field(default=None, foreign_key='uploadedfile.id')

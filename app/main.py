@@ -1,5 +1,3 @@
-import datetime
-import hashlib
 from app.services.file_service import (
     validate_file_type,
     save_file_with_hash,
@@ -7,12 +5,14 @@ from app.services.file_service import (
     FileAlreadyExistsError
 )
 from app.db import create_db_and_tables, get_session
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
+from app.models.models import UploadedFile
 from starlette.requests import Request
 from pathlib import Path
+from sqlmodel import Session, select
+from datetime import datetime, UTC
 
 app = FastAPI(title="Bike Tracker")
 
@@ -22,6 +22,8 @@ templates = Jinja2Templates(directory='app/templates')
 def on_startup() -> None:
     create_db_and_tables()
 
+
+on_startup()
 
 workouts = [
     {"date": "2025-09-20", "type": "Велотренировка", "duration": 90, "distance": 45},
@@ -67,11 +69,15 @@ async def imports(request: Request):
 
 
 @app.post('/imports')
-async def import_csv(file: UploadFile = File(...)):
+async def import_csv(file: UploadFile = File(...), session: Session = Depends(get_session)):
     try:
         validate_file_type(filename=file.filename, content_type=file.content_type)
         content = await file.read()
-        file_path = save_file_with_hash(content)
+        file_path, hash_value = save_file_with_hash(content, session)
+        uploaded_file = UploadedFile(original_name=file.filename, sha256=hash_value, uploaded_at=datetime.now(UTC))
+        session.add(uploaded_file)
+        session.commit()
+        session.refresh(uploaded_file)
         return RedirectResponse(url='/imports?ok=1', status_code=303)
 
     except FileValidationError:

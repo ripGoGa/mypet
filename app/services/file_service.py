@@ -1,6 +1,8 @@
 import hashlib
 import datetime
 from pathlib import Path
+from sqlmodel import select, Session
+from app.models.models import UploadedFile
 
 
 class FileValidationError(Exception):
@@ -22,14 +24,15 @@ def validate_file_type(filename: str, content_type: str) -> None:
         raise FileValidationError('Можно загружать только CSV-файлы!')
 
 
-def save_file_with_hash(content: bytes) -> str:
+def save_file_with_hash(content: bytes, session: Session) -> tuple[str, str]:
     hash_value = hashlib.sha256(content).hexdigest()
     filename = f"{hash_value}.csv"
     path = Path('data/csv') / f'{filename}'
-    if path.exists():
+    existing = session.exec(select(UploadedFile).where((UploadedFile.sha256 == hash_value))).first()
+    if existing:
         raise FileAlreadyExistsError('Файл с таким содержимым уже существует')
     try:
         path.write_bytes(content)
     except (PermissionError, OSError) as e:
         raise OSError(f"Не удалось сохранить файл: {e}")
-    return str(path)
+    return str(path), hash_value
