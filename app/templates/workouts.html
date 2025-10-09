@@ -38,7 +38,7 @@
         <th>Имя файла</th>
         <th>Время загрузки</th>
     </tr>
-    {% for u in uploaded_workouts %}
+    {% for u in last_3_uploaded %}
     <tr>
         <td>{{ u.original_name }}</td>
         <td>{{ u.uploaded_at }}</td>

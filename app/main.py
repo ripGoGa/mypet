@@ -8,11 +8,12 @@ from app.db import create_db_and_tables, get_session
 from fastapi import FastAPI, UploadFile, File, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from app.models.models import UploadedFile
+from app.models.models import UploadedFile, Workout
 from starlette.requests import Request
 from pathlib import Path
 from sqlmodel import Session, select
 from datetime import datetime, UTC
+from sqlalchemy import desc
 
 app = FastAPI(title="Bike Tracker")
 
@@ -25,13 +26,6 @@ def on_startup() -> None:
 
 on_startup()
 
-workouts = [
-    {"date": "2025-09-20", "type": "Велотренировка", "duration": 90, "distance": 45},
-    {"date": "2025-09-22", "type": "Интервалы", "duration": 60, "distance": 30},
-    {"date": "2025-09-24", "type": "Легкая", "duration": 120, "distance": 55},
-]
-uploaded_workouts = []
-
 
 def ensure_data_store() -> None:
     Path('data/csv').mkdir(parents=True, exist_ok=True)
@@ -43,10 +37,12 @@ async def hello_root(request: Request):
 
 
 @app.get('/workouts', response_class=HTMLResponse)
-async def list_workouts(request: Request):
+async def list_workouts(request: Request, session: Session = Depends(get_session)):
+    workouts = session.exec(select(Workout)).all()
+    last_3_uploaded = session.exec(select(UploadedFile).order_by(desc(UploadedFile.uploaded_at)).limit(3)).all()
     return templates.TemplateResponse('workouts.html', {'request': request,
                                                         'workouts': workouts,
-                                                        'uploaded_workouts': uploaded_workouts})
+                                                        'last_3_uploaded': last_3_uploaded})
 
 
 @app.get('/imports', response_class=HTMLResponse)
