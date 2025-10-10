@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="The save_file_with_hash function has been improved: it now checks for duplicates. Route /import is connected to the database. A table has been created in the database">
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="The stub has been removed from the list_workouts function in the @app.get('/workouts')  route. function connected to the UploadedFile, modified template list_workouts.html">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/workouts.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/workouts.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -202,7 +200,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760032760493</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="The stub has been removed from the list_workouts function in the @app.get('/workouts')  route. function connected to the UploadedFile, modified template list_workouts.html">
+      <option name="closed" value="true" />
+      <created>1760035769813</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1760035769813</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -231,6 +237,7 @@
     <MESSAGE value="created 'save_file_with_hash' function" />
     <MESSAGE value="deleted datatime from 'save_file_with_hash' and refactor @app.post('/imports')" />
     <MESSAGE value="The save_file_with_hash function has been improved: it now checks for duplicates. Route /import is connected to the database. A table has been created in the database" />
-    <option name="LAST_COMMIT_MESSAGE" value="The save_file_with_hash function has been improved: it now checks for duplicates. Route /import is connected to the database. A table has been created in the database" />
+    <MESSAGE value="The stub has been removed from the list_workouts function in the @app.get('/workouts')  route. function connected to the UploadedFile, modified template list_workouts.html" />
+    <option name="LAST_COMMIT_MESSAGE" value="The stub has been removed from the list_workouts function in the @app.get('/workouts')  route. function connected to the UploadedFile, modified template list_workouts.html" />
   </component>
 </project>

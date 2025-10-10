@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Optional
+from typing import Optional, List
 from sqlmodel import SQLModel, Field, Relationship
 
 
@@ -8,6 +8,7 @@ class UploadedFile(SQLModel, table=True):
     original_name: str
     sha256: str = Field(unique=True)
     uploaded_at: datetime
+    workouts: List['Workout'] = Relationship(back_populates='source_file')
 
 
 class Workout(SQLModel, table=True):
@@ -18,3 +19,4 @@ class Workout(SQLModel, table=True):
     distance_km: float
     effort: Optional[float] = None
     source_file_id: Optional[int] = Field(default=None, foreign_key='uploadedfile.id')
+    source_file: Optional[UploadedFile] = Relationship(back_populates='workouts')
