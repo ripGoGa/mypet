@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="The stub has been removed from the list_workouts function in the @app.get('/workouts')  route. function connected to the UploadedFile, modified template list_workouts.html">
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="Add database relationships between UploadedFile and Workout model">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/models.py" afterDir="false" />
     </list>
@@ -208,7 +208,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760035769813</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Add database relationships between UploadedFile and Workout model">
+      <option name="closed" value="true" />
+      <created>1760121051506</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1760121051506</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -238,6 +246,7 @@
     <MESSAGE value="deleted datatime from 'save_file_with_hash' and refactor @app.post('/imports')" />
     <MESSAGE value="The save_file_with_hash function has been improved: it now checks for duplicates. Route /import is connected to the database. A table has been created in the database" />
     <MESSAGE value="The stub has been removed from the list_workouts function in the @app.get('/workouts')  route. function connected to the UploadedFile, modified template list_workouts.html" />
-    <option name="LAST_COMMIT_MESSAGE" value="The stub has been removed from the list_workouts function in the @app.get('/workouts')  route. function connected to the UploadedFile, modified template list_workouts.html" />
+    <MESSAGE value="Add database relationships between UploadedFile and Workout model" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add database relationships between UploadedFile and Workout model" />
   </component>
 </project>
