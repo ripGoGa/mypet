@@ -3,10 +3,10 @@ from sqlmodel import Session, select
 import pandas as pd
 from datetime import timedelta
 
-from app.models.models import UserProfile
+from app.models.models import UserProfile, Workout
 
 
-def parse_csv_to_workout(file_path: Path) -> str:
+def parse_csv_to_workout(file_path: Path, uf_id: int, session: Session) -> None:
     df = pd.read_csv(file_path)
 
     # Маска движения
@@ -17,8 +17,7 @@ def parse_csv_to_workout(file_path: Path) -> str:
 
     # Базовые показатели
     p_30 = df.loc[moving_mask, 'watts'].rolling(30).mean()
-    ftp = 242
-    # ftp = session.exec(select(UserProfile.ftp).where((UserProfile.id == 1))).one()
+    ftp = session.exec(select(UserProfile.ftp).where((UserProfile.id == 1))).one()
     duration = timedelta(seconds=df['time'].max())
     moving_time = timedelta(seconds=int(moving_mask.sum()))
     distance_km = round(df['distance'].max() / 1000, 2)
@@ -35,13 +34,16 @@ def parse_csv_to_workout(file_path: Path) -> str:
     training_stress_score = round(((moving_mask.sum() * normalized_power * intensity_factor) / (ftp * 3600)) * 100, 1)
 
     # Калории
-    calories_burned = round(avg_watts * (moving_mask.sum() / 3600) * 3.6, 1)
-    print(
-        f'duration = {duration}, moving_time = {moving_time}, distance_km = {distance_km}, avg_watts = {avg_watts}, normalized_power = {normalized_power}, intensity_factor ={intensity_factor}, training_stress_score = {training_stress_score}, avg_cadence = {avg_cadence},'
-        f'avg_heartrate = {avg_heartrate}, max_heartrate = {max_heartrate}, avg_speed = {avg_speed}, avg_speed_without_stop = {avg_speed_without_stop}, calories_burned ={calories_burned}', sep='\n')
+    calories_burned = int(avg_watts * (moving_mask.sum() / 3600) * 3.6)
 
+    #Запись в базу данных
+    uploaded_file = Workout(id=uf_id, duration=duration, moving_time=moving_time, distance_km=distance_km,
+                            avg_watts=avg_watts, normalized_power=normalized_power,intensity_factor=intensity_factor,
+                            training_stress_score=training_stress_score, avg_cadence=avg_cadence,avg_speed=avg_speed,
+                            avg_speed_without_stop=avg_speed_without_stop, avg_heartrate=avg_heartrate,
+                            max_heartrate=max_heartrate, calories_burned=calories_burned, source_file_id=uf_id,
+                            source_file=file_path)
+    session.add(uploaded_file)
+    session.flush()
 
-fp = Path('/Users/igoroborin/PycharmProjects/mypet/data/csv/16051339958_streams.csv')
-
-parse_csv_to_workout(file_path=fp)
 

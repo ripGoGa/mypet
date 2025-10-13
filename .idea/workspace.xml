@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="Upgrade parse_cvs: add moving_mask, calories and moving metrics">
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="Upgrade Workout model">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/parse_cvs.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/parse_cvs.py" afterDir="false" />
     </list>
@@ -241,7 +242,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760359670081</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Upgrade Workout model">
+      <option name="closed" value="true" />
+      <created>1760360010227</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1760360010227</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -275,6 +284,7 @@
     <MESSAGE value="Add SQL model UserProfile and update Workout model" />
     <MESSAGE value="Add first parse_cvs service" />
     <MESSAGE value="Upgrade parse_cvs: add moving_mask, calories and moving metrics" />
-    <option name="LAST_COMMIT_MESSAGE" value="Upgrade parse_cvs: add moving_mask, calories and moving metrics" />
+    <MESSAGE value="Upgrade Workout model" />
+    <option name="LAST_COMMIT_MESSAGE" value="Upgrade Workout model" />
   </component>
 </project>
