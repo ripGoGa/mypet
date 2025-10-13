@@ -15,6 +15,8 @@ from sqlmodel import Session, select
 from datetime import datetime, UTC
 from sqlalchemy import desc
 
+from app.services.parse_cvs import parse_csv_to_workout
+
 app = FastAPI(title="Bike Tracker")
 
 templates = Jinja2Templates(directory='app/templates')
@@ -72,8 +74,10 @@ async def import_csv(file: UploadFile = File(...), session: Session = Depends(ge
         file_path, hash_value = save_file_with_hash(content, session)
         uploaded_file = UploadedFile(original_name=file.filename, sha256=hash_value, uploaded_at=datetime.now(UTC))
         session.add(uploaded_file)
+        session.flush()
+
+        parse_csv_to_workout(file_path=file_path, uf_id=uploaded_file.id, session=session)
         session.commit()
-        session.refresh(uploaded_file)
         return RedirectResponse(url='/imports?ok=1', status_code=303)
 
     except FileValidationError:

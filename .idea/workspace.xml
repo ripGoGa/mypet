@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="Upgrade Workout model">
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="Upgrade Workout model again xD. Preparation for an atomic write operation in the database">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/parse_cvs.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/parse_cvs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -250,7 +249,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760360010227</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Upgrade Workout model again xD. Preparation for an atomic write operation in the database">
+      <option name="closed" value="true" />
+      <created>1760366693858</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1760366693858</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -285,6 +292,7 @@
     <MESSAGE value="Add first parse_cvs service" />
     <MESSAGE value="Upgrade parse_cvs: add moving_mask, calories and moving metrics" />
     <MESSAGE value="Upgrade Workout model" />
-    <option name="LAST_COMMIT_MESSAGE" value="Upgrade Workout model" />
+    <MESSAGE value="Upgrade Workout model again xD. Preparation for an atomic write operation in the database" />
+    <option name="LAST_COMMIT_MESSAGE" value="Upgrade Workout model again xD. Preparation for an atomic write operation in the database" />
   </component>
 </project>
