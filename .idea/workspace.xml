@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="Add first parse_cvs service">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="Upgrade parse_cvs: add moving_mask, calories and moving metrics">
+      <change beforePath="$PROJECT_DIR$/app/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/parse_cvs.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/parse_cvs.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -233,7 +233,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760292676429</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Upgrade parse_cvs: add moving_mask, calories and moving metrics">
+      <option name="closed" value="true" />
+      <created>1760359670081</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1760359670081</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -266,6 +274,7 @@
     <MESSAGE value="Add database relationships between UploadedFile and Workout model" />
     <MESSAGE value="Add SQL model UserProfile and update Workout model" />
     <MESSAGE value="Add first parse_cvs service" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add first parse_cvs service" />
+    <MESSAGE value="Upgrade parse_cvs: add moving_mask, calories and moving metrics" />
+    <option name="LAST_COMMIT_MESSAGE" value="Upgrade parse_cvs: add moving_mask, calories and moving metrics" />
   </component>
 </project>

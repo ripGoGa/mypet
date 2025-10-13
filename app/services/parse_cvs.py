@@ -29,15 +29,15 @@ def parse_csv_to_workout(file_path: Path) -> str:
     avg_speed_without_stop = round(df.loc[df['velocity_smooth'] > 2, 'velocity_smooth'].mean() * 3.6, 1)
 
     # Метрики
-    avg_watts2 = int(df.loc[moving_mask, 'watts'].mean())
+    avg_watts = int(df.loc[moving_mask, 'watts'].mean())
     normalized_power = round(((p_30 ** 4).mean()) ** 0.25, 1)
     intensity_factor = round(normalized_power / ftp, 3)
     training_stress_score = round(((moving_mask.sum() * normalized_power * intensity_factor) / (ftp * 3600)) * 100, 1)
 
     # Калории
-    calories_burned = round(avg_watts2 * (moving_mask.sum() / 3600) * 3.6, 1)
+    calories_burned = round(avg_watts * (moving_mask.sum() / 3600) * 3.6, 1)
     print(
-        f'duration = {duration}, moving_time = {moving_time}, distance_km = {distance_km}, avg_watts2 = {avg_watts2}, normalized_power = {normalized_power}, intensity_factor ={intensity_factor}, training_stress_score = {training_stress_score}, avg_cadence = {avg_cadence},'
+        f'duration = {duration}, moving_time = {moving_time}, distance_km = {distance_km}, avg_watts = {avg_watts}, normalized_power = {normalized_power}, intensity_factor ={intensity_factor}, training_stress_score = {training_stress_score}, avg_cadence = {avg_cadence},'
         f'avg_heartrate = {avg_heartrate}, max_heartrate = {max_heartrate}, avg_speed = {avg_speed}, avg_speed_without_stop = {avg_speed_without_stop}, calories_burned ={calories_burned}', sep='\n')
 
 

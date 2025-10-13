@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Optional, List
 from sqlmodel import SQLModel, Field, Relationship
 
@@ -14,7 +14,8 @@ class UploadedFile(SQLModel, table=True):
 class Workout(SQLModel, table=True):
     id: int = Field(primary_key=True, default=None)
     date: datetime
-    duration_min: float
+    duration_min: timedelta
+    moving_time: timedelta
     distance_km: float
     avg_watts: Optional[float]
     normalized_power: Optional[float]
@@ -22,9 +23,10 @@ class Workout(SQLModel, table=True):
     training_stress_score: Optional[float]
     avg_cadence: Optional[float]
     avg_speed: Optional[float]
+    avg_speed_without_stop: Optional[float]
     avg_heartrate: Optional[float]
-    effort: Optional[float] = None
-    ftp: Optional[float]
+    max_heartrate: Optional[float]
+    calories_burned: Optional[float]
 
     source_file_id: Optional[int] = Field(default=None, foreign_key='uploadedfile.id')
     source_file: Optional[UploadedFile] = Relationship(back_populates='workouts')
