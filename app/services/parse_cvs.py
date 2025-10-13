@@ -8,27 +8,40 @@ from app.models.models import UserProfile
 
 def parse_csv_to_workout(file_path: Path) -> str:
     df = pd.read_csv(file_path)
-    p_30 = df['watts'].rolling(30).mean()
+
+    # Маска движения
+    if 'moving' in df.columns:
+        moving_mask = df['moving'] == True
+    else:
+        moving_mask = df['velocity_smooth'] > 1
+
+    # Базовые показатели
+    p_30 = df.loc[moving_mask, 'watts'].rolling(30).mean()
     ftp = 242
     # ftp = session.exec(select(UserProfile.ftp).where((UserProfile.id == 1))).one()
     duration = timedelta(seconds=df['time'].max())
+    moving_time = timedelta(seconds=int(moving_mask.sum()))
     distance_km = round(df['distance'].max() / 1000, 2)
-    distance_km2 = round(df['distance'].diff().clip(lower=0).fillna(0).sum() / 1000, 2)
-    avg_watts = int(df['watts'].mean())
-    normalized_power = round(((p_30**4).mean())**0.25, 0)
-    intensity_factor = normalized_power / ftp
-    training_stress_score = ((df['time'].max() * normalized_power * intensity_factor) / (ftp * 3600)) * 100
-    avg_cadence = df.loc[df['cadence'] > 0, 'cadence'].mean()
-    avg_heartrate = df['heartrate'].mean()
-    avg_speed = df['velocity_smooth'].mean() * 3.6
-    avg_speed_without_stop = df.loc[df['velocity_smooth'] > 2, 'velocity_smooth'].mean() * 3.6
-    print(f'duration = {duration}, distance_km = {distance_km},  avg_watts = {avg_watts}, normalized_power = {normalized_power}, intensity_factor ={intensity_factor}, training_stress_score = {training_stress_score}, avg_cadence = {avg_cadence},'
-          f'avg_heartrate = {avg_heartrate}, avg_speed = {avg_speed}, avg_speed_without_stop = {avg_speed_without_stop}', sep='\n')
+    avg_cadence = int(df.loc[df['cadence'] > 0, 'cadence'].mean())
+    avg_heartrate = int(df['heartrate'].mean())
+    max_heartrate = int(df['heartrate'].max())
+    avg_speed = round(df['velocity_smooth'].mean() * 3.6, 1)
+    avg_speed_without_stop = round(df.loc[df['velocity_smooth'] > 2, 'velocity_smooth'].mean() * 3.6, 1)
 
+    # Метрики
+    avg_watts2 = int(df.loc[moving_mask, 'watts'].mean())
+    normalized_power = round(((p_30 ** 4).mean()) ** 0.25, 1)
+    intensity_factor = round(normalized_power / ftp, 3)
+    training_stress_score = round(((moving_mask.sum() * normalized_power * intensity_factor) / (ftp * 3600)) * 100, 1)
+
+    # Калории
+    calories_burned = round(avg_watts2 * (moving_mask.sum() / 3600) * 3.6, 1)
+    print(
+        f'duration = {duration}, moving_time = {moving_time}, distance_km = {distance_km}, avg_watts2 = {avg_watts2}, normalized_power = {normalized_power}, intensity_factor ={intensity_factor}, training_stress_score = {training_stress_score}, avg_cadence = {avg_cadence},'
+        f'avg_heartrate = {avg_heartrate}, max_heartrate = {max_heartrate}, avg_speed = {avg_speed}, avg_speed_without_stop = {avg_speed_without_stop}, calories_burned ={calories_burned}', sep='\n')
 
 
 fp = Path('/Users/igoroborin/PycharmProjects/mypet/data/csv/16051339958_streams.csv')
 
 parse_csv_to_workout(file_path=fp)
-
 

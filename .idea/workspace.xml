@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="Add SQL model UserProfile and update Workout model">
-      <change afterPath="$PROJECT_DIR$/app/services/parse_cvs.py" afterDir="false" />
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="Add first parse_cvs service">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/parse_cvs.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/parse_cvs.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -226,7 +225,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760208015861</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Add first parse_cvs service">
+      <option name="closed" value="true" />
+      <created>1760292676429</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1760292676429</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -258,6 +265,7 @@
     <MESSAGE value="The stub has been removed from the list_workouts function in the @app.get('/workouts')  route. function connected to the UploadedFile, modified template list_workouts.html" />
     <MESSAGE value="Add database relationships between UploadedFile and Workout model" />
     <MESSAGE value="Add SQL model UserProfile and update Workout model" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add SQL model UserProfile and update Workout model" />
+    <MESSAGE value="Add first parse_cvs service" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add first parse_cvs service" />
   </component>
 </project>
