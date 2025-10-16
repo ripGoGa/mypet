@@ -15,7 +15,7 @@ from sqlmodel import Session, select
 from datetime import datetime, UTC
 from sqlalchemy import desc
 
-from app.services.parse_cvs import parse_csv_to_workout
+from app.services.parse_cvs import parse_csv_to_workout, ParseCsvError
 
 app = FastAPI(title="Bike Tracker")
 
@@ -79,10 +79,15 @@ async def import_csv(file: UploadFile = File(...), session: Session = Depends(ge
         parse_csv_to_workout(file_path=file_path, uf_id=uploaded_file.id, session=session)
         session.commit()
         return RedirectResponse(url='/imports?ok=1', status_code=303)
-
+    except ParseCsvError:
+        session.rollback()
+        return RedirectResponse(url='/imports?err=parse', status_code=303)
     except FileValidationError:
+        session.rollback()
         return RedirectResponse(url='/imports?err=type', status_code=303)
     except FileAlreadyExistsError:
+        session.rollback()
         return RedirectResponse(url='/imports?err=dup', status_code=303)
     except OSError:
+        session.rollback()
         return RedirectResponse(url='/imports?err=write', status_code=303)

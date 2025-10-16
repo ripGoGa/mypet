@@ -6,6 +6,11 @@ from datetime import timedelta
 from app.models.models import UserProfile, Workout
 
 
+class ParseCsvError(Exception):
+    """Ошибка в парсере"""
+    pass
+
+
 def parse_csv_to_workout(file_path: Path, uf_id: int, session: Session) -> None:
     df = pd.read_csv(file_path)
 
@@ -36,14 +41,12 @@ def parse_csv_to_workout(file_path: Path, uf_id: int, session: Session) -> None:
     # Калории
     calories_burned = int(avg_watts * (moving_mask.sum() / 3600) * 3.6)
 
-    #Запись в базу данных
-    uploaded_file = Workout(id=uf_id, duration=duration, moving_time=moving_time, distance_km=distance_km,
-                            avg_watts=avg_watts, normalized_power=normalized_power,intensity_factor=intensity_factor,
-                            training_stress_score=training_stress_score, avg_cadence=avg_cadence,avg_speed=avg_speed,
+    # Запись в базу данных
+    workout = Workout(source_file_id=uf_id, duration=duration, moving_time=moving_time, distance_km=distance_km,
+                            avg_watts=avg_watts, normalized_power=normalized_power, intensity_factor=intensity_factor,
+                            training_stress_score=training_stress_score, avg_cadence=avg_cadence, avg_speed=avg_speed,
                             avg_speed_without_stop=avg_speed_without_stop, avg_heartrate=avg_heartrate,
-                            max_heartrate=max_heartrate, calories_burned=calories_burned, source_file_id=uf_id,
+                            max_heartrate=max_heartrate, calories_burned=calories_burned,
                             source_file=file_path)
-    session.add(uploaded_file)
+    session.add(workout)
     session.flush()
-
-

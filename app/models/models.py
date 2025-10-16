@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+from pathlib import Path
 from typing import Optional, List
 from sqlmodel import SQLModel, Field, Relationship
 
@@ -28,7 +29,7 @@ class Workout(SQLModel, table=True):
     calories_burned: Optional[int]
 
     source_file_id: Optional[int] = Field(default=None, foreign_key='uploadedfile.id')
-    source_file: Optional[UploadedFile] = Relationship(back_populates='workouts')
+    source_file: str = Relationship(back_populates='workouts')
 
 
 class UserProfile(SQLModel, table=True):
