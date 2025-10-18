@@ -8,7 +8,7 @@ from app.db import create_db_and_tables, get_session
 from fastapi import FastAPI, UploadFile, File, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from app.models.models import UploadedFile, Workout
+from app.models.models import UploadedFile, Workout, UserProfile
 from starlette.requests import Request
 from pathlib import Path
 from sqlmodel import Session, select
@@ -91,3 +91,11 @@ async def import_csv(file: UploadFile = File(...), session: Session = Depends(ge
     except OSError:
         session.rollback()
         return RedirectResponse(url='/imports?err=write', status_code=303)
+
+
+@app.get('/profile', response_class=HTMLResponse)
+async def show_profile(request: Request, session: Session = Depends(get_session)):
+    profile = session.exec(select(UserProfile)).first()
+    if profile is None:
+        return RedirectResponse(url='/profile/create', status_code=303)
+    return templates.TemplateResponse('profile.html', {'request': request, 'profile': profile})

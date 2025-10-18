@@ -33,11 +33,10 @@ class Workout(SQLModel, table=True):
 
 
 class UserProfile(SQLModel, table=True):
-    id: int = Field(primary_key=True, default=None)
+    id: Optional[int] = Field(primary_key=True, default=None)
     name: str
     birth_date: Optional[date]
     height_cm: Optional[int]
-    weight_kg: Optional[float]
-    ftp: Optional[float]
-    created_at: datetime = Field(default_factory=datetime.now)
+    weight_kg: float
+    ftp: int
     updated_at: datetime = Field(default_factory=datetime.now)
