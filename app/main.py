@@ -99,3 +99,11 @@ async def show_profile(request: Request, session: Session = Depends(get_session)
     if profile is None:
         return RedirectResponse(url='/profile/create', status_code=303)
     return templates.TemplateResponse('profile.html', {'request': request, 'profile': profile})
+
+
+@app.get('/profile/create', response_class=HTMLResponse)
+async def create_profile(request: Request, session: Session = Depends(get_session)):
+    profile = session.exec(select(UserProfile)).first()
+    if profile is None:
+        return templates.TemplateResponse('profile_create.html', {'request': request})
+    return RedirectResponse(url='/profile', status_code=303)

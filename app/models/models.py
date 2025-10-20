@@ -29,7 +29,8 @@ class Workout(SQLModel, table=True):
     calories_burned: Optional[int]
 
     source_file_id: Optional[int] = Field(default=None, foreign_key='uploadedfile.id')
-    source_file: str = Relationship(back_populates='workouts')
+    source_file: Optional['UploadedFile'] = Relationship(back_populates='workouts')
+
 
 
 class UserProfile(SQLModel, table=True):
