@@ -32,7 +32,6 @@ class Workout(SQLModel, table=True):
     source_file: Optional['UploadedFile'] = Relationship(back_populates='workouts')
 
 
-
 class UserProfile(SQLModel, table=True):
     id: Optional[int] = Field(primary_key=True, default=None)
     name: str

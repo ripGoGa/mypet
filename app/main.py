@@ -1,3 +1,5 @@
+from typing import Optional
+
 from app.services.file_service import (
     validate_file_type,
     save_file_with_hash,
@@ -5,14 +7,14 @@ from app.services.file_service import (
     FileAlreadyExistsError
 )
 from app.db import create_db_and_tables, get_session
-from fastapi import FastAPI, UploadFile, File, Depends
+from fastapi import FastAPI, UploadFile, File, Depends, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from app.models.models import UploadedFile, Workout, UserProfile
 from starlette.requests import Request
 from pathlib import Path
 from sqlmodel import Session, select
-from datetime import datetime, UTC
+from datetime import datetime, UTC, date
 from sqlalchemy import desc
 
 from app.services.parse_cvs import parse_csv_to_workout, ParseCsvError
@@ -102,8 +104,20 @@ async def show_profile(request: Request, session: Session = Depends(get_session)
 
 
 @app.get('/profile/create', response_class=HTMLResponse)
-async def create_profile(request: Request, session: Session = Depends(get_session)):
+async def check_created_profile(request: Request, session: Session = Depends(get_session)):
     profile = session.exec(select(UserProfile)).first()
     if profile is None:
         return templates.TemplateResponse('profile_create.html', {'request': request})
+    return RedirectResponse(url='/profile', status_code=303)
+
+
+@app.post("/profile/create", response_class=HTMLResponse)
+async def create_profile(name: str = Form(...), weight_kg: float = Form(...), ftp: int = Form(...),
+                         birth_date: Optional[date] = Form(None), height_cm: Optional[int] = Form(None),
+                         session: Session = Depends(get_session)):
+    if session.exec(select(UserProfile)).first() is None:
+        user_profile = UserProfile(name=name, weight_kg=weight_kg, birth_date=birth_date, height_cm=height_cm,
+                                   ftp=ftp)
+        session.add(user_profile)
+        session.commit()
     return RedirectResponse(url='/profile', status_code=303)

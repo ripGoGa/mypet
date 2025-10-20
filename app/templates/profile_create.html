@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Создать профиль</title>
+</head>
+<body>
+    <h1>Создание профиля</h1>
+    <form method="POST" action="/profile/create">
+        <label>
+            Имя:
+            <input type="text" name="name" required>
+        </label>
+        <br>
+        <label>
+            Дата рождения:
+            <input type="date" name="birth_date">
+        </label>
+        <br>
+        <label>
+            Вес (кг):
+            <input type="number" name="weight_kg" step="0.1" required>
+        </label>
+        <br>
+        <label>
+            Рост (см):
+            <input type="number" name="height_cm">
+        </label>
+        <br>
+        <label>
+            FTP (Вт):
+            <input type="number" name="ftp" required>
+        </label>
+        <br>
+        <button type="submit">Создать профиль</button>
+    </form>
+</body>
+</html>

@@ -46,7 +46,6 @@ def parse_csv_to_workout(file_path: Path, uf_id: int, session: Session) -> None:
                             avg_watts=avg_watts, normalized_power=normalized_power, intensity_factor=intensity_factor,
                             training_stress_score=training_stress_score, avg_cadence=avg_cadence, avg_speed=avg_speed,
                             avg_speed_without_stop=avg_speed_without_stop, avg_heartrate=avg_heartrate,
-                            max_heartrate=max_heartrate, calories_burned=calories_burned,
-                            source_file=file_path)
+                            max_heartrate=max_heartrate, calories_burned=calories_burned)
     session.add(workout)
     session.flush()
