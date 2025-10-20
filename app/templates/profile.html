@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль</title>
+</head>
+<body>
+<a href="/">Главная страница</a>
+<a href="/profile/edit">Редактировать профиль</a>
+
+<table border="1">
+    <tr>
+        <th>Имя</th>
+        <th>Дата рождения</th>
+        <th>Вес (кг)</th>
+        <th>Рост (см)</th>
+        <th>FTP (Вт)</th>
+    </tr>
+    <tr>
+        <td>{{ profile.name }}</td>
+        <td>{{ profile.birth_date or "—" }}</td>
+        <td>{{ profile.weight_kg }}</td>
+        <td>{{ profile.height_cm or "—" }}</td>
+        <td>{{ profile.ftp }}</td>
+    </tr>
+</table>
+</body>
+</html>

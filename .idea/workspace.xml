@@ -4,12 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="Upgrade Workout model again xD. Preparation for an atomic write operation in the database">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/mypet.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/mypet.iml" afterDir="false" />
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="Update UserProfile model, add get'/profile' route to display user profile">
+      <change afterPath="$PROJECT_DIR$/app/templates/profile.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,8 +21,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -260,7 +257,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760366693858</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Update UserProfile model, add get'/profile' route to display user profile">
+      <option name="closed" value="true" />
+      <created>1760808978099</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1760808978099</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -296,6 +301,7 @@
     <MESSAGE value="Upgrade parse_cvs: add moving_mask, calories and moving metrics" />
     <MESSAGE value="Upgrade Workout model" />
     <MESSAGE value="Upgrade Workout model again xD. Preparation for an atomic write operation in the database" />
-    <option name="LAST_COMMIT_MESSAGE" value="Upgrade Workout model again xD. Preparation for an atomic write operation in the database" />
+    <MESSAGE value="Update UserProfile model, add get'/profile' route to display user profile" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update UserProfile model, add get'/profile' route to display user profile" />
   </component>
 </project>
