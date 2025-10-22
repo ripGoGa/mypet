@@ -121,3 +121,11 @@ async def create_profile(name: str = Form(...), weight_kg: float = Form(...), ft
         session.add(user_profile)
         session.commit()
     return RedirectResponse(url='/profile', status_code=303)
+
+
+@app.get('/profile/edit', response_class=HTMLResponse)
+async def check_edited_profile(request: Request, session: Session = Depends(get_session)):
+    profile = session.exec(select(UserProfile)).first()
+    if profile is not None:
+        return templates.TemplateResponse('profile_edit.html', {'request': request, 'profile': profile})
+    return RedirectResponse(url='/profile', status_code=303)

@@ -4,12 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="add Get route for profile creation form">
-      <change afterPath="$PROJECT_DIR$/app/templates/profile_create.html" afterDir="false" />
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="Fixed parse_csv_to_workout to correctly associate Workout with UploadedFile: removed file_path from Relationship">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/parse_cvs.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/parse_cvs.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -284,7 +281,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760969990748</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Fixed parse_csv_to_workout to correctly associate Workout with UploadedFile: removed file_path from Relationship">
+      <option name="closed" value="true" />
+      <created>1760973361083</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1760973361083</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -323,6 +328,7 @@
     <MESSAGE value="Update UserProfile model, add get'/profile' route to display user profile" />
     <MESSAGE value="Create template profile.html" />
     <MESSAGE value="add Get route for profile creation form" />
-    <option name="LAST_COMMIT_MESSAGE" value="add Get route for profile creation form" />
+    <MESSAGE value="Fixed parse_csv_to_workout to correctly associate Workout with UploadedFile: removed file_path from Relationship" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed parse_csv_to_workout to correctly associate Workout with UploadedFile: removed file_path from Relationship" />
   </component>
 </project>
