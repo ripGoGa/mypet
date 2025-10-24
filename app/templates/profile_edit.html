@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактировать профиль</title>
+</head>
+<body>
+    <h1>Редактирование профиля</h1>
+    <form method="POST" action="/profile/edit">
+        <label>
+            Имя:
+            <input type="text" name="name" value="{{ profile.name }}" required>
+        </label>
+        <br>
+        <label>
+            Дата рождения:
+            <input type="date" name="birth_date" value="{{ profile.birth_date or '' }}">
+        </label>
+        <br>
+        <label>
+            Вес (кг):
+            <input type="number" name="weight_kg" step="0.1" value="{{ profile.weight_kg }}" required>
+        </label>
+        <br>
+        <label>
+            Рост (см):
+            <input type="number" name="height_cm" value="{{ profile.height_cm or '' }}">
+        </label>
+        <br>
+        <label>
+            FTP (Вт):
+            <input type="number" name="ftp" value="{{ profile.ftp }}" required>
+        </label>
+        <br>
+        <button type="submit">Сохранить изменения</button>
+        <a href="/profile">Отмена</a>
+    </form>
+</body>
+</html>

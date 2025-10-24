@@ -112,9 +112,14 @@ async def check_created_profile(request: Request, session: Session = Depends(get
 
 
 @app.post("/profile/create", response_class=HTMLResponse)
-async def create_profile(name: str = Form(...), weight_kg: float = Form(...), ftp: int = Form(...),
-                         birth_date: Optional[date] = Form(None), height_cm: Optional[int] = Form(None),
-                         session: Session = Depends(get_session)):
+async def create_profile(
+    name: str = Form(...),
+    weight_kg: float = Form(...),
+    ftp: int = Form(...),
+    birth_date: Optional[date] = Form(None),
+    height_cm: Optional[int] = Form(None),
+    session: Session = Depends(get_session)
+):
     if session.exec(select(UserProfile)).first() is None:
         user_profile = UserProfile(name=name, weight_kg=weight_kg, birth_date=birth_date, height_cm=height_cm,
                                    ftp=ftp)
@@ -128,4 +133,24 @@ async def check_edited_profile(request: Request, session: Session = Depends(get_
     profile = session.exec(select(UserProfile)).first()
     if profile is not None:
         return templates.TemplateResponse('profile_edit.html', {'request': request, 'profile': profile})
+    return RedirectResponse(url='/profile/create', status_code=303)
+
+
+@app.post('/profile/edit', response_class=HTMLResponse)
+async def edit_profile(
+    name: str = Form(...),
+    weight_kg: float = Form(...),
+    ftp: int = Form(...),
+    birth_date: Optional[date] = Form(None),
+    height_cm: Optional[int] = Form(None),
+    session: Session = Depends(get_session)
+):
+    profile = session.exec(select(UserProfile)).first()
+    profile.name = name
+    profile.weight_kg = weight_kg
+    profile.height_cm = height_cm
+    profile.ftp = ftp
+    profile.birth_date = birth_date
+    profile.updated_at = datetime.now()
+    session.commit()
     return RedirectResponse(url='/profile', status_code=303)
