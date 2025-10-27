@@ -1,3 +1,4 @@
+from math import ceil
 from typing import Optional
 
 from app.services.file_service import (
@@ -15,7 +16,7 @@ from starlette.requests import Request
 from pathlib import Path
 from sqlmodel import Session, select
 from datetime import datetime, UTC, date
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 
 from app.services.parse_cvs import parse_csv_to_workout, ParseCsvError
 
@@ -41,12 +42,18 @@ async def hello_root(request: Request):
 
 
 @app.get('/workouts', response_class=HTMLResponse)
-async def list_workouts(request: Request, session: Session = Depends(get_session)):
-    workouts = session.exec(select(Workout)).all()
-    last_3_uploaded = session.exec(select(UploadedFile).order_by(desc(UploadedFile.uploaded_at)).limit(3)).all()
-    return templates.TemplateResponse('workouts.html', {'request': request,
-                                                        'workouts': workouts,
-                                                        'last_3_uploaded': last_3_uploaded})
+async def list_workouts(request: Request, session: Session = Depends(get_session), page: int = 1):
+    if page < 1:
+        page = 1
+    limit = 10
+    offset = (page - 1) * limit
+    total_count = session.exec(select(func.count(Workout.id))).one()
+    total_pages = ceil(total_count / limit)
+    workouts = session.exec(select(Workout).order_by(desc(Workout.id)).limit(limit).offset(offset)).all()
+    return templates.TemplateResponse('workouts.html', {'request': request, 'workouts': workouts,
+                                                        'current_page': page,
+                                                        'total_pages': total_pages})
+
 
 
 @app.get('/imports', response_class=HTMLResponse)

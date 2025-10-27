@@ -2,48 +2,52 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Мои тренировки</title>
+    <title>Список тренировок</title>
 </head>
 <body>
-    <a href="/imports"
-   style="display: inline-block;
-          padding: 10px 20px;
-          margin-bottom: 10px;
-          background-color: #2196F3;
-          color: white;
-          text-decoration: none;
-          border-radius: 5px;">
-   Загрузить тренировку
-</a>
-     <h1>Список тренировок</h1>
-<table border="1">
-    <tr>
-        <th>Дата</th>
-        <th>Тип</th>
-        <th>Длительность (мин)</th>
-        <th>Дистанция (км)</th>
-    </tr>
-    {% for w in workouts %}
-    <tr>
-        <td>{{ w.date }}</td>
-        <td>{{ w.type }}</td>
-        <td>{{ w.duration }}</td>
-        <td>{{ w.distance }}</td>
-    </tr>
-    {% endfor %}
-</table>
-     <h2>Недавние загрузки</h2>
-<table border="1">
-    <tr>
-        <th>Имя файла</th>
-        <th>Время загрузки</th>
-    </tr>
-    {% for u in last_3_uploaded %}
-    <tr>
-        <td>{{ u.original_name }}</td>
-        <td>{{ u.uploaded_at }}</td>
-    </tr>
-    {% endfor %}
-</table>
+    <h1>Мои тренировки</h1>
+
+    {% if workouts %}
+        <table border="1">
+            <tr>
+                <th>Дата</th>
+                <th>Дистанция (км)</th>
+                <th>Длительность</th>
+                <th>Средняя мощность (Вт)</th>
+                <th>Средний пульс</th>
+                <th>TSS</th>
+                <th>Подробнее</th>
+            </tr>
+            {% for workout in workouts %}
+                <tr>
+                    <td>
+                        {{ workout.source_file.uploaded_at }}
+                    </td>
+                    <td>{{ workout.distance_km }}</td>
+                    <td>{{ workout.duration }}</td>
+                    <td>{{ workout.avg_watts }}</td>
+                    <td>{{ workout.avg_heartrate }}</td>
+                    <td>{{ workout.training_stress_score }}</td>
+                    <td>
+                        <a href="/workouts/{{ workout.id }}">Открыть</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>Тренировки не найдены.</p>
+    {% endif %}
+
+    <div>
+        {% if current_page > 1 %}
+            <a href="/workouts?page={{ current_page - 1 }}">← Предыдущая</a>
+        {% endif %}
+
+        Страница {{ current_page }} из {{ total_pages }}
+
+        {% if current_page < total_pages %}
+            <a href="/workouts?page={{ current_page + 1 }}">Следующая →</a>
+        {% endif %}
+    </div>
 </body>
 </html>
