@@ -24,8 +24,8 @@ class Workout(SQLModel, table=True):
     avg_cadence: Optional[int]
     avg_speed: Optional[float]
     avg_speed_without_stop: Optional[int]
-    avg_heartrate: Optional[int]
-    max_heartrate: Optional[float]
+    avg_heartrate: Optional[int] = None
+    max_heartrate: Optional[float] = None
     calories_burned: Optional[int]
 
     source_file_id: Optional[int] = Field(default=None, foreign_key='uploadedfile.id')
