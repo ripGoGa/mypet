@@ -8,7 +8,7 @@ from app.services.file_service import (
     FileAlreadyExistsError
 )
 from app.db import create_db_and_tables, get_session
-from fastapi import FastAPI, UploadFile, File, Depends, Form
+from fastapi import FastAPI, UploadFile, File, Depends, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from app.models.models import UploadedFile, Workout, UserProfile
@@ -53,7 +53,6 @@ async def list_workouts(request: Request, session: Session = Depends(get_session
     return templates.TemplateResponse('workouts.html', {'request': request, 'workouts': workouts,
                                                         'current_page': page,
                                                         'total_pages': total_pages})
-
 
 
 @app.get('/imports', response_class=HTMLResponse)
@@ -120,12 +119,12 @@ async def check_created_profile(request: Request, session: Session = Depends(get
 
 @app.post("/profile/create", response_class=HTMLResponse)
 async def create_profile(
-    name: str = Form(...),
-    weight_kg: float = Form(...),
-    ftp: int = Form(...),
-    birth_date: Optional[date] = Form(None),
-    height_cm: Optional[int] = Form(None),
-    session: Session = Depends(get_session)
+        name: str = Form(...),
+        weight_kg: float = Form(...),
+        ftp: int = Form(...),
+        birth_date: Optional[date] = Form(None),
+        height_cm: Optional[int] = Form(None),
+        session: Session = Depends(get_session)
 ):
     if session.exec(select(UserProfile)).first() is None:
         user_profile = UserProfile(name=name, weight_kg=weight_kg, birth_date=birth_date, height_cm=height_cm,
@@ -145,12 +144,12 @@ async def check_edited_profile(request: Request, session: Session = Depends(get_
 
 @app.post('/profile/edit', response_class=HTMLResponse)
 async def edit_profile(
-    name: str = Form(...),
-    weight_kg: float = Form(...),
-    ftp: int = Form(...),
-    birth_date: Optional[date] = Form(None),
-    height_cm: Optional[int] = Form(None),
-    session: Session = Depends(get_session)
+        name: str = Form(...),
+        weight_kg: float = Form(...),
+        ftp: int = Form(...),
+        birth_date: Optional[date] = Form(None),
+        height_cm: Optional[int] = Form(None),
+        session: Session = Depends(get_session)
 ):
     profile = session.exec(select(UserProfile)).first()
     profile.name = name
@@ -161,3 +160,11 @@ async def edit_profile(
     profile.updated_at = datetime.now()
     session.commit()
     return RedirectResponse(url='/profile', status_code=303)
+
+
+@app.get('/workouts/{workout_id}', response_class=HTMLResponse)
+async def workout_detail(workout_id: int, request: Request, session: Session = Depends(get_session)):
+    workout = session.exec(select(Workout).where(Workout.id == workout_id)).first()
+    if not workout:
+        raise HTTPException(status_code=404, detail='Тренировка не найдена')
+    return templates.TemplateResponse('workout_detail.html', {'request': request, 'workout': workout})

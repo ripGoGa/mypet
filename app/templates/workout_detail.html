@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Детали тренировки</title>
+</head>
+<body>
+    <h1>Детали тренировки</h1>
+
+    <h2>Основная информация</h2>
+    <p>Дата: {{ workout.source_file.uploaded_at }}</p>
+    <p>Длительность: {{ workout.duration }}</p>
+    <p>Время в движении: {{ workout.moving_time }}</p>
+    <p>Дистанция: {{ workout.distance_km }} км</p>
+
+    <h2>Метрики мощности</h2>
+    <p>Средняя мощность: {{ workout.avg_watts }} Вт</p>
+    <p>Normalized Power: {{ workout.normalized_power }} Вт</p>
+    <p>Intensity Factor: {{ workout.intensity_factor }}</p>
+    <p>TSS: {{ workout.training_stress_score }}</p>
+
+    <h2>Пульс</h2>
+    {% if workout.avg_heartrate %}
+        <p>Средний пульс: {{ workout.avg_heartrate }} уд/мин</p>
+        <p>Максимальный пульс: {{ workout.max_heartrate }} уд/мин</p>
+    {% else %}
+        <p>Данные о пульсе отсутствуют</p>
+    {% endif %}
+
+    <h2>Каденс и скорость</h2>
+    {% if workout.avg_cadence %}
+        <p>Средний каденс: {{ workout.avg_cadence }} об/мин</p>
+    {% else %}
+        <p>Данные о каденсе отсутствуют</p>
+    {% endif %}
+    <p>Средняя скорость: {{ workout.avg_speed }} км/ч</p>
+    <p>Средняя скорость без остановок: {{ workout.avg_speed_without_stop }} км/ч</p>
+
+    <h2>Калории</h2>
+    <p>Калории: {{ workout.calories_burned }} ккал</p>
+
+    <a href="/workouts">← Назад к списку</a>
+</body>
+</html>

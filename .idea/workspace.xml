@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="Feature: Add workouts list page with pagination&#10;&#10;- Created GET /workouts with pagination support (10 workouts per page)&#10;- Added a total page count&#10;- Implemented sorting by ID (newest on top)&#10;- Created a workouts.html template with a workout table&#10;- Added navigation between pages (Previous/Next)">
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="fix: handle missing heartrate and cadence in CSV import&#10;&#10;- Add get_metric_or_none() helper function&#10;- Make heartrate and cadence fields optional&#10;- Prevent crashes on incomplete workout data">
+      <change afterPath="$PROJECT_DIR$/app/templates/workout_detail.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/parse_cvs.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/parse_cvs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -298,7 +298,15 @@
       <option name="project" value="LOCAL" />
       <updated>1761567395269</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="fix: handle missing heartrate and cadence in CSV import&#10;&#10;- Add get_metric_or_none() helper function&#10;- Make heartrate and cadence fields optional&#10;- Prevent crashes on incomplete workout data">
+      <option name="closed" value="true" />
+      <created>1761673726912</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1761673726912</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -314,7 +322,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Create project structure and requirements" />
     <MESSAGE value="add workouts route and template with table" />
     <MESSAGE value="add imports route and test file upload" />
     <MESSAGE value="add CSV upload and save file by hash with validation" />
@@ -339,6 +346,7 @@
     <MESSAGE value="add Get route for profile creation form" />
     <MESSAGE value="Fixed parse_csv_to_workout to correctly associate Workout with UploadedFile: removed file_path from Relationship" />
     <MESSAGE value="Feature: Add workouts list page with pagination&#10;&#10;- Created GET /workouts with pagination support (10 workouts per page)&#10;- Added a total page count&#10;- Implemented sorting by ID (newest on top)&#10;- Created a workouts.html template with a workout table&#10;- Added navigation between pages (Previous/Next)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Feature: Add workouts list page with pagination&#10;&#10;- Created GET /workouts with pagination support (10 workouts per page)&#10;- Added a total page count&#10;- Implemented sorting by ID (newest on top)&#10;- Created a workouts.html template with a workout table&#10;- Added navigation between pages (Previous/Next)" />
+    <MESSAGE value="fix: handle missing heartrate and cadence in CSV import&#10;&#10;- Add get_metric_or_none() helper function&#10;- Make heartrate and cadence fields optional&#10;- Prevent crashes on incomplete workout data" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: handle missing heartrate and cadence in CSV import&#10;&#10;- Add get_metric_or_none() helper function&#10;- Make heartrate and cadence fields optional&#10;- Prevent crashes on incomplete workout data" />
   </component>
 </project>
