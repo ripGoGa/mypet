@@ -1,6 +1,7 @@
 from math import ceil
 from typing import Optional
 
+from app.services.ai_coach import get_ollama_service, OllamaService
 from app.services.file_service import (
     validate_file_type,
     save_file_with_hash,
@@ -168,3 +169,22 @@ async def workout_detail(workout_id: int, request: Request, session: Session = D
     if not workout:
         raise HTTPException(status_code=404, detail='Тренировка не найдена')
     return templates.TemplateResponse('workout_detail.html', {'request': request, 'workout': workout})
+
+
+@app.get('/coach', response_class=HTMLResponse)
+async def coach_page(request: Request, session: Session = Depends(get_session)):
+    profile = session.exec(select(UserProfile)).first()
+    if not profile:
+        return RedirectResponse(url="/profile/create", status_code=303)
+    return templates.TemplateResponse('coach.html', {'request': request})
+
+
+@app.post('/coach/advice', response_class=HTMLResponse)
+async def get_advice(request: Request, session: Session = Depends(get_session), num_workouts: int = Form(5),
+                     ollama_service: OllamaService = Depends(get_ollama_service)):
+    workouts = session.exec(select(Workout).order_by(desc(Workout.id)).limit(num_workouts)).all()
+    profile = session.exec(select(UserProfile)).first()
+    if not profile:
+        return RedirectResponse(url="/profile/create", status_code=303)
+    advice = await ollama_service.get_training_advice(profile, workouts)
+    return templates.TemplateResponse('advice.html', {'request': request, 'advice': advice})

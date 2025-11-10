@@ -1,9 +1,10 @@
 import httpx
 from typing import List, Optional
-from fastapi import HTTPException, Depends
-from sqlmodel import Session
+from fastapi import HTTPException
 
-from app.db import get_session
+
+def get_ollama_service():
+    return OllamaService()
 
 
 class OllamaService:
@@ -99,5 +100,3 @@ class OllamaService:
         prompt += result
         advice = await self.generate(prompt)
         return advice
-
-
