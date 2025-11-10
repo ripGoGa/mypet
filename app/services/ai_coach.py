@@ -1,10 +1,14 @@
 import httpx
 from typing import List, Optional
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
+from sqlmodel import Session
+
+from app.db import get_session
 
 
 class OllamaService:
     """Сервис для работы с Ollama API"""
+
     def __init__(self, base_url: str = "http://localhost:11434"):
         self.base_url = base_url
         self.model = "llama3.1"
@@ -52,17 +56,14 @@ class OllamaService:
                 detail="Внутренняя ошибка при обращении к ИИ."
             )
 
-    def format_workouts(self, workouts: List) -> str:
-        """
-        Форматирует список тренировок в текст для промпта
-
+    @staticmethod
+    def format_workouts(workouts: List) -> str:
+        """Форматирует список тренировок в текст для промпта
         Args:
             workouts: Список объектов Workout
-
         Returns:
             Текстовое представление тренировок
         """
-        # TODO: Преобразовать тренировки в читаемый текст
         if not workouts:
             return 'Тренировок пока нет'
         result = f'Последние {len(workouts)} тренировок: \n\n'
@@ -80,15 +81,23 @@ class OllamaService:
         return result
 
     async def get_training_advice(self, profile, workouts: List) -> str:
-        """
-        Получает рекомендации от ИИ-тренера
-
+        """Получает рекомендации от ИИ-тренера
         Args:
             profile: Объект UserProfile
             workouts: Список последних тренировок
-
         Returns:
             Рекомендации от ИИ
         """
-        # TODO: Собрать промпт и вызвать generate()
-        pass
+        result = self.format_workouts(workouts)
+        if result == 'Тренировок пока нет':
+            return 'Тренировок пока нет'
+        ftp = profile.ftp
+        weight_kg = profile.weight_kg
+        prompt = (f'Ты опытный тренер по велоспорту и должен дать рекомендации для следующей тренировки,'
+                  f' а так же составь список тренировок на неделю. Вот мои '
+                  f'данные: мой FTP: {ftp}, 'f'вес: {weight_kg}. Вот мой список тренировок:')
+        prompt += result
+        advice = await self.generate(prompt)
+        return advice
+
+
