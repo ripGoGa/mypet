@@ -63,7 +63,21 @@ class OllamaService:
             Текстовое представление тренировок
         """
         # TODO: Преобразовать тренировки в читаемый текст
-        pass
+        if not workouts:
+            return 'Тренировок пока нет'
+        result = f'Последние {len(workouts)} тренировок: \n\n'
+        for i, workout in enumerate(workouts, 1):
+            line = (f'{i}. '
+                    f'{workout.distance_km} км'
+                    f'{workout.duration}, '
+                    f'TSS {workout.training_stress_score}, '
+                    f'{workout.avg_watts} Вт (NP {workout.normalized_power} ВТ, IF {workout.intensity_factor})')
+            if workout.avg_heartrate:
+                line += f', {workout.avg_heartrate} уд/мин'
+            if workout.avg_cadence:
+                line += f', {workout.avg_cadence} об/мин'
+            result += line + '\n'
+        return result
 
     async def get_training_advice(self, profile, workouts: List) -> str:
         """
