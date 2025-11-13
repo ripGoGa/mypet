@@ -25,7 +25,7 @@ class OllamaService:
                     json={
                         "model": self.model,  # Название модели
                         "prompt": prompt,  # Промпт для модели
-                        "stream": True,  # Без потоковой передачи
+                        "stream": False,  # Без потоковой передачи
                         "options": {
                             "num_ctx": 8192  # Контекстное окно 8k
                         }

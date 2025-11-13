@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="Feature: Add format_workouts() for AI coach&#10;&#10;- Implemented the format_workouts() function for converting workouts to text.&#10;- Format: compact strings with key metrics (distance, TSS, power, NP, IF).&#10;- Conditional display of heart rate and cadence (if data is available).&#10;- The user can select the number of workouts to analyze.">
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="feat: implement AI coach UI&#10;&#10;- Add GET /coach and POST /coach/advice routes&#10;- Add coach.html form and advice.html result page&#10;- User can select number of workouts to analyze&#10;- Call OllamaService to generate recommendations">
+      <change afterPath="$PROJECT_DIR$/app/templates/advice.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/coach.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/ai_coach.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/ai_coach.py" afterDir="false" />
     </list>
@@ -21,8 +23,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -329,7 +331,23 @@
       <option name="project" value="LOCAL" />
       <updated>1762785914885</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="feat: add OllamaService with AI coach integration&#10;&#10;- Implement generate() for LLM communication&#10;- Add format_workouts() for workout formatting&#10;- Add get_training_advice() to get AI recommendations&#10;- Handle connection errors and timeouts">
+      <option name="closed" value="true" />
+      <created>1762792916859</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1762792916859</updated>
+    </task>
+    <task id="LOCAL-00032" summary="feat: implement AI coach UI&#10;&#10;- Add GET /coach and POST /coach/advice routes&#10;- Add coach.html form and advice.html result page&#10;- User can select number of workouts to analyze&#10;- Call OllamaService to generate recommendations">
+      <option name="closed" value="true" />
+      <created>1762797933431</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1762797933431</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -345,8 +363,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="add storage for upload workouts, show recent uploads in workouts page" />
-    <MESSAGE value="add navigation button on index, workouts, imports pages" />
     <MESSAGE value="add success and error message with PRG" />
     <MESSAGE value="Create SQLite setup and db engine with SQLModel" />
     <MESSAGE value="Create models for UploadedFile and Workout" />
@@ -370,6 +386,8 @@
     <MESSAGE value="feat: add workout detail page&#10;&#10;- Created GET /workouts/{workout_id} for detailed view of workout&#10;- Added workout_detail.html template.&#10;- All metrics are shown: power, heart rate, cadence, speed, calories&#10;- Missing data handling (heart rate, cadence)&#10;- Back to list navigation added" />
     <MESSAGE value="Progress: Created the OllamaService class, added asyncgenerate() for Ollama LLM integration.&#10;&#10;- Implemented the asynchronous generate() function for communicating with the local LLM via the Ollama API.&#10;- Handling connection and timeout errors." />
     <MESSAGE value="Feature: Add format_workouts() for AI coach&#10;&#10;- Implemented the format_workouts() function for converting workouts to text.&#10;- Format: compact strings with key metrics (distance, TSS, power, NP, IF).&#10;- Conditional display of heart rate and cadence (if data is available).&#10;- The user can select the number of workouts to analyze." />
-    <option name="LAST_COMMIT_MESSAGE" value="Feature: Add format_workouts() for AI coach&#10;&#10;- Implemented the format_workouts() function for converting workouts to text.&#10;- Format: compact strings with key metrics (distance, TSS, power, NP, IF).&#10;- Conditional display of heart rate and cadence (if data is available).&#10;- The user can select the number of workouts to analyze." />
+    <MESSAGE value="feat: add OllamaService with AI coach integration&#10;&#10;- Implement generate() for LLM communication&#10;- Add format_workouts() for workout formatting&#10;- Add get_training_advice() to get AI recommendations&#10;- Handle connection errors and timeouts" />
+    <MESSAGE value="feat: implement AI coach UI&#10;&#10;- Add GET /coach and POST /coach/advice routes&#10;- Add coach.html form and advice.html result page&#10;- User can select number of workouts to analyze&#10;- Call OllamaService to generate recommendations" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: implement AI coach UI&#10;&#10;- Add GET /coach and POST /coach/advice routes&#10;- Add coach.html form and advice.html result page&#10;- User can select number of workouts to analyze&#10;- Call OllamaService to generate recommendations" />
   </component>
 </project>
