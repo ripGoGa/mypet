@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="feat: implement AI coach UI&#10;&#10;- Add GET /coach and POST /coach/advice routes&#10;- Add coach.html form and advice.html result page&#10;- User can select number of workouts to analyze&#10;- Call OllamaService to generate recommendations">
-      <change afterPath="$PROJECT_DIR$/app/templates/advice.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/templates/coach.html" afterDir="false" />
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="feat: add AI coach with Ollama integration&#10;&#10;- Implement OllamaService (generate, format_workouts, get_training_advice)&#10;- Add GET /coach and POST /coach/advice routes&#10;- Create coach.html form and advice.html result page&#10;- User selects number of workouts to analyze (1-20)&#10;- Fixed stream mode issue (stream=false)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/ai_coach.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/ai_coach.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -347,7 +345,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762797933431</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="feat: add AI coach with Ollama integration&#10;&#10;- Implement OllamaService (generate, format_workouts, get_training_advice)&#10;- Add GET /coach and POST /coach/advice routes&#10;- Create coach.html form and advice.html result page&#10;- User selects number of workouts to analyze (1-20)&#10;- Fixed stream mode issue (stream=false)">
+      <option name="closed" value="true" />
+      <created>1763051036270</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1763051036270</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -363,7 +369,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="add success and error message with PRG" />
     <MESSAGE value="Create SQLite setup and db engine with SQLModel" />
     <MESSAGE value="Create models for UploadedFile and Workout" />
     <MESSAGE value="Prep for refactoring: created separate 'services' folder and added 'file_validator' function" />
@@ -388,6 +393,7 @@
     <MESSAGE value="Feature: Add format_workouts() for AI coach&#10;&#10;- Implemented the format_workouts() function for converting workouts to text.&#10;- Format: compact strings with key metrics (distance, TSS, power, NP, IF).&#10;- Conditional display of heart rate and cadence (if data is available).&#10;- The user can select the number of workouts to analyze." />
     <MESSAGE value="feat: add OllamaService with AI coach integration&#10;&#10;- Implement generate() for LLM communication&#10;- Add format_workouts() for workout formatting&#10;- Add get_training_advice() to get AI recommendations&#10;- Handle connection errors and timeouts" />
     <MESSAGE value="feat: implement AI coach UI&#10;&#10;- Add GET /coach and POST /coach/advice routes&#10;- Add coach.html form and advice.html result page&#10;- User can select number of workouts to analyze&#10;- Call OllamaService to generate recommendations" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: implement AI coach UI&#10;&#10;- Add GET /coach and POST /coach/advice routes&#10;- Add coach.html form and advice.html result page&#10;- User can select number of workouts to analyze&#10;- Call OllamaService to generate recommendations" />
+    <MESSAGE value="feat: add AI coach with Ollama integration&#10;&#10;- Implement OllamaService (generate, format_workouts, get_training_advice)&#10;- Add GET /coach and POST /coach/advice routes&#10;- Create coach.html form and advice.html result page&#10;- User selects number of workouts to analyze (1-20)&#10;- Fixed stream mode issue (stream=false)" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add AI coach with Ollama integration&#10;&#10;- Implement OllamaService (generate, format_workouts, get_training_advice)&#10;- Add GET /coach and POST /coach/advice routes&#10;- Create coach.html form and advice.html result page&#10;- User selects number of workouts to analyze (1-20)&#10;- Fixed stream mode issue (stream=false)" />
   </component>
 </project>

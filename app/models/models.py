@@ -40,3 +40,13 @@ class UserProfile(SQLModel, table=True):
     weight_kg: float
     ftp: int
     updated_at: datetime = Field(default_factory=datetime.now)
+    messages: List['ChatMessage'] = Relationship(back_populates='user')
+
+
+class ChatMessage(SQLModel, table=True):
+    id: Optional[int] = Field(primary_key=True, default=None)
+    user_id: int = Field(foreign_key='userprofile.id')
+    role: str   # user или assistant
+    content: str
+    created_at: datetime = Field(default_factory=datetime.now)
+    user: Optional['UserProfile'] = Relationship(back_populates='messages')
