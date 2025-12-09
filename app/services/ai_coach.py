@@ -1,6 +1,7 @@
 import httpx
 from typing import List, Optional
 from fastapi import HTTPException
+from app.models.models import ChatMessage
 
 
 def get_ollama_service():
@@ -100,3 +101,21 @@ class OllamaService:
         prompt += result
         advice = await self.generate(prompt)
         return advice
+
+    async def chat(self, messages: List[dict], timeout: int = 60) -> str:
+        try:
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                response = await client.post(f"{self.base_url}/api/chat", json={'model': self.model,
+                                                                                'messages': messages, 'stream': False,
+                                                                                'options': {'num_ctx': 8192}})
+            response.raise_for_status()
+            data = response.json()
+            return data.get('message', {}).get('content', "")
+
+        except httpx.ConnectError:
+            raise HTTPException(503, detail='Сервис ИИ не доступен')
+        except httpx.TimeoutException:
+            raise HTTPException(504, detail='Превышено время ожидания')
+        except Exception as e:
+            print(f'Ошибка Chat: {e}')
+            raise HTTPException(500, detail='Внутренняя ошибка ИИ')

@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="feat: add AI coach with Ollama integration&#10;&#10;- Implement OllamaService (generate, format_workouts, get_training_advice)&#10;- Add GET /coach and POST /coach/advice routes&#10;- Create coach.html form and advice.html result page&#10;- User selects number of workouts to analyze (1-20)&#10;- Fixed stream mode issue (stream=false)">
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="feat: add ChatMessage model and UserProfile relationship&#10;&#10;- Add ChatMessage model (user_id, role, content, created_at)&#10;- Update UserProfile with messages relationship (back_populates)&#10;- Prepare database schema for persistent AI chat history&#10;- Define foreign key constraints for user-message linking">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/ai_coach.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/ai_coach.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -353,7 +353,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763051036270</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="feat: add ChatMessage model and UserProfile relationship&#10;&#10;- Add ChatMessage model (user_id, role, content, created_at)&#10;- Update UserProfile with messages relationship (back_populates)&#10;- Prepare database schema for persistent AI chat history&#10;- Define foreign key constraints for user-message linking">
+      <option name="closed" value="true" />
+      <created>1765275025570</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1765275025570</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -369,7 +377,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Create SQLite setup and db engine with SQLModel" />
     <MESSAGE value="Create models for UploadedFile and Workout" />
     <MESSAGE value="Prep for refactoring: created separate 'services' folder and added 'file_validator' function" />
     <MESSAGE value="created 'save_file_with_hash' function" />
@@ -394,6 +401,7 @@
     <MESSAGE value="feat: add OllamaService with AI coach integration&#10;&#10;- Implement generate() for LLM communication&#10;- Add format_workouts() for workout formatting&#10;- Add get_training_advice() to get AI recommendations&#10;- Handle connection errors and timeouts" />
     <MESSAGE value="feat: implement AI coach UI&#10;&#10;- Add GET /coach and POST /coach/advice routes&#10;- Add coach.html form and advice.html result page&#10;- User can select number of workouts to analyze&#10;- Call OllamaService to generate recommendations" />
     <MESSAGE value="feat: add AI coach with Ollama integration&#10;&#10;- Implement OllamaService (generate, format_workouts, get_training_advice)&#10;- Add GET /coach and POST /coach/advice routes&#10;- Create coach.html form and advice.html result page&#10;- User selects number of workouts to analyze (1-20)&#10;- Fixed stream mode issue (stream=false)" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add AI coach with Ollama integration&#10;&#10;- Implement OllamaService (generate, format_workouts, get_training_advice)&#10;- Add GET /coach and POST /coach/advice routes&#10;- Create coach.html form and advice.html result page&#10;- User selects number of workouts to analyze (1-20)&#10;- Fixed stream mode issue (stream=false)" />
+    <MESSAGE value="feat: add ChatMessage model and UserProfile relationship&#10;&#10;- Add ChatMessage model (user_id, role, content, created_at)&#10;- Update UserProfile with messages relationship (back_populates)&#10;- Prepare database schema for persistent AI chat history&#10;- Define foreign key constraints for user-message linking" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add ChatMessage model and UserProfile relationship&#10;&#10;- Add ChatMessage model (user_id, role, content, created_at)&#10;- Update UserProfile with messages relationship (back_populates)&#10;- Prepare database schema for persistent AI chat history&#10;- Define foreign key constraints for user-message linking" />
   </component>
 </project>
