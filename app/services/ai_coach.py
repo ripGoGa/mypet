@@ -119,3 +119,19 @@ class OllamaService:
         except Exception as e:
             print(f'Ошибка Chat: {e}')
             raise HTTPException(500, detail='Внутренняя ошибка ИИ')
+
+    async def get_chat_response(self, profile, workouts, history: List['ChatMessage'], user_question: str):
+        profile_info = f"""
+        ИМЯ: {profile.name}
+        ВЕС: {profile.weight_kg} кг
+        FTP: {profile.ftp} Вт
+        """
+        system_instruction = f'Ты опытный тренер по велоспорту.'
+        message_list = []
+        message_list.append({'role': 'system', 'content': system_instruction})
+
+        for msg in history:
+            message_list.append({'role': msg.role, 'content': msg.content})
+        message_list.append({'role': 'user', 'content': user_question})
+
+        return await self.chat(message_list)
