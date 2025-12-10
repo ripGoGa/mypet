@@ -127,8 +127,7 @@ class OllamaService:
         FTP: {profile.ftp} Вт
         """
         system_instruction = f'Ты опытный тренер по велоспорту.'
-        message_list = []
-        message_list.append({'role': 'system', 'content': system_instruction})
+        message_list = [{'role': 'system', 'content': system_instruction}]
 
         for msg in history:
             message_list.append({'role': msg.role, 'content': msg.content})

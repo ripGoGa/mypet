@@ -12,7 +12,7 @@ from app.db import create_db_and_tables, get_session
 from fastapi import FastAPI, UploadFile, File, Depends, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from app.models.models import UploadedFile, Workout, UserProfile
+from app.models.models import UploadedFile, Workout, UserProfile, ChatMessage
 from starlette.requests import Request
 from pathlib import Path
 from sqlmodel import Session, select
@@ -176,7 +176,10 @@ async def coach_page(request: Request, session: Session = Depends(get_session)):
     profile = session.exec(select(UserProfile)).first()
     if not profile:
         return RedirectResponse(url="/profile/create", status_code=303)
-    return templates.TemplateResponse('coach.html', {'request': request})
+    message_history = session.exec(select(ChatMessage).where(profile.id == ChatMessage.user_id).order_by(
+        ChatMessage.created_at)).all()
+
+    return templates.TemplateResponse('coach.html', {'request': request, 'message_history': message_history})
 
 
 @app.post('/coach/advice', response_class=HTMLResponse)
@@ -188,3 +191,18 @@ async def get_advice(request: Request, session: Session = Depends(get_session), 
         return RedirectResponse(url="/profile/create", status_code=303)
     advice = await ollama_service.get_training_advice(profile, workouts)
     return templates.TemplateResponse('advice.html', {'request': request, 'advice': advice})
+
+
+@app.post('/coach/chat', response_class=HTMLResponse)
+async def chat(request: Request, user_question, session: Session = Depends(get_session),
+               ollama_service=Depends(get_ollama_service)):
+    profile = session.exec(select(UserProfile)).first()
+    if not profile:
+        return RedirectResponse(url="/profile/create", status_code=303)
+    workouts = session.exec(select(Workout).order_by(desc(Workout.id)).limit(10)).all()
+    message_history = session.exec(select(ChatMessage).where(profile.id == ChatMessage.user_id).order_by(
+        ChatMessage.created_at)).all()
+    answer = await ollama_service.get_training_advice(profile=profile, workouts=workouts, history=message_history,
+                                                      user_question=user_question)
+
+
