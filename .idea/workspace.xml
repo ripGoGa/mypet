@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="feat: implement get_chat_response with full history context">
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="refactor: GET/coach, preparation for creating an AI chat">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/ai_coach.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/ai_coach.py" afterDir="false" />
@@ -378,7 +378,15 @@
       <option name="project" value="LOCAL" />
       <updated>1765363468428</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="refactor: GET/coach, preparation for creating an AI chat">
+      <option name="closed" value="true" />
+      <created>1765373423228</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1765373423228</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -394,7 +402,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="created 'save_file_with_hash' function" />
     <MESSAGE value="deleted datatime from 'save_file_with_hash' and refactor @app.post('/imports')" />
     <MESSAGE value="The save_file_with_hash function has been improved: it now checks for duplicates. Route /import is connected to the database. A table has been created in the database" />
     <MESSAGE value="The stub has been removed from the list_workouts function in the @app.get('/workouts')  route. function connected to the UploadedFile, modified template list_workouts.html" />
@@ -419,6 +426,7 @@
     <MESSAGE value="feat: add ChatMessage model and UserProfile relationship&#10;&#10;- Add ChatMessage model (user_id, role, content, created_at)&#10;- Update UserProfile with messages relationship (back_populates)&#10;- Prepare database schema for persistent AI chat history&#10;- Define foreign key constraints for user-message linking" />
     <MESSAGE value="feat: add chat method to OllamaService" />
     <MESSAGE value="feat: implement get_chat_response with full history context" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: implement get_chat_response with full history context" />
+    <MESSAGE value="refactor: GET/coach, preparation for creating an AI chat" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: GET/coach, preparation for creating an AI chat" />
   </component>
 </project>

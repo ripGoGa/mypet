@@ -194,15 +194,25 @@ async def get_advice(request: Request, session: Session = Depends(get_session), 
 
 
 @app.post('/coach/chat', response_class=HTMLResponse)
-async def chat(request: Request, user_question, session: Session = Depends(get_session),
+async def chat(request: Request, user_question: str = Form(...), session: Session = Depends(get_session),
                ollama_service=Depends(get_ollama_service)):
+    # Получаем данные
     profile = session.exec(select(UserProfile)).first()
     if not profile:
         return RedirectResponse(url="/profile/create", status_code=303)
     workouts = session.exec(select(Workout).order_by(desc(Workout.id)).limit(10)).all()
     message_history = session.exec(select(ChatMessage).where(profile.id == ChatMessage.user_id).order_by(
         ChatMessage.created_at)).all()
-    answer = await ollama_service.get_training_advice(profile=profile, workouts=workouts, history=message_history,
-                                                      user_question=user_question)
+    # Сохраняем вопрос пользователя
+    user_message = ChatMessage(user_id=profile.id, role='user', content=user_question)
+    session.add(user_message)
+    session.commit()
+    # Вызываем ИИ и передаем старую историю + новый вопрос
+    answer = await ollama_service.get_chat_response(profile=profile, workouts=workouts, history=message_history,
+                                                    user_question=user_question)
+    # Сохраняем новый ответ в контекст
+    assistant_message = ChatMessage(user_id=profile.id, role='assistant', content=answer)
+    session.add(assistant_message)
+    session.commit()
 
-
+    return RedirectResponse(url='/coach', status_code=303)
