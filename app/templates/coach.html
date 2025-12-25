@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>ИИ-тренер</title>
-</head>
-<body>
-    <h1>ИИ-тренер</h1>
+    <head>
+        <title>Мой AI Тренер</title>
+    </head>
 
-    <form method="POST" action="/coach/advice">
-        <label>Сколько тренировок учитывать?</label>
-        <input type="number" name="num_workouts" value="5" min="1" max="20">
-        <button type="submit">Получить рекомендации</button>
-    </form>
+    <body>
+    {% for msg in message_history %}
 
-    <a href="/workouts">← Назад к списку тренировок</a>
-</body>
+        {% if msg.role == 'user' %}
+            <div>Я: {{ msg.content }}</div>
+        {% else %}
+            <div>Тренер: {{ msg.content }}</div>
+        {% endif %}
+
+    {% endfor %}
+    <form action="/coach/chat" method="post">
+    <input type="text" name="user_question">
+    <button type="submit">Отправить</button></form>
+        </body>
 </html>
