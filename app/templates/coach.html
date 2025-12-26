@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="ru">
-    <head>
-        <title>Мой AI Тренер</title>
-    </head>
-
-    <body>
+{% extends "base.html" %}
+{% block title %} Чат с тренером{% endblock %}
+{% block content %}
     {% for msg in message_history %}
 
         {% if msg.role == 'user' %}
@@ -14,8 +10,21 @@
         {% endif %}
 
     {% endfor %}
-    <form action="/coach/chat" method="post">
+    <form id="chat-form" action="/coach/chat" method="post">
     <input type="text" name="user_question">
     <button type="submit">Отправить</button></form>
-        </body>
-</html>
+    <div id="loading_message" style="display:none;">
+        ⏳ Тренер анализирует данные, подождите... </div>
+        <script>
+         // 1. Находим нашу форму по ID
+const form = document.getElementById('chat-form');
+
+// 2. Находим скрытое сообщение по ID
+const loader = document.getElementById('loading_message');
+
+// 3. Подслушиваем событие 'submit' (отправка) на форме
+form.addEventListener('submit', function() {
+    // Когда отправка произошла — меняем стиль на 'block' (показываем)
+    loader.style.display = 'block';
+});</script>
+            {% endblock %}
