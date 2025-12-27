@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8" />
-    <title>Создать профиль</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %} Создать профиль{% endblock %}
+{% block content %}
     <h1>Создание профиля</h1>
     <form method="POST" action="/profile/create">
         <label>
@@ -34,5 +30,4 @@
         <br>
         <button type="submit">Создать профиль</button>
     </form>
-</body>
-</html>
+{% endblock %}

@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Bike Tracker</title>
-</head>
-<body>
-    <h1>Привет, {{ user }}!</h1>
-    <p>Это твой личный велотрекер </p>
+{% extends "base.html" %}
+{% block title %} Это твой личный велотрекер{% endblock %}
+{% block content %}
 <a href="/workouts"
    style="display: inline-block;
           padding: 10px 20px;
@@ -27,5 +22,4 @@
           border-radius: 5px;">
    Загрузить тренировку
 </a>
-</body>
-</html>
+{% endblock %}

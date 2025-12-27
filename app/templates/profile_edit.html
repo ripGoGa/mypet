@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Редактировать профиль</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %} Редактировать профиль{% endblock %}
+{% block content %}
     <h1>Редактирование профиля</h1>
     <form method="POST" action="/profile/edit">
         <label>
@@ -35,5 +31,4 @@
         <button type="submit">Сохранить изменения</button>
         <a href="/profile">Отмена</a>
     </form>
-</body>
-</html>
+{% endblock %}

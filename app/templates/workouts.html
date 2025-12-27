@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Список тренировок</title>
-</head>
-<body>
-    <h1>Мои тренировки</h1>
-
+{% extends "base.html" %}
+{% block title %} Мои тренировки{% endblock %}
+{% block content %}
     {% if workouts %}
         <table border="1">
             <tr>
@@ -49,5 +43,4 @@
             <a href="/workouts?page={{ current_page + 1 }}">Следующая →</a>
         {% endif %}
     </div>
-</body>
-</html>
+{% endblock %}

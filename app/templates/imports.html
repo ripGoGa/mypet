@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Импорт тренировки</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %} Импорт тренировки{% endblock %}
+{% block content %}
     {% if message %}
         <p style="color: {{ 'red' if is_error else 'green' }};">{{ message }}</p>
     {% endif %}
@@ -27,5 +23,4 @@
         <input type="file" name="file" accept=".csv">
         <button type="submit">Загрузить</button>
     </form>
-</body>
-</html>
+{% endblock %}
