@@ -2,6 +2,7 @@ import httpx
 from typing import List, Optional
 from fastapi import HTTPException
 from app.models.models import ChatMessage
+from pathlib import Path
 
 
 def get_ollama_service():
@@ -10,10 +11,20 @@ def get_ollama_service():
 
 class OllamaService:
     """Сервис для работы с Ollama API"""
-
     def __init__(self, base_url: str = "http://localhost:11434"):
         self.base_url = base_url
         self.model = "llama3.1"
+        self.system_prompt = self._load_system_prompt()
+
+    @staticmethod
+    def _load_system_prompt() -> str:
+        current_file = Path(__file__)
+        prompt_path = current_file.parent.parent / 'prompts' / 'System_Persona.txt'
+        try:
+            return prompt_path.read_text(encoding='utf-8')
+        except Exception as e:
+            print(f'Ошибка загрузки промта: {e}')
+            return 'Ты — опытный тренер по велоспорту'
 
     async def generate(self, prompt: str, timeout: int = 60) -> str:
         """Отправляет промпт в Ollama и возвращает ответ модели """
@@ -126,7 +137,7 @@ class OllamaService:
         ВЕС: {profile.weight_kg} кг
         FTP: {profile.ftp} Вт
         """
-        system_instruction = f'Ты опытный тренер по велоспорту.'
+        system_instruction = self.system_prompt.format(sport='cycling')
         message_list = [{'role': 'system', 'content': system_instruction}]
 
         for msg in history:
