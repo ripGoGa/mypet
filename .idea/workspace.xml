@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="feat(ai): add system persona promt and create prompts directory&#10;&#10;-Created a dedicated directory for AI prompts and added the initial System_Persona.txt file to separate coaching logic from the application code.">
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="feat(ai): integrate dynamic system persona template&#10;-Added System_Persona.txt to separate coaching instructions from the logic.&#10;-Implemented _load_system_prompt in OllamaService to read the template from the file system.&#10;-Updated __init__ to cache the system persona template at startup for better performance.&#10;-Refactored get_chat_response to inject dynamic values (like sport type) into the system message.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/promts/System_Persona.txt" beforeDir="false" afterPath="$PROJECT_DIR$/app/prompts/System_Persona.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/ai_coach.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/ai_coach.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -426,7 +425,15 @@
       <option name="project" value="LOCAL" />
       <updated>1767698603729</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="feat(ai): integrate dynamic system persona template&#10;-Added System_Persona.txt to separate coaching instructions from the logic.&#10;-Implemented _load_system_prompt in OllamaService to read the template from the file system.&#10;-Updated __init__ to cache the system persona template at startup for better performance.&#10;-Refactored get_chat_response to inject dynamic values (like sport type) into the system message.">
+      <option name="closed" value="true" />
+      <created>1767774011234</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1767774011234</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -442,7 +449,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Add first parse_cvs service" />
     <MESSAGE value="Upgrade parse_cvs: add moving_mask, calories and moving metrics" />
     <MESSAGE value="Upgrade Workout model" />
     <MESSAGE value="Upgrade Workout model again xD. Preparation for an atomic write operation in the database" />
@@ -467,6 +473,7 @@
     <MESSAGE value="refactor(templates): extract base layout with navigation&#10;&#10;- Create app/templates/base.html with common structure and navigation&#10;- Update app/templates/coach.html to extend base.html&#10;- Fix JavaScript syntax for loading indicator in coach.html" />
     <MESSAGE value="refactor(templates): implement navigation in base layout&#10;&#10;- Update base.html with shared navigation&#10;- Update all templates to inherit from base" />
     <MESSAGE value="feat(ai): add system persona promt and create prompts directory&#10;&#10;-Created a dedicated directory for AI prompts and added the initial System_Persona.txt file to separate coaching logic from the application code." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(ai): add system persona promt and create prompts directory&#10;&#10;-Created a dedicated directory for AI prompts and added the initial System_Persona.txt file to separate coaching logic from the application code." />
+    <MESSAGE value="feat(ai): integrate dynamic system persona template&#10;-Added System_Persona.txt to separate coaching instructions from the logic.&#10;-Implemented _load_system_prompt in OllamaService to read the template from the file system.&#10;-Updated __init__ to cache the system persona template at startup for better performance.&#10;-Refactored get_chat_response to inject dynamic values (like sport type) into the system message." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(ai): integrate dynamic system persona template&#10;-Added System_Persona.txt to separate coaching instructions from the logic.&#10;-Implemented _load_system_prompt in OllamaService to read the template from the file system.&#10;-Updated __init__ to cache the system persona template at startup for better performance.&#10;-Refactored get_chat_response to inject dynamic values (like sport type) into the system message." />
   </component>
 </project>
