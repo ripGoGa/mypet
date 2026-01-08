@@ -47,14 +47,11 @@ class AthleteProfile(SQLModel, table=True):
     id: Optional[int] = Field(primary_key=True, foreign_key='userprofile.id')
     weight_kg: Optional[float]
     current_FTP: Optional[int]
-    limitations: Optional[Text]
-    equipment_tracking: Optional[Text]  # какие устройства есть у пользователя
+    limitations: Optional[str]
     weekly_hours: int  # Сколько времени есть на тренировки в неделю
-    usual_stats: Optional[Text]  # какие показатели у него обычно
-    weekly_routine: Optional[Text]  # Как обычно тренируется пользователь
     available_time: Optional[float]  # сколько времени хочет тратить на тренировки
-    gear: Optional[Text]  # какое оборудование есть у пользователя( велосипед, станки..)
-    environment_location: Optional[Text]  # окружение, локация
+    gear: Optional[str]  # какое оборудование есть у пользователя( велосипед, станки..)
+    environment_location: Optional[str]  # окружение, локация
     user: Optional['UserProfile'] = Relationship(back_populates='athlete_info')
 
 
