@@ -14,17 +14,19 @@ class OllamaService:
     def __init__(self, base_url: str = "http://localhost:11434"):
         self.base_url = base_url
         self.model = "llama3.1"
-        self.system_prompt = self._load_system_prompt()
+        self.system_prompt = self._load_prompt('System_Persona.txt')
+        self.user_profile = self._load_prompt('User_Profile.txt')
+        self.current_content = self._load_prompt('Current_Content.txt')
 
     @staticmethod
-    def _load_system_prompt() -> str:
+    def _load_prompt(filename: str) -> str:
         current_file = Path(__file__)
-        prompt_path = current_file.parent.parent / 'prompts' / 'System_Persona.txt'
+        prompt_path = current_file.parent.parent / 'prompts' / filename
         try:
             return prompt_path.read_text(encoding='utf-8')
         except Exception as e:
             print(f'Ошибка загрузки промта: {e}')
-            return 'Ты — опытный тренер по велоспорту'
+            return 'Произошла ошибка файл промпта не найден'
 
     async def generate(self, prompt: str, timeout: int = 60) -> str:
         """Отправляет промпт в Ollama и возвращает ответ модели """
