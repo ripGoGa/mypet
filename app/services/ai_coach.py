@@ -1,7 +1,13 @@
+from datetime import date
+from select import select
+
 import httpx
 from typing import List, Optional
-from fastapi import HTTPException
-from app.models.models import ChatMessage
+from fastapi import HTTPException, Depends
+from sqlmodel import Session
+
+from app.db import get_session
+from app.models.models import ChatMessage, UserProfile, AthleteProfile
 from pathlib import Path
 
 
@@ -11,6 +17,7 @@ def get_ollama_service():
 
 class OllamaService:
     """Сервис для работы с Ollama API"""
+
     def __init__(self, base_url: str = "http://localhost:11434"):
         self.base_url = base_url
         self.model = "llama3.1"
@@ -147,3 +154,24 @@ class OllamaService:
         message_list.append({'role': 'user', 'content': user_question})
 
         return await self.chat(message_list)
+
+    async def build_chat_messages(self, athlete: AthleteProfile, user_message: str, summary: str):
+        athlete_data = athlete.model_dump()
+        for k, v in athlete_data.items():
+            if v is None:
+                athlete_data[k] = 'Не указано'
+        profile_section = self.user_profile.format(**athlete_data)
+        content_section = self.current_content.format(current_data=date.today().isoformat(),
+                                                      recent_workouts_summary=summary,
+                                                      user_message=user_message)
+        user_prompt = f'{profile_section}\n\n{content_section}'
+        return user_prompt
+
+    async def format_history(self, history: List[ChatMessage]) -> str:
+        # Берем последние 10 объектов
+        recent_msgs = history[-10:]
+        result = '### ПРЕДЫДУЩИЕ СООБЩЕНИЯ\n'
+        # Перебираем последние сообщения
+        for mess in recent_msgs:
+            dump_mess = mess.model_dump(include={'role', 'content'})
+            result += f'{dump_mess['role']}: {dump_mess['content']}\n'

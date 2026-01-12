@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="feat(ai): implement modular prompts and simplify athlete profile&#10;- Created User_Profile.txt and Current_Context.txt for modular prompt engineering.&#10;- Refactored AthleteProfile in models.py to focus on core metrics (FTP, weight, limitations).&#10;- Synchronized template placeholders with database field names for automated formatting.">
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="feat(ai): refactor prompt loading into a reusable static method&#10;- Unified prompt loading logic into a single static method `_load_prompt`.&#10;- Updated OllamaService to load multiple template parts: System Persona, User Profile, and Current Context.&#10;- Prepared the infrastructure for dynamic prompt assembly using athlete data from the database.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/ai_coach.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/ai_coach.py" afterDir="false" />
     </list>
@@ -449,7 +449,15 @@
       <option name="project" value="LOCAL" />
       <updated>1767864099698</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="feat(ai): refactor prompt loading into a reusable static method&#10;- Unified prompt loading logic into a single static method `_load_prompt`.&#10;- Updated OllamaService to load multiple template parts: System Persona, User Profile, and Current Context.&#10;- Prepared the infrastructure for dynamic prompt assembly using athlete data from the database.">
+      <option name="closed" value="true" />
+      <created>1768017803307</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1768017803307</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -465,7 +473,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Upgrade Workout model again xD. Preparation for an atomic write operation in the database" />
     <MESSAGE value="Update UserProfile model, add get'/profile' route to display user profile" />
     <MESSAGE value="Create template profile.html" />
     <MESSAGE value="add Get route for profile creation form" />
@@ -490,6 +497,7 @@
     <MESSAGE value="feat(ai): integrate dynamic system persona template&#10;-Added System_Persona.txt to separate coaching instructions from the logic.&#10;-Implemented _load_system_prompt in OllamaService to read the template from the file system.&#10;-Updated __init__ to cache the system persona template at startup for better performance.&#10;-Refactored get_chat_response to inject dynamic values (like sport type) into the system message." />
     <MESSAGE value="feat(db): implement AthleteProfile and establish 1-to-1 relationship&#10;-Created AthleteProfile table to store dynamic fitness metrics separately from core user data.&#10;-Linked AthleteProfile to UserProfile using a shared primary key (Foreign Key).&#10;-Updated UserProfile to include a relationship back to AthleteProfile." />
     <MESSAGE value="feat(ai): implement modular prompts and simplify athlete profile&#10;- Created User_Profile.txt and Current_Context.txt for modular prompt engineering.&#10;- Refactored AthleteProfile in models.py to focus on core metrics (FTP, weight, limitations).&#10;- Synchronized template placeholders with database field names for automated formatting." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(ai): implement modular prompts and simplify athlete profile&#10;- Created User_Profile.txt and Current_Context.txt for modular prompt engineering.&#10;- Refactored AthleteProfile in models.py to focus on core metrics (FTP, weight, limitations).&#10;- Synchronized template placeholders with database field names for automated formatting." />
+    <MESSAGE value="feat(ai): refactor prompt loading into a reusable static method&#10;- Unified prompt loading logic into a single static method `_load_prompt`.&#10;- Updated OllamaService to load multiple template parts: System Persona, User Profile, and Current Context.&#10;- Prepared the infrastructure for dynamic prompt assembly using athlete data from the database." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(ai): refactor prompt loading into a reusable static method&#10;- Unified prompt loading logic into a single static method `_load_prompt`.&#10;- Updated OllamaService to load multiple template parts: System Persona, User Profile, and Current Context.&#10;- Prepared the infrastructure for dynamic prompt assembly using athlete data from the database." />
   </component>
 </project>
