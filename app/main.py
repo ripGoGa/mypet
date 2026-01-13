@@ -12,11 +12,11 @@ from app.db import create_db_and_tables, get_session
 from fastapi import FastAPI, UploadFile, File, Depends, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from app.models.models import UploadedFile, Workout, UserProfile, ChatMessage
+from app.models.models import UploadedFile, Workout, UserProfile, ChatMessage, AthleteProfile
 from starlette.requests import Request
 from pathlib import Path
 from sqlmodel import Session, select
-from datetime import datetime, UTC, date
+from datetime import datetime, UTC, date, timedelta
 from sqlalchemy import desc, func
 
 from app.services.parse_cvs import parse_csv_to_workout, ParseCsvError
@@ -122,16 +122,26 @@ async def check_created_profile(request: Request, session: Session = Depends(get
 async def create_profile(
         name: str = Form(...),
         weight_kg: float = Form(...),
-        ftp: int = Form(...),
+        current_ftp: int = Form(...),
+        limitations: str = Form(...),
+        weekly_hours: float = Form(...),
+        gear: str = Form(...),
+        environment_location: str = Form(...),
         birth_date: Optional[date] = Form(None),
         height_cm: Optional[int] = Form(None),
+        email_address: str = Form(...),
         session: Session = Depends(get_session)
 ):
     if session.exec(select(UserProfile)).first() is None:
-        user_profile = UserProfile(name=name, weight_kg=weight_kg, birth_date=birth_date, height_cm=height_cm,
-                                   ftp=ftp)
+        user_profile = UserProfile(name=name, birth_date=birth_date, height_cm=height_cm, email_address=email_address)
         session.add(user_profile)
         session.commit()
+        athlete_profile = AthleteProfile(id=user_profile.id, weight_kg=weight_kg, current_ftp=current_ftp, gear=gear,
+                                         environment_location=environment_location, limitations=limitations,
+                                         weekly_hours=weekly_hours)
+        session.add(athlete_profile)
+        session.commit()
+
     return RedirectResponse(url='/profile', status_code=303)
 
 
@@ -200,16 +210,20 @@ async def chat(request: Request, user_question: str = Form(...), session: Sessio
     profile = session.exec(select(UserProfile)).first()
     if not profile:
         return RedirectResponse(url="/profile/create", status_code=303)
-    workouts = session.exec(select(Workout).order_by(desc(Workout.id)).limit(10)).all()
-    message_history = session.exec(select(ChatMessage).where(profile.id == ChatMessage.user_id).order_by(
-        ChatMessage.created_at)).all()
+    week_ago = datetime.now() - timedelta(days=7)
+    workouts = session.exec(select(Workout).join(UploadedFile).where(UploadedFile.uploaded_at >= week_ago)).all()
+    summary = ollama_service.format_workouts(workouts)
+    message_history = session.exec(select(ChatMessage).where(ChatMessage.user_id == profile.id).where(
+        ChatMessage.created_at >= week_ago))
+    prompt = await ollama_service.build_chat_messages(athlete=profile, user_message=user_question, summary=summary,
+                                                      message_history=message_history)
+
     # Сохраняем вопрос пользователя
     user_message = ChatMessage(user_id=profile.id, role='user', content=user_question)
     session.add(user_message)
     session.commit()
     # Вызываем ИИ и передаем старую историю + новый вопрос
-    answer = await ollama_service.get_chat_response(profile=profile, workouts=workouts, history=message_history,
-                                                    user_question=user_question)
+    answer = await ollama_service.chat(messages=prompt)
     # Сохраняем новый ответ в контекст
     assistant_message = ChatMessage(user_id=profile.id, role='assistant', content=answer)
     session.add(assistant_message)
