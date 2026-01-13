@@ -1,13 +1,8 @@
 from datetime import date
-from select import select
-
 import httpx
-from typing import List, Optional
-from fastapi import HTTPException, Depends
-from sqlmodel import Session
-
-from app.db import get_session
-from app.models.models import ChatMessage, UserProfile, AthleteProfile
+from typing import List
+from fastapi import HTTPException
+from app.models.models import ChatMessage, AthleteProfile
 from pathlib import Path
 
 
@@ -140,12 +135,7 @@ class OllamaService:
             print(f'Ошибка Chat: {e}')
             raise HTTPException(500, detail='Внутренняя ошибка ИИ')
 
-    async def get_chat_response(self, profile, workouts, history: List['ChatMessage'], user_question: str):
-        profile_info = f"""
-        ИМЯ: {profile.name}
-        ВЕС: {profile.weight_kg} кг
-        FTP: {profile.ftp} Вт
-        """
+    async def get_chat_response(self, history: List['ChatMessage'], user_question: str):
         system_instruction = self.system_prompt.format(sport='cycling')
         message_list = [{'role': 'system', 'content': system_instruction}]
 
@@ -155,23 +145,34 @@ class OllamaService:
 
         return await self.chat(message_list)
 
-    async def build_chat_messages(self, athlete: AthleteProfile, user_message: str, summary: str):
+    async def build_chat_messages(self, athlete: AthleteProfile, user_message: str, summary: str,
+                                  message_history: List[ChatMessage]) -> List:
+        # Достаем данные атлета
         athlete_data = athlete.model_dump()
         for k, v in athlete_data.items():
             if v is None:
                 athlete_data[k] = 'Не указано'
+
+        # Формируем историю
+        history_text = self.format_history(message_history)
+
+        # Заполняем шаблоны
         profile_section = self.user_profile.format(**athlete_data)
-        content_section = self.current_content.format(current_data=date.today().isoformat(),
+        content_section = self.current_content.format(current_date=date.today().isoformat(),
                                                       recent_workouts_summary=summary,
                                                       user_message=user_message)
-        user_prompt = f'{profile_section}\n\n{content_section}'
-        return user_prompt
+        # Собираем все вместе
+        user_prompt = f'{profile_section}\n\n{history_text}\n\n{content_section}'
 
-    async def format_history(self, history: List[ChatMessage]) -> str:
+        return [{'role': 'system', 'content': self.system_prompt},
+                {'role': 'user', 'content': user_prompt}]
+
+    def format_history(self, history: List[ChatMessage]) -> str:
         # Берем последние 10 объектов
         recent_msgs = history[-10:]
         result = '### ПРЕДЫДУЩИЕ СООБЩЕНИЯ\n'
         # Перебираем последние сообщения
         for mess in recent_msgs:
             dump_mess = mess.model_dump(include={'role', 'content'})
-            result += f'{dump_mess['role']}: {dump_mess['content']}\n'
+            result += f'{dump_mess["role"]}: {dump_mess["content"]}\n'
+        return result
