@@ -77,6 +77,9 @@ async def imports(request: Request):
 
 @app.post('/imports')
 async def import_csv(file: UploadFile = File(...), session: Session = Depends(get_session)):
+    user = session.exec(select(UserProfile)).first()
+    if not user:
+        return RedirectResponse(url='/profile/create', status_code=303)
     try:
         validate_file_type(filename=file.filename, content_type=file.content_type)
         content = await file.read()
@@ -85,7 +88,7 @@ async def import_csv(file: UploadFile = File(...), session: Session = Depends(ge
         session.add(uploaded_file)
         session.flush()
 
-        parse_csv_to_workout(file_path=file_path, uf_id=uploaded_file.id, session=session)
+        parse_csv_to_workout(file_path=file_path, uf_id=uploaded_file.id, session=session, user_id=user.id)
         session.commit()
         return RedirectResponse(url='/imports?ok=1', status_code=303)
     except ParseCsvError:

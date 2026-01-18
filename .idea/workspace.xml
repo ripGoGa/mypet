@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="wip(ai-coach): start implementing build_chat_messages function">
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="feat(core): overhaul profile creation and AI chat logic&#10;&#10;- Database: Update `UserProfile` to include email; refactor `AthleteProfile` fields (fix naming convention `current_ftp`, add `weekly_hours`).&#10;- Backend: Implement two-step profile creation logic (User -&gt; Athlete) in `main.py`.&#10;- AI Service: Refactor `build_chat_messages` to support structured message history and synchronous formatting.&#10;- Chat: Update `/coach/chat` endpoint to properly filter workouts via JOIN and maintain conversation context.&#10;- Frontend: Update `profile_create.html` with new required fields.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/profile_create.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/profile_create.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/parse_cvs.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/parse_cvs.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -475,7 +474,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768278873361</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="feat(core): overhaul profile creation and AI chat logic&#10;&#10;- Database: Update `UserProfile` to include email; refactor `AthleteProfile` fields (fix naming convention `current_ftp`, add `weekly_hours`).&#10;- Backend: Implement two-step profile creation logic (User -&gt; Athlete) in `main.py`.&#10;- AI Service: Refactor `build_chat_messages` to support structured message history and synchronous formatting.&#10;- Chat: Update `/coach/chat` endpoint to properly filter workouts via JOIN and maintain conversation context.&#10;- Frontend: Update `profile_create.html` with new required fields.">
+      <option name="closed" value="true" />
+      <created>1768283889346</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1768283889346</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -491,7 +498,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="add Get route for profile creation form" />
     <MESSAGE value="Fixed parse_csv_to_workout to correctly associate Workout with UploadedFile: removed file_path from Relationship" />
     <MESSAGE value="Feature: Add workouts list page with pagination&#10;&#10;- Created GET /workouts with pagination support (10 workouts per page)&#10;- Added a total page count&#10;- Implemented sorting by ID (newest on top)&#10;- Created a workouts.html template with a workout table&#10;- Added navigation between pages (Previous/Next)" />
     <MESSAGE value="fix: handle missing heartrate and cadence in CSV import&#10;&#10;- Add get_metric_or_none() helper function&#10;- Make heartrate and cadence fields optional&#10;- Prevent crashes on incomplete workout data" />
@@ -516,6 +522,7 @@
     <MESSAGE value="feat(ai): refactor prompt loading into a reusable static method&#10;- Unified prompt loading logic into a single static method `_load_prompt`.&#10;- Updated OllamaService to load multiple template parts: System Persona, User Profile, and Current Context.&#10;- Prepared the infrastructure for dynamic prompt assembly using athlete data from the database." />
     <MESSAGE value="refactor(ai): modularize prompt construction and history formatting&#10;- Added `format_history` to process recent chat context (last 10 messages).&#10;- Refactored `build_chat_messages` to accept pre-fetched profile and workout data.&#10;- Implemented `model_dump(include=...)` for cleaner data extraction from models.&#10;- Improved prompt structure by separating System Persona and User context." />
     <MESSAGE value="wip(ai-coach): start implementing build_chat_messages function" />
-    <option name="LAST_COMMIT_MESSAGE" value="wip(ai-coach): start implementing build_chat_messages function" />
+    <MESSAGE value="feat(core): overhaul profile creation and AI chat logic&#10;&#10;- Database: Update `UserProfile` to include email; refactor `AthleteProfile` fields (fix naming convention `current_ftp`, add `weekly_hours`).&#10;- Backend: Implement two-step profile creation logic (User -&gt; Athlete) in `main.py`.&#10;- AI Service: Refactor `build_chat_messages` to support structured message history and synchronous formatting.&#10;- Chat: Update `/coach/chat` endpoint to properly filter workouts via JOIN and maintain conversation context.&#10;- Frontend: Update `profile_create.html` with new required fields." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(core): overhaul profile creation and AI chat logic&#10;&#10;- Database: Update `UserProfile` to include email; refactor `AthleteProfile` fields (fix naming convention `current_ftp`, add `weekly_hours`).&#10;- Backend: Implement two-step profile creation logic (User -&gt; Athlete) in `main.py`.&#10;- AI Service: Refactor `build_chat_messages` to support structured message history and synchronous formatting.&#10;- Chat: Update `/coach/chat` endpoint to properly filter workouts via JOIN and maintain conversation context.&#10;- Frontend: Update `profile_create.html` with new required fields." />
   </component>
 </project>
