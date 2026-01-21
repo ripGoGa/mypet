@@ -107,10 +107,12 @@ async def import_csv(file: UploadFile = File(...), session: Session = Depends(ge
 
 @app.get('/profile', response_class=HTMLResponse)
 async def show_profile(request: Request, session: Session = Depends(get_session)):
-    profile = session.exec(select(UserProfile)).first()
-    if profile is None:
+    user_profile = session.exec(select(UserProfile)).first()
+    if user_profile is None:
         return RedirectResponse(url='/profile/create', status_code=303)
-    return templates.TemplateResponse('profile.html', {'request': request, 'profile': profile})
+    athlete_profile = session.exec(select(AthleteProfile).where(AthleteProfile.id == user_profile.id)).first()
+    return templates.TemplateResponse('profile.html', {'request': request, 'user_profile': user_profile,
+                                                       'athlete_profile': athlete_profile})
 
 
 @app.get('/profile/create', response_class=HTMLResponse)
@@ -150,28 +152,52 @@ async def create_profile(
 
 @app.get('/profile/edit', response_class=HTMLResponse)
 async def check_edited_profile(request: Request, session: Session = Depends(get_session)):
-    profile = session.exec(select(UserProfile)).first()
-    if profile is not None:
-        return templates.TemplateResponse('profile_edit.html', {'request': request, 'profile': profile})
+    user_profile = session.exec(select(UserProfile)).first()
+
+    if user_profile is not None:
+        athlete_profile = session.exec(select(AthleteProfile).where(AthleteProfile.id == user_profile.id)).first()
+        return templates.TemplateResponse('profile_edit.html', {'request': request, 'user_profile': user_profile,
+                                                                'athlete_profile': athlete_profile})
+
     return RedirectResponse(url='/profile/create', status_code=303)
 
 
 @app.post('/profile/edit', response_class=HTMLResponse)
 async def edit_profile(
         name: str = Form(...),
+        email_address: str = Form(...),
         weight_kg: float = Form(...),
-        ftp: int = Form(...),
+        current_ftp: int = Form(...),
+        weekly_hours: float = Form(...),
+        gear: str = Form(...),
+        environment_location: str = Form(...),
+        limitations: str = Form(...),
         birth_date: Optional[date] = Form(None),
         height_cm: Optional[int] = Form(None),
         session: Session = Depends(get_session)
 ):
-    profile = session.exec(select(UserProfile)).first()
-    profile.name = name
-    profile.weight_kg = weight_kg
-    profile.height_cm = height_cm
-    profile.ftp = ftp
-    profile.birth_date = birth_date
-    profile.updated_at = datetime.now()
+    # Получаем данные из базы
+    user_profile = session.exec(select(UserProfile)).first()
+    athlete_profile = session.exec(select(AthleteProfile).where(AthleteProfile.id == user_profile.id)).first()
+
+    # Обновляем UserProfile
+    user_profile.name = name
+    user_profile.email_address = email_address
+    user_profile.birth_date = birth_date
+    user_profile.height_cm = height_cm
+    user_profile.updated_at = datetime.now()
+
+    # Обновляем AthleteProfile
+    athlete_profile.weight_kg = weight_kg
+    athlete_profile.current_ftp = current_ftp
+    athlete_profile.weekly_hours = weekly_hours
+    athlete_profile.gear = gear
+    athlete_profile.environment_location = environment_location
+    athlete_profile.limitations = limitations
+
+    # Сохраняем, отправляем в базу
+    session.add(user_profile)
+    session.add(athlete_profile)
     session.commit()
     return RedirectResponse(url='/profile', status_code=303)
 

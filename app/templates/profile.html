@@ -1,23 +1,85 @@
 {% extends "base.html" %}
-{% block title %} Профиль{% endblock %}
-{% block content %}
-<a href="/">Главная страница</a>
-<a href="/profile/edit">Редактировать профиль</a>
 
-<table border="1">
-    <tr>
-        <th>Имя</th>
-        <th>Дата рождения</th>
-        <th>Вес (кг)</th>
-        <th>Рост (см)</th>
-        <th>FTP (Вт)</th>
-    </tr>
-    <tr>
-        <td>{{ profile.name }}</td>
-        <td>{{ profile.birth_date or "—" }}</td>
-        <td>{{ profile.weight_kg }}</td>
-        <td>{{ profile.height_cm or "—" }}</td>
-        <td>{{ profile.ftp }}</td>
-    </tr>
-</table>
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+
+        <div class="d-flex justify-content-between align-items-end mb-5 border-bottom pb-3">
+            <div>
+                <h1 class="display-5 fw-bold mb-0 text-uppercase">{{ user_profile.name }}</h1>
+                <p class="text-secondary mb-0">{{ user_profile.email_address }}</p>
+            </div>
+            <a href="/profile/edit" class="btn btn-outline-primary px-4">
+                Редактировать
+            </a>
+        </div>
+
+        <div class="row g-5">
+            <div class="col-md-4">
+                <div class="mb-4">
+                    <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.75rem; letter-spacing: 1px;">Физиология</h6>
+
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <span>Вес</span>
+                        <span class="fw-bold">{{ athlete_profile.weight_kg }} кг</span>
+                    </div>
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <span>Рост</span>
+                        <span class="fw-bold">{{ user_profile.height_cm }} см</span>
+                    </div>
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <span>Дата рождения</span>
+                        <span class="fw-bold">{{ user_profile.birth_date }}</span>
+                    </div>
+                </div>
+
+                <div>
+                     <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.75rem; letter-spacing: 1px;">Производительность</h6>
+
+                     <div class="bg-black text-white p-3 mb-2">
+                         <span class="d-block text-white-50 small text-uppercase">FTP (Ватт)</span>
+                         <span class="display-6 fw-bold">{{ athlete_profile.current_ftp }}</span>
+                     </div>
+
+                     <div class="border p-3">
+                         <span class="d-block text-muted small text-uppercase">Объем (Часов/нед)</span>
+                         <span class="h4 fw-bold mb-0">{{ athlete_profile.weekly_hours }}</span>
+                     </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card h-100">
+                    <div class="card-header">
+                        Контекст тренировок
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <label class="d-block text-muted small text-uppercase mb-1">Оборудование</label>
+                            <p class="fs-5">{{ athlete_profile.gear or '—' }}</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="d-block text-muted small text-uppercase mb-1">Локация</label>
+                            <p class="fs-5">{{ athlete_profile.environment_location or '—' }}</p>
+                        </div>
+
+                        <div class="mb-0">
+                            <label class="d-block text-muted small text-uppercase mb-1">Ограничения и травмы</label>
+                            <div class="p-3 bg-light border-start border-3 border-dark">
+                                {{ athlete_profile.limitations or 'Ограничений нет' }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-top text-end">
+                        <small class="text-muted">ID профиля: {{ user_profile.id }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 {% endblock %}

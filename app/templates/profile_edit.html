@@ -1,34 +1,74 @@
 {% extends "base.html" %}
-{% block title %} Редактировать профиль{% endblock %}
+
+{% block title %}Редактирование профиля{% endblock %}
+
 {% block content %}
-    <h1>Редактирование профиля</h1>
-    <form method="POST" action="/profile/edit">
-        <label>
-            Имя:
-            <input type="text" name="name" value="{{ profile.name }}" required>
-        </label>
-        <br>
-        <label>
-            Дата рождения:
-            <input type="date" name="birth_date" value="{{ profile.birth_date or '' }}">
-        </label>
-        <br>
-        <label>
-            Вес (кг):
-            <input type="number" name="weight_kg" step="0.1" value="{{ profile.weight_kg }}" required>
-        </label>
-        <br>
-        <label>
-            Рост (см):
-            <input type="number" name="height_cm" value="{{ profile.height_cm or '' }}">
-        </label>
-        <br>
-        <label>
-            FTP (Вт):
-            <input type="number" name="ftp" value="{{ profile.ftp }}" required>
-        </label>
-        <br>
-        <button type="submit">Сохранить изменения</button>
-        <a href="/profile">Отмена</a>
-    </form>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">✏️ Редактирование данных</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="/profile/edit">
+
+                    <h5 class="text-primary mb-3">Личные данные</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Имя</label>
+                        <input type="text" name="name" class="form-control" value="{{ user_profile.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email_address" class="form-control" value="{{ user_profile.email_address }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Дата рождения</label>
+                        <input type="date" name="birth_date" class="form-control" value="{{ user_profile.birth_date }}">
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Вес (кг)</label>
+                            <input type="number" step="0.1" name="weight_kg" class="form-control" value="{{ athlete_profile.weight_kg or '' }}" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Рост (см)</label>
+                            <input type="number" name="height_cm" class="form-control" value="{{ user_profile.height_cm or '' }}">
+                        </div>
+                    </div>
+
+                    <h5 class="text-primary mb-3 mt-4">Спорт</h5>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label">FTP</label>
+                            <input type="number" name="current_ftp" class="form-control" value="{{ athlete_profile.current_ftp or '' }}" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Часов в неделю</label>
+                            <input type="number" name="weekly_hours" class="form-control" value="{{ athlete_profile.weekly_hours or '' }}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Оборудование</label>
+                        <input type="text" name="gear" class="form-control" value="{{ athlete_profile.gear or '' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Локация</label>
+                        <input type="text" name="environment_location" class="form-control" value="{{ athlete_profile.environment_location or '' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Травмы / Ограничения</label>
+                        <textarea name="limitations" class="form-control" rows="2">{{ athlete_profile.limitations or '' }}</textarea>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-success flex-grow-1">Сохранить</button>
+                        <a href="/profile" class="btn btn-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

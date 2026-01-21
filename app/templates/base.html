@@ -2,22 +2,147 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}AI Coach{% endblock %}</title>
-    </head>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Глобальные настройки */
+        :root {
+            --bs-font-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --bs-body-bg: #fdfdfd; /* Почти белый, но не стерильный */
+            --bs-body-color: #121212; /* Почти черный для текста */
+        }
+
+        body {
+            font-family: var(--bs-font-sans-serif);
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Навигация */
+        .navbar {
+            background-color: #000 !important; /* Глубокий черный */
+            border-bottom: 1px solid #333;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+        }
+        .nav-link {
+            font-weight: 500;
+            color: #aaa !important;
+            text-transform: lowercase; /* Модный прием в типографике */
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #fff !important;
+        }
+
+        /* Карточки - строгие, без теней, с рамкой */
+        .card {
+            border: 1px solid #e0e0e0;
+            border-radius: 0; /* Убираем скругления */
+            box-shadow: none !important;
+            background-color: #fff;
+        }
+        .card-header {
+            background-color: #fff;
+            border-bottom: 2px solid #000;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        /* Кнопки - черные или контурные */
+        .btn-primary {
+            background-color: #000;
+            border-color: #000;
+            border-radius: 0;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background-color: #333;
+            border-color: #333;
+        }
+        .btn-outline-primary {
+            color: #000;
+            border-color: #000;
+            border-radius: 0;
+        }
+        .btn-outline-primary:hover {
+            background-color: #000;
+            color: #fff;
+        }
+
+        /* Поля ввода */
+        .form-control {
+            border-radius: 0;
+            border: 1px solid #ccc;
+            background-color: #fafafa;
+        }
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #000;
+            background-color: #fff;
+        }
+
+        /* Подвал */
+        .footer {
+            border-top: 1px solid #e0e0e0;
+            background-color: #fff;
+            color: #666;
+            padding: 30px 0;
+            margin-top: 60px;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
 <body>
 
-    <nav style="background: #f0f0f0; padding: 10px; margin-bottom: 20px;">
-        <a href="/">Главная</a>|
-        <a href="/workouts">Тренировки</a>|
-        <a href="/imports">Импорт тренировок</a>|
-        <a href="/profile">Профиль</a>|
-        <a href="/coach">AI Тренер</a>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/coach">AI COACH // SYSTEM</a>
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto gap-3"> <li class="nav-item">
+                        <a class="nav-link" href="/coach">чат</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile">профиль</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/imports">импорт</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </nav>
 
-    <main>
-        {% block content %}
-        {% endblock %}
+    <main class="py-5">
+        <div class="container">
+            {% block content %}
+            {% endblock %}
+        </div>
     </main>
 
+    <footer class="footer text-center">
+        <div class="container">
+            <span class="text-uppercase fw-bold">AI Cycling Coach</span> &mdash; v0.1 MVP
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

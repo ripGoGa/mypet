@@ -1,58 +1,72 @@
 {% extends "base.html" %}
-{% block title %} Создать профиль{% endblock %}
+
+{% block title %}Создание профиля{% endblock %}
+
 {% block content %}
-    <h1>Создание профиля</h1>
-    <form method="POST" action="/profile/create">
-        <label>
-            Имя:
-            <input type="text" name="name" required>
-        </label>
-        <br>
-        <label>
-            Адрес электронной почты:
-            <input type="text" name="email_address" required>
-        </label>
-        <br>
-        <label>
-            Дата рождения:
-            <input type="date" name="birth_date">
-        </label>
-        <br>
-        <label>
-            Вес (кг):
-            <input type="number" name="weight_kg" step="0.1" required>
-        </label>
-        <br>
-        <label>
-            Рост (см):
-            <input type="number" name="height_cm">
-        </label>
-        <br>
-        <label>
-            FTP (Вт):
-            <input type="number" name="current_ftp" required>
-        </label>
-        <br>
-        <label>
-            Ограничения, травмы:
-            <input type="text" name="limitations" required>
-        </label>
-        <br>
-        <label>
-            Количество часов на тренировки в неделю:
-            <input type="number" name="weekly_hours" required>
-        </label>
-        <br>
-        <label>
-            Оборудование(велосипеды, тренажеры):
-            <input type="text" name="gear">
-        </label>
-        <br>
-        <label>
-            Место проживания, климат:
-            <input type="text" name="environment_location" required>
-        </label>
-        <br>
-        <button type="submit">Создать профиль</button>
-    </form>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">🚴 Регистрация атлета</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="/profile/create">
+
+                    <h5 class="text-secondary mb-3">Личные данные</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Имя</label>
+                        <input type="text" name="name" class="form-control" placeholder="Иван" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email_address" class="form-control" placeholder="ivan@example.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Дата рождения</label>
+                        <input type="date" name="birth_date" class="form-control">
+                    </div>
+
+                    <h5 class="text-secondary mb-3 mt-4">Физические данные</h5>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label">Вес (кг)</label>
+                            <input type="number" step="0.1" name="weight_kg" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Рост (см)</label>
+                            <input type="number" name="height_cm" class="form-control">
+                        </div>
+                    </div>
+
+                    <h5 class="text-secondary mb-3 mt-4">Тренировки</h5>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label">FTP (Ватт)</label>
+                            <input type="number" name="current_ftp" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Часов в неделю</label>
+                            <input type="number" name="weekly_hours" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Оборудование</label>
+                        <input type="text" name="gear" class="form-control" placeholder="Велосипед, станок...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Локация</label>
+                        <input type="text" name="environment_location" class="form-control" placeholder="Город, климат">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ограничения / Травмы</label>
+                        <textarea name="limitations" class="form-control" rows="2"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 btn-lg mt-3">Создать профиль</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
