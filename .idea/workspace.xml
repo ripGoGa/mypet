@@ -4,13 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="fix(parser): restore workout import logic for new user/athlete schema&#10;&#10;- Main: update `/imports` endpoint to retrieve current `user_id` and pass it to the parser.&#10;- Parser: update logic to fetch FTP from `AthleteProfile` instead of `UserProfile`.&#10;- Parser: handle missing FTP gracefully (set advanced metrics to None).&#10;- Fix: cast numpy float types to native python floats for SQLite compatibility.&#10;- Fix: resolve variable shadowing bug in heartrate parsing.">
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="style(ui): overhaul design to monochrome minimalism and fix profile editing&#10;&#10;- UI/UX: Replace default Bootstrap theme with a strict black-and-white  design.&#10;- Templates: Refactor `base.html` and `profile.html` to use high-contrast typography and grid layouts.&#10;- Fix(main): Resolve `AttributeError` in `/profile/edit` by correctly fetching `AthleteProfile` alongside `UserProfile`.&#10;- Fix(main): Correct variable naming consistency (`profile` -&gt; `user_profile`) to prevent Jinja2 `UndefinedError`.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/profile_create.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/profile_create.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/profile_edit.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/profile_edit.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/prompts/Current_Context.txt" beforeDir="false" afterPath="$PROJECT_DIR$/app/prompts/Current_Content.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/prompts/User_Profile.txt" beforeDir="false" afterPath="$PROJECT_DIR$/app/prompts/User_Profile.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/ai_coach.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/ai_coach.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/coach.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/coach.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,14 +92,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1758819487803</updated>
-    </task>
-    <task id="LOCAL-00002" summary="Create project structure and requirements">
-      <option name="closed" value="true" />
-      <created>1758821683905</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1758821683905</updated>
     </task>
     <task id="LOCAL-00003" summary="add workouts route and template with table">
       <option name="closed" value="true" />
@@ -485,7 +477,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768744911994</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="style(ui): overhaul design to monochrome minimalism and fix profile editing&#10;&#10;- UI/UX: Replace default Bootstrap theme with a strict black-and-white  design.&#10;- Templates: Refactor `base.html` and `profile.html` to use high-contrast typography and grid layouts.&#10;- Fix(main): Resolve `AttributeError` in `/profile/edit` by correctly fetching `AthleteProfile` alongside `UserProfile`.&#10;- Fix(main): Correct variable naming consistency (`profile` -&gt; `user_profile`) to prevent Jinja2 `UndefinedError`.">
+      <option name="closed" value="true" />
+      <created>1768992517920</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1768992517920</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -501,7 +501,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Feature: Add workouts list page with pagination&#10;&#10;- Created GET /workouts with pagination support (10 workouts per page)&#10;- Added a total page count&#10;- Implemented sorting by ID (newest on top)&#10;- Created a workouts.html template with a workout table&#10;- Added navigation between pages (Previous/Next)" />
     <MESSAGE value="fix: handle missing heartrate and cadence in CSV import&#10;&#10;- Add get_metric_or_none() helper function&#10;- Make heartrate and cadence fields optional&#10;- Prevent crashes on incomplete workout data" />
     <MESSAGE value="feat: add workout detail page&#10;&#10;- Created GET /workouts/{workout_id} for detailed view of workout&#10;- Added workout_detail.html template.&#10;- All metrics are shown: power, heart rate, cadence, speed, calories&#10;- Missing data handling (heart rate, cadence)&#10;- Back to list navigation added" />
     <MESSAGE value="Progress: Created the OllamaService class, added asyncgenerate() for Ollama LLM integration.&#10;&#10;- Implemented the asynchronous generate() function for communicating with the local LLM via the Ollama API.&#10;- Handling connection and timeout errors." />
@@ -526,6 +525,7 @@
     <MESSAGE value="wip(ai-coach): start implementing build_chat_messages function" />
     <MESSAGE value="feat(core): overhaul profile creation and AI chat logic&#10;&#10;- Database: Update `UserProfile` to include email; refactor `AthleteProfile` fields (fix naming convention `current_ftp`, add `weekly_hours`).&#10;- Backend: Implement two-step profile creation logic (User -&gt; Athlete) in `main.py`.&#10;- AI Service: Refactor `build_chat_messages` to support structured message history and synchronous formatting.&#10;- Chat: Update `/coach/chat` endpoint to properly filter workouts via JOIN and maintain conversation context.&#10;- Frontend: Update `profile_create.html` with new required fields." />
     <MESSAGE value="fix(parser): restore workout import logic for new user/athlete schema&#10;&#10;- Main: update `/imports` endpoint to retrieve current `user_id` and pass it to the parser.&#10;- Parser: update logic to fetch FTP from `AthleteProfile` instead of `UserProfile`.&#10;- Parser: handle missing FTP gracefully (set advanced metrics to None).&#10;- Fix: cast numpy float types to native python floats for SQLite compatibility.&#10;- Fix: resolve variable shadowing bug in heartrate parsing." />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(parser): restore workout import logic for new user/athlete schema&#10;&#10;- Main: update `/imports` endpoint to retrieve current `user_id` and pass it to the parser.&#10;- Parser: update logic to fetch FTP from `AthleteProfile` instead of `UserProfile`.&#10;- Parser: handle missing FTP gracefully (set advanced metrics to None).&#10;- Fix: cast numpy float types to native python floats for SQLite compatibility.&#10;- Fix: resolve variable shadowing bug in heartrate parsing." />
+    <MESSAGE value="style(ui): overhaul design to monochrome minimalism and fix profile editing&#10;&#10;- UI/UX: Replace default Bootstrap theme with a strict black-and-white  design.&#10;- Templates: Refactor `base.html` and `profile.html` to use high-contrast typography and grid layouts.&#10;- Fix(main): Resolve `AttributeError` in `/profile/edit` by correctly fetching `AthleteProfile` alongside `UserProfile`.&#10;- Fix(main): Correct variable naming consistency (`profile` -&gt; `user_profile`) to prevent Jinja2 `UndefinedError`." />
+    <option name="LAST_COMMIT_MESSAGE" value="style(ui): overhaul design to monochrome minimalism and fix profile editing&#10;&#10;- UI/UX: Replace default Bootstrap theme with a strict black-and-white  design.&#10;- Templates: Refactor `base.html` and `profile.html` to use high-contrast typography and grid layouts.&#10;- Fix(main): Resolve `AttributeError` in `/profile/edit` by correctly fetching `AthleteProfile` alongside `UserProfile`.&#10;- Fix(main): Correct variable naming consistency (`profile` -&gt; `user_profile`) to prevent Jinja2 `UndefinedError`." />
   </component>
 </project>

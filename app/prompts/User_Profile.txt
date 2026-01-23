@@ -1,6 +1,6 @@
 ### USER PROFILE
 - Weight: {weight_kg} kg
-- Current FTP: {current_FTP} W
+- Current FTP: {current_ftp} W
 - Physical Limitations: {limitations}
 - Available Training Time: {weekly_hours} h/week
 - Equipment/Gear: {gear}

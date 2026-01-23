@@ -145,13 +145,17 @@ class OllamaService:
 
         return await self.chat(message_list)
 
-    async def build_chat_messages(self, athlete: AthleteProfile, user_message: str, summary: str,
-                                  message_history: List[ChatMessage]) -> List:
+    async def build_chat_messages(self, user_profile, athlete_profile, user_message, summary, message_history):
         # Достаем данные атлета
-        athlete_data = athlete.model_dump()
-        for k, v in athlete_data.items():
-            if v is None:
-                athlete_data[k] = 'Не указано'
+        # Объединяем данные
+        athlete_data = user_profile.model_dump()
+        if athlete_profile:
+            athlete_data.update(athlete_profile.model_dump())
+
+        # Проверка на None
+        for key, value in athlete_data.items():
+            if value is None:
+                athlete_data[key] = "Не указано"
 
         # Формируем историю
         history_text = self.format_history(message_history)

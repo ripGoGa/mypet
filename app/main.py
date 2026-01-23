@@ -236,25 +236,28 @@ async def get_advice(request: Request, session: Session = Depends(get_session), 
 async def chat(request: Request, user_question: str = Form(...), session: Session = Depends(get_session),
                ollama_service=Depends(get_ollama_service)):
     # Получаем данные
-    profile = session.exec(select(UserProfile)).first()
-    if not profile:
+    user_profile = session.exec(select(UserProfile)).first()
+    if not user_profile:
         return RedirectResponse(url="/profile/create", status_code=303)
+    athlete_profile = session.exec(select(AthleteProfile).where(AthleteProfile.id == user_profile.id)).first()
+
     week_ago = datetime.now() - timedelta(days=7)
     workouts = session.exec(select(Workout).join(UploadedFile).where(UploadedFile.uploaded_at >= week_ago)).all()
     summary = ollama_service.format_workouts(workouts)
-    message_history = session.exec(select(ChatMessage).where(ChatMessage.user_id == profile.id).where(
-        ChatMessage.created_at >= week_ago))
-    prompt = await ollama_service.build_chat_messages(athlete=profile, user_message=user_question, summary=summary,
+    message_history = session.exec(select(ChatMessage).where(ChatMessage.user_id == user_profile.id).where(
+        ChatMessage.created_at >= week_ago)).all()
+    prompt = await ollama_service.build_chat_messages(user_profile=user_profile, athlete_profile=athlete_profile,
+                                                      user_message=user_question, summary=summary,
                                                       message_history=message_history)
 
     # Сохраняем вопрос пользователя
-    user_message = ChatMessage(user_id=profile.id, role='user', content=user_question)
+    user_message = ChatMessage(user_id=user_profile.id, role='user', content=user_question)
     session.add(user_message)
     session.commit()
     # Вызываем ИИ и передаем старую историю + новый вопрос
     answer = await ollama_service.chat(messages=prompt)
     # Сохраняем новый ответ в контекст
-    assistant_message = ChatMessage(user_id=profile.id, role='assistant', content=answer)
+    assistant_message = ChatMessage(user_id=user_profile.id, role='assistant', content=answer)
     session.add(assistant_message)
     session.commit()
 

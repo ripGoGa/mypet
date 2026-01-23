@@ -1,30 +1,98 @@
 {% extends "base.html" %}
-{% block title %} Чат с тренером{% endblock %}
+
+{% block title %}Чат с системой{% endblock %}
+
 {% block content %}
-    {% for msg in message_history %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
 
-        {% if msg.role == 'user' %}
-            <div>Я: {{ msg.content }}</div>
-        {% else %}
-            <div>Тренер: {{ msg.content }}</div>
-        {% endif %}
+        <div class="card h-100 border-dark" style="min-height: 75vh;">
 
-    {% endfor %}
-    <form id="chat-form" action="/coach/chat" method="post">
-    <input type="text" name="user_question">
-    <button type="submit">Отправить</button></form>
-    <div id="loading_message" style="display:none;">
-        ⏳ Тренер анализирует данные, подождите... </div>
-        <script>
-         // 1. Находим нашу форму по ID
-const form = document.getElementById('chat-form');
+            <div class="card-header bg-white border-bottom border-dark d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0 fw-bold text-uppercase spacing-1">AI Analyst // Communication</h5>
+                <small class="text-muted">STATUS: ONLINE</small>
+            </div>
 
-// 2. Находим скрытое сообщение по ID
-const loader = document.getElementById('loading_message');
+            <div class="card-body overflow-auto bg-light" id="chat-window" style="height: 500px;">
 
-// 3. Подслушиваем событие 'submit' (отправка) на форме
-form.addEventListener('submit', function() {
-    // Когда отправка произошла — меняем стиль на 'block' (показываем)
-    loader.style.display = 'block';
-});</script>
-            {% endblock %}
+                {% for msg in message_history %}
+                    {% if msg.role == 'user' %}
+                        <div class="d-flex justify-content-end mb-4">
+                            <div class="text-end" style="max-width: 80%;">
+                                <small class="text-muted text-uppercase mb-1 d-block" style="font-size: 0.7rem;">User</small>
+                                <div class="p-3 bg-white border border-dark text-dark">
+                                    {{ msg.content }}
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="d-flex justify-content-start mb-4">
+                            <div class="text-start" style="max-width: 85%;">
+                                <small class="text-muted text-uppercase mb-1 d-block" style="font-size: 0.7rem;">System</small>
+                                <div class="p-3 bg-black text-white">
+                                    {{ msg.content }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                <div id="loading_indicator" class="d-none justify-content-start mb-4">
+                    <div class="text-start">
+                         <small class="text-muted text-uppercase mb-1 d-block" style="font-size: 0.7rem;">System</small>
+                         <div class="p-3 bg-white border border-dark text-muted fst-italic d-flex align-items-center gap-2">
+                             <div class="spinner-border spinner-border-sm text-dark" role="status"></div>
+                             <span>ANALYZING DATA...</span>
+                         </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-footer bg-white border-top border-dark p-0">
+                <form id="chat-form" action="/coach/chat" method="post" class="d-flex">
+                    <input type="text" name="user_question"
+                           class="form-control border-0 p-4 shadow-none"
+                           placeholder="Введите запрос или команду..."
+                           autocomplete="off" required>
+
+                    <button type="submit" class="btn btn-dark px-5 border-0 rounded-0 text-uppercase fw-bold">
+                        Send
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const chatWindow = document.getElementById('chat-window');
+    const form = document.getElementById('chat-form');
+    const loader = document.getElementById('loading_indicator');
+    const inputField = form.querySelector('input[name="user_question"]');
+
+    // 1. Авто-скролл вниз при загрузке страницы
+    window.onload = function() {
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+        inputField.focus(); // Сразу ставим курсор в поле ввода
+    };
+
+    // 2. Обработка отправки
+    form.addEventListener('submit', function() {
+        // Показываем индикатор загрузки
+        loader.classList.remove('d-none');
+        loader.classList.add('d-flex');
+
+        // Скроллим вниз, чтобы было видно индикатор
+        setTimeout(() => {
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }, 50);
+
+        // Блокируем кнопку, чтобы не нажать дважды
+        const btn = form.querySelector('button');
+        btn.disabled = true;
+        btn.innerText = 'WAIT...';
+    });
+</script>
+{% endblock %}
