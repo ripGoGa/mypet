@@ -11,8 +11,8 @@
         /* Глобальные настройки */
         :root {
             --bs-font-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            --bs-body-bg: #fdfdfd; /* Почти белый, но не стерильный */
-            --bs-body-color: #121212; /* Почти черный для текста */
+            --bs-body-bg: #fdfdfd;
+            --bs-body-color: #121212;
         }
 
         body {
@@ -26,7 +26,7 @@
 
         /* Навигация */
         .navbar {
-            background-color: #000 !important; /* Глубокий черный */
+            background-color: #000 !important;
             border-bottom: 1px solid #333;
         }
         .navbar-brand {
@@ -38,16 +38,16 @@
         .nav-link {
             font-weight: 500;
             color: #aaa !important;
-            text-transform: lowercase; /* Модный прием в типографике */
+            text-transform: lowercase;
         }
         .nav-link:hover, .nav-link.active {
             color: #fff !important;
         }
 
-        /* Карточки - строгие, без теней, с рамкой */
+        /* Карточки */
         .card {
             border: 1px solid #e0e0e0;
-            border-radius: 0; /* Убираем скругления */
+            border-radius: 0;
             box-shadow: none !important;
             background-color: #fff;
         }
@@ -61,7 +61,7 @@
             padding-bottom: 1rem;
         }
 
-        /* Кнопки - черные или контурные */
+        /* Кнопки */
         .btn-primary {
             background-color: #000;
             border-color: #000;
@@ -80,6 +80,9 @@
         .btn-outline-primary:hover {
             background-color: #000;
             color: #fff;
+        }
+        .btn-dark {
+            border-radius: 0;
         }
 
         /* Поля ввода */
@@ -116,8 +119,15 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto gap-3"> <li class="nav-item">
+                <ul class="navbar-nav ms-auto gap-3">
+                    <li class="nav-item">
                         <a class="nav-link" href="/coach">чат</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/workouts">тренировки</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/statistics">статистика</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/profile">профиль</a>

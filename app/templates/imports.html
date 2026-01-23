@@ -1,26 +1,61 @@
 {% extends "base.html" %}
-{% block title %} Импорт тренировки{% endblock %}
+
+{% block title %}Импорт данных{% endblock %}
+
 {% block content %}
-    {% if message %}
-        <p style="color: {{ 'red' if is_error else 'green' }};">{{ message }}</p>
-    {% endif %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
 
+        {% if message %}
+            <div class="alert {{ 'alert-danger' if is_error else 'alert-success' }} rounded-0 border-0 mb-4 d-flex align-items-center" role="alert">
+                <div class="fw-bold text-uppercase me-2">
+                    {{ 'ERROR:' if is_error else 'SUCCESS:' }}
+                </div>
+                <div>{{ message }}</div>
+            </div>
+        {% endif %}
 
-    <a href="/workouts"
-       style="display: inline-block;
-              padding: 10px 20px;
-              margin-bottom: 10px;
-              background-color: #4CAF50;
-              color: white;
-              text-decoration: none;
-              border-radius: 5px;">
-       К списку тренировок
-    </a>
+        <div class="card border-dark shadow-none">
+            <div class="card-header bg-black text-white text-center py-3">
+                <h5 class="mb-0 text-uppercase spacing-1">Data Ingestion</h5>
+            </div>
 
-    <h1>Загрузка CSV</h1>
+            <div class="card-body p-5">
+                <form method="post" action="/imports" enctype="multipart/form-data">
 
-    <form method="post" action="/imports" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".csv">
-        <button type="submit">Загрузить</button>
-    </form>
+                    <div class="mb-4">
+                        <label for="formFileLg" class="form-label text-uppercase text-muted fw-bold small">
+                            Выберите файл тренировки
+                        </label>
+                        <input class="form-control form-control-lg border-dark" id="formFileLg" type="file" name="file" accept=".csv, .fit" required>
+                        <div class="form-text mt-2">
+                            Поддерживаемые форматы: <span class="fw-bold text-dark">.FIT</span> (Garmin/Wahoo), <span class="fw-bold text-dark">.CSV</span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-dark btn-lg rounded-0 text-uppercase fw-bold py-3">
+                            Загрузить в базу
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="card-footer bg-white border-top border-dark text-center py-3">
+                <a href="/workouts" class="text-decoration-none text-secondary text-uppercase small fw-bold">
+                    &larr; Вернуться к списку тренировок
+                </a>
+            </div>
+        </div>
+
+        <div class="mt-4 text-center">
+            <p class="text-muted small">
+                Система автоматически определит тип файла и рассчитает метрики (NP, TSS, IF).
+                <br>Дубликаты файлов будут отклонены.
+            </p>
+        </div>
+
+    </div>
+</div>
 {% endblock %}

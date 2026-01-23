@@ -38,8 +38,11 @@ def ensure_data_store() -> None:
 
 
 @app.get('/', response_class=HTMLResponse)
-async def hello_root(request: Request):
-    return templates.TemplateResponse('index.html', {'request': request, 'user': 'Спортсмен'})
+async def hello_root(request: Request, session: Session = Depends(get_session)):
+    # Пытаемся узнать имя пользователя для приветствия
+    user = session.exec(select(UserProfile)).first()
+
+    return templates.TemplateResponse('index.html', {'request': request, 'user_profile': user})
 
 
 @app.get('/workouts', response_class=HTMLResponse)

@@ -1,25 +1,101 @@
 {% extends "base.html" %}
-{% block title %} Это твой личный велотрекер{% endblock %}
-{% block content %}
-<a href="/workouts"
-   style="display: inline-block;
-          padding: 10px 20px;
-          margin-bottom: 10px;
-          background-color: #4CAF50;
-          color: white;
-          text-decoration: none;
-          border-radius: 5px;">
-   К списку тренировок
-</a>
 
-<a href="/imports"
-   style="display: inline-block;
-          padding: 10px 20px;
-          margin-bottom: 10px;
-          background-color: #2196F3;
-          color: white;
-          text-decoration: none;
-          border-radius: 5px;">
-   Загрузить тренировку
-</a>
+{% block title %}Панель управления{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+
+        <div class="mb-5 pb-3 border-bottom border-dark">
+            <small class="text-uppercase text-muted fw-bold ls-1">System Status: Active</small>
+            <h1 class="display-3 fw-bold text-uppercase mt-2">
+                {% if user_profile %}
+                    Welcome back, {{ user_profile.name }}
+                {% else %}
+                    Welcome, Athlete
+                {% endif %}
+            </h1>
+            <p class="text-secondary lead">
+                AI Cycling Analytics Core v0.1
+            </p>
+        </div>
+
+        {% if not user_profile %}
+            <div class="text-center py-5">
+                <h3 class="mb-4">Требуется инициализация профиля</h3>
+                <a href="/profile/create" class="btn btn-dark btn-lg rounded-0 px-5 py-3 text-uppercase fw-bold">
+                    Создать профиль
+                </a>
+            </div>
+        {% else %}
+            <div class="row g-4">
+
+                <div class="col-md-6">
+                    <a href="/imports" class="text-decoration-none">
+                        <div class="card h-100 border-dark hover-effect text-center p-5">
+                            <div class="display-1 fw-bold mb-3" style="line-height: 1;">&darr;</div>
+                            <h4 class="text-uppercase fw-bold text-black">Import Data</h4>
+                            <p class="text-muted small">Загрузка .FIT и .CSV файлов</p>
+                            <span class="btn btn-outline-dark rounded-0 mt-3 text-uppercase small">Upload</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6">
+                    <a href="/coach" class="text-decoration-none">
+                        <div class="card h-100 border-black bg-black text-white hover-effect-invert text-center p-5">
+                            <div class="display-4 fw-bold mb-3 font-monospace">AI //</div>
+                            <h4 class="text-uppercase fw-bold text-white">AI Coach</h4>
+                            <p class="text-white-50 small">Анализ и рекомендации</p>
+                            <span class="btn btn-light rounded-0 mt-3 text-uppercase small fw-bold">Start Chat</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6">
+                    <a href="/workouts" class="text-decoration-none">
+                        <div class="card h-100 border-dark hover-effect p-4 d-flex flex-row align-items-center justify-content-between">
+                            <div>
+                                <h5 class="text-uppercase fw-bold text-black mb-1">Database</h5>
+                                <p class="text-muted small mb-0">Архив всех тренировок</p>
+                            </div>
+                            <span class="fs-2">&rarr;</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6">
+                    <a href="/statistics" class="text-decoration-none">
+                        <div class="card h-100 border-dark hover-effect p-4 d-flex flex-row align-items-center justify-content-between">
+                            <div>
+                                <h5 class="text-uppercase fw-bold text-black mb-1">Metrics</h5>
+                                <p class="text-muted small mb-0">Графики и тренды</p>
+                            </div>
+                            <span class="fs-2">&rarr;</span>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<style>
+    .hover-effect {
+        transition: all 0.2s ease;
+    }
+    .hover-effect:hover {
+        background-color: #f0f0f0;
+        transform: translateY(-2px);
+    }
+    .hover-effect-invert {
+        transition: all 0.2s ease;
+    }
+    .hover-effect-invert:hover {
+        background-color: #1a1a1a !important;
+        transform: translateY(-2px);
+    }
+</style>
 {% endblock %}
