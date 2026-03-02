@@ -265,3 +265,46 @@ async def chat(request: Request, user_question: str = Form(...), session: Sessio
     session.commit()
 
     return RedirectResponse(url='/coach', status_code=303)
+
+
+@app.get('/statistics')
+async def main_stat(request: Request, session: Session = Depends(get_session), period: int = 1):
+    week_ago = datetime.now() - timedelta(days=period)
+    workouts_for_range = session.exec(
+        select(Workout).join(UploadedFile).where(UploadedFile.uploaded_at >= week_ago)).all()
+    count_workouts = len(workouts_for_range)
+    total_distance = 0
+    total_tss = []
+    total_duration = timedelta(days=0)
+    avg_watts = []
+    avg_speed = []
+    avg_heartrate = []
+    if not count_workouts:
+        return templates.TemplateResponse('statistics.html', {'request': request, 'count_workouts': count_workouts,
+                                                              'total_distance': total_distance, 'total_tss': total_tss,
+                                                              'total_duration': total_duration, 'avg_watts': avg_watts,
+                                                              'avg_speed': avg_speed, 'avg_heartrate': avg_heartrate})
+    for workout in workouts_for_range:
+        total_distance += workout.distance_km
+        if workout.training_stress_score:
+            total_tss.append(workout.training_stress_score)
+        total_duration += workout.duration
+
+        if workout.avg_watts:
+            avg_watts.append(workout.avg_watts)
+
+        if workout.avg_speed:
+            avg_speed.append(workout.avg_speed)
+
+        if workout.avg_heartrate:
+            avg_heartrate.append(workout.avg_heartrate)
+
+    avg_heartrate = sum(avg_heartrate) / len(avg_heartrate) if avg_heartrate else 0
+    avg_speed = sum(avg_speed) / len(avg_speed) if avg_speed else 0
+    avg_watts = sum(avg_watts) / len(avg_watts) if avg_watts else 0
+    total_tss = sum(total_tss)
+
+    return templates.TemplateResponse('statistics.html', {'request': request, 'count_workouts': count_workouts,
+                                                          'total_distance': total_distance, 'total_tss': total_tss,
+                                                          'total_duration': total_duration, 'avg_watts': avg_watts,
+                                                          'avg_speed': avg_speed, 'avg_heartrate': avg_heartrate})

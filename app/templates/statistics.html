@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="text-uppercase fw-bold" style="letter-spacing: 2px; font-size: 1.4rem;">
+            STATISTICS // OVERVIEW
+        </h1>
+        <p class="text-muted small text-uppercase">Сводка за период</p>
+    </div>
+</div>
+
+{# Переключатель периодов #}
+<div class="mb-4">
+    <a href="?period=7" class="btn btn-sm {{ 'btn-primary' if period == 7 else 'btn-outline-primary' }} me-1">НЕДЕЛЯ</a>
+    <a href="?period=30" class="btn btn-sm {{ 'btn-primary' if period == 30 else 'btn-outline-primary' }} me-1">МЕСЯЦ</a>
+    <a href="?period=365" class="btn btn-sm {{ 'btn-primary' if period == 365 else 'btn-outline-primary' }}">ГОД</a>
+</div>
+
+{% if not count_workouts %}
+    <div class="alert rounded-0 border border-dark">
+        <span class="text-uppercase fw-bold">NO DATA</span> — за данный период тренировок не найдено.
+    </div>
+{% else %}
+
+{# Сводные карточки #}
+<div class="row g-3 mb-5">
+
+    <div class="col-6 col-md-3">
+        <div class="card h-100">
+            <div class="card-header">Тренировок</div>
+            <div class="card-body">
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
+                    {{ count_workouts }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+        <div class="card h-100">
+            <div class="card-header">Дистанция</div>
+            <div class="card-body">
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
+                    {{ "%.1f"|format(total_distance) }} <small class="text-muted" style="font-size: 1rem;">км</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+        <div class="card h-100">
+            <div class="card-header">TSS</div>
+            <div class="card-body">
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
+                    {{ "%.0f"|format(total_tss) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+        <div class="card h-100">
+            <div class="card-header">Время</div>
+            <div class="card-body">
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
+                    {{ total_duration }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{# Средние показатели #}
+<div class="card mb-4">
+    <div class="card-header">СРЕДНИЕ ПОКАЗАТЕЛИ</div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-6 col-md-4 text-center">
+                <div class="text-muted text-uppercase small">Мощность</div>
+                <div style="font-family: monospace; font-size: 1.5rem; font-weight: 700;">{{ "%.0f"|format(avg_watts) }} Вт</div>
+            </div>
+            <div class="col-6 col-md-4 text-center">
+                <div class="text-muted text-uppercase small">Скорость</div>
+                <div style="font-family: monospace; font-size: 1.5rem; font-weight: 700;">{{ "%.1f"|format(avg_speed) }} км/ч</div>
+            </div>
+            <div class="col-6 col-md-4 text-center">
+                <div class="text-muted text-uppercase small">Пульс</div>
+                <div style="font-family: monospace; font-size: 1.5rem; font-weight: 700;">{{ "%.0f"|format(avg_heartrate) }} bpm</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}
