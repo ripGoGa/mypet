@@ -268,27 +268,30 @@ async def chat(request: Request, user_question: str = Form(...), session: Sessio
 
 
 @app.get('/statistics')
-async def main_stat(request: Request, session: Session = Depends(get_session), period: int = 1):
+async def main_stat(request: Request, session: Session = Depends(get_session), period: int = 7):
     week_ago = datetime.now() - timedelta(days=period)
     workouts_for_range = session.exec(
         select(Workout).join(UploadedFile).where(UploadedFile.uploaded_at >= week_ago)).all()
     count_workouts = len(workouts_for_range)
-    total_distance = 0
+    total_distance = []
     total_tss = []
     total_duration = timedelta(days=0)
     avg_watts = []
     avg_speed = []
     avg_heartrate = []
-    if not count_workouts:
-        return templates.TemplateResponse('statistics.html', {'request': request, 'count_workouts': count_workouts,
-                                                              'total_distance': total_distance, 'total_tss': total_tss,
-                                                              'total_duration': total_duration, 'avg_watts': avg_watts,
-                                                              'avg_speed': avg_speed, 'avg_heartrate': avg_heartrate})
+    avg_cadence = []
+    in_factor = []
     for workout in workouts_for_range:
-        total_distance += workout.distance_km
+        total_distance.append(workout.distance_km)
         if workout.training_stress_score:
             total_tss.append(workout.training_stress_score)
         total_duration += workout.duration
+
+        if workout.intensity_factor:
+            in_factor.append(workout.intensity_factor)
+
+        if workout.avg_cadence:
+            avg_cadence.append(workout.avg_cadence)
 
         if workout.avg_watts:
             avg_watts.append(workout.avg_watts)
@@ -298,11 +301,14 @@ async def main_stat(request: Request, session: Session = Depends(get_session), p
 
         if workout.avg_heartrate:
             avg_heartrate.append(workout.avg_heartrate)
-
+    max_in_factor = max(in_factor)
+    max_distance = max(total_distance)
     avg_heartrate = sum(avg_heartrate) / len(avg_heartrate) if avg_heartrate else 0
     avg_speed = sum(avg_speed) / len(avg_speed) if avg_speed else 0
     avg_watts = sum(avg_watts) / len(avg_watts) if avg_watts else 0
     total_tss = sum(total_tss)
+    avg_cadence = sum(avg_cadence) / len(avg_cadence) if avg_cadence else 0
+
 
     return templates.TemplateResponse('statistics.html', {'request': request, 'count_workouts': count_workouts,
                                                           'total_distance': total_distance, 'total_tss': total_tss,

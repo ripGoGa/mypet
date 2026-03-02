@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="style(ui): overhaul dashboard and add workout list views&#10;&#10;- UI/UX: Redesign Dashboard (`index.html`) to &quot;Industrial Monochrome&quot; style.&#10;- UI/UX: Create `workouts.html` with a data table for viewing uploaded logs.&#10;- UI/UX: Create `statistics.html` placeholder page.&#10;- UI/UX: Update `imports.html` styling (strict cards, alerts).&#10;- Nav: Update `base.html` menu with links to Workouts and Stats.&#10;- Main: Add routes for `/workouts` and `/statistics`.&#10;- Main: Update root route to fetch user name for the dashboard greeting.">
-      <change afterPath="$PROJECT_DIR$/app/templates/statistics.html" afterDir="false" />
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="feat(stats): implement statistics dashboard and data aggregation&#10;&#10;- Backend: Add `/statistics` endpoint with time period filtering (7, 30, 365 days).&#10;- Logic: Implement safe calculation for total metrics (distance, duration, TSS) and averages (HR, speed, power).&#10;- Frontend: Create `statistics.html` with a responsive grid, period toggle buttons, and empty state handling.&#10;- Fix: Resolve Jinja2 formatting errors by correctly summing list variables and handling default query parameters.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
     </list>
@@ -90,14 +89,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1758819487803</updated>
-    </task>
-    <task id="LOCAL-00005" summary="add CSV upload and save file by hash with validation">
-      <option name="closed" value="true" />
-      <created>1759430065131</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1759430065131</updated>
     </task>
     <task id="LOCAL-00006" summary="add storage for upload workouts, show recent uploads in workouts page">
       <option name="closed" value="true" />
@@ -483,7 +474,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769160743230</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="feat(stats): implement statistics dashboard and data aggregation&#10;&#10;- Backend: Add `/statistics` endpoint with time period filtering (7, 30, 365 days).&#10;- Logic: Implement safe calculation for total metrics (distance, duration, TSS) and averages (HR, speed, power).&#10;- Frontend: Create `statistics.html` with a responsive grid, period toggle buttons, and empty state handling.&#10;- Fix: Resolve Jinja2 formatting errors by correctly summing list variables and handling default query parameters.">
+      <option name="closed" value="true" />
+      <created>1772455957662</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1772455957662</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -499,7 +498,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Progress: Created the OllamaService class, added asyncgenerate() for Ollama LLM integration.&#10;&#10;- Implemented the asynchronous generate() function for communicating with the local LLM via the Ollama API.&#10;- Handling connection and timeout errors." />
     <MESSAGE value="Feature: Add format_workouts() for AI coach&#10;&#10;- Implemented the format_workouts() function for converting workouts to text.&#10;- Format: compact strings with key metrics (distance, TSS, power, NP, IF).&#10;- Conditional display of heart rate and cadence (if data is available).&#10;- The user can select the number of workouts to analyze." />
     <MESSAGE value="feat: add OllamaService with AI coach integration&#10;&#10;- Implement generate() for LLM communication&#10;- Add format_workouts() for workout formatting&#10;- Add get_training_advice() to get AI recommendations&#10;- Handle connection errors and timeouts" />
     <MESSAGE value="feat: implement AI coach UI&#10;&#10;- Add GET /coach and POST /coach/advice routes&#10;- Add coach.html form and advice.html result page&#10;- User can select number of workouts to analyze&#10;- Call OllamaService to generate recommendations" />
@@ -524,6 +522,7 @@
     <MESSAGE value="style(ui): overhaul design to monochrome minimalism and fix profile editing&#10;&#10;- UI/UX: Replace default Bootstrap theme with a strict black-and-white  design.&#10;- Templates: Refactor `base.html` and `profile.html` to use high-contrast typography and grid layouts.&#10;- Fix(main): Resolve `AttributeError` in `/profile/edit` by correctly fetching `AthleteProfile` alongside `UserProfile`.&#10;- Fix(main): Correct variable naming consistency (`profile` -&gt; `user_profile`) to prevent Jinja2 `UndefinedError`." />
     <MESSAGE value="fix(chat): restore context injection and fix profile merging logic&#10;&#10;- Logic: Update `ai_coach.py` to accept and merge separate `UserProfile` and `AthleteProfile` objects (handling None values).&#10;- Main: Fix argument mismatch in `/coach/chat` endpoint; ensure `AthleteProfile` is fetched and passed to the service.&#10;- Templates: Correct variable naming in `UserProfile.txt` to match database fields (fix `KeyError: 'current_FTP'`).&#10;- Config: Ensure `Current_Content.txt` exists to prevent `FileNotFoundError` during prompt generation." />
     <MESSAGE value="style(ui): overhaul dashboard and add workout list views&#10;&#10;- UI/UX: Redesign Dashboard (`index.html`) to &quot;Industrial Monochrome&quot; style.&#10;- UI/UX: Create `workouts.html` with a data table for viewing uploaded logs.&#10;- UI/UX: Create `statistics.html` placeholder page.&#10;- UI/UX: Update `imports.html` styling (strict cards, alerts).&#10;- Nav: Update `base.html` menu with links to Workouts and Stats.&#10;- Main: Add routes for `/workouts` and `/statistics`.&#10;- Main: Update root route to fetch user name for the dashboard greeting." />
-    <option name="LAST_COMMIT_MESSAGE" value="style(ui): overhaul dashboard and add workout list views&#10;&#10;- UI/UX: Redesign Dashboard (`index.html`) to &quot;Industrial Monochrome&quot; style.&#10;- UI/UX: Create `workouts.html` with a data table for viewing uploaded logs.&#10;- UI/UX: Create `statistics.html` placeholder page.&#10;- UI/UX: Update `imports.html` styling (strict cards, alerts).&#10;- Nav: Update `base.html` menu with links to Workouts and Stats.&#10;- Main: Add routes for `/workouts` and `/statistics`.&#10;- Main: Update root route to fetch user name for the dashboard greeting." />
+    <MESSAGE value="feat(stats): implement statistics dashboard and data aggregation&#10;&#10;- Backend: Add `/statistics` endpoint with time period filtering (7, 30, 365 days).&#10;- Logic: Implement safe calculation for total metrics (distance, duration, TSS) and averages (HR, speed, power).&#10;- Frontend: Create `statistics.html` with a responsive grid, period toggle buttons, and empty state handling.&#10;- Fix: Resolve Jinja2 formatting errors by correctly summing list variables and handling default query parameters." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(stats): implement statistics dashboard and data aggregation&#10;&#10;- Backend: Add `/statistics` endpoint with time period filtering (7, 30, 365 days).&#10;- Logic: Implement safe calculation for total metrics (distance, duration, TSS) and averages (HR, speed, power).&#10;- Frontend: Create `statistics.html` with a responsive grid, period toggle buttons, and empty state handling.&#10;- Fix: Resolve Jinja2 formatting errors by correctly summing list variables and handling default query parameters." />
   </component>
 </project>
