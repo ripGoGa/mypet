@@ -275,17 +275,25 @@ async def main_stat(request: Request, session: Session = Depends(get_session), p
     count_workouts = len(workouts_for_range)
     total_distance = []
     total_tss = []
-    total_duration = timedelta(days=0)
+    total_moving_time = timedelta(days=0)
     avg_watts = []
     avg_speed = []
     avg_heartrate = []
     avg_cadence = []
     in_factor = []
+    norm_power = []
+    max_hr = []
     for workout in workouts_for_range:
         total_distance.append(workout.distance_km)
         if workout.training_stress_score:
             total_tss.append(workout.training_stress_score)
-        total_duration += workout.duration
+        total_moving_time += workout.duration
+
+        if workout.max_heartrate:
+            max_hr.append(workout.max_heartrate)
+
+        if workout.normalized_power:
+            norm_power.append(workout.normalized_power)
 
         if workout.intensity_factor:
             in_factor.append(workout.intensity_factor)
@@ -301,16 +309,20 @@ async def main_stat(request: Request, session: Session = Depends(get_session), p
 
         if workout.avg_heartrate:
             avg_heartrate.append(workout.avg_heartrate)
-    max_in_factor = max(in_factor)
-    max_distance = max(total_distance)
+    max_in_factor = max(in_factor) if in_factor else 0
+    max_distance = max(total_distance) if total_distance else 0
+    max_np = max(norm_power) if norm_power else 0
+    max_heartrate = max(max_hr)
     avg_heartrate = sum(avg_heartrate) / len(avg_heartrate) if avg_heartrate else 0
     avg_speed = sum(avg_speed) / len(avg_speed) if avg_speed else 0
     avg_watts = sum(avg_watts) / len(avg_watts) if avg_watts else 0
     total_tss = sum(total_tss)
     avg_cadence = sum(avg_cadence) / len(avg_cadence) if avg_cadence else 0
-
-
     return templates.TemplateResponse('statistics.html', {'request': request, 'count_workouts': count_workouts,
                                                           'total_distance': total_distance, 'total_tss': total_tss,
-                                                          'total_duration': total_duration, 'avg_watts': avg_watts,
-                                                          'avg_speed': avg_speed, 'avg_heartrate': avg_heartrate})
+                                                          'total_moving_time': total_moving_time,
+                                                          'avg_watts': avg_watts,
+                                                          'avg_speed': avg_speed, 'avg_heartrate': avg_heartrate,
+                                                          'max_in_factor': max_in_factor, 'max_distance': max_distance,
+                                                          'max_np': max_np, 'max_heartrate': max_heartrate,
+                                                          'avg_cadence': avg_cadence})
