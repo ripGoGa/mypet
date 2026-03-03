@@ -283,8 +283,12 @@ async def main_stat(request: Request, session: Session = Depends(get_session), p
     in_factor = []
     norm_power = []
     max_hr = []
+    ccall = []
     for workout in workouts_for_range:
         total_distance.append(workout.distance_km)
+        if workout.calories_burned:
+            ccall.append(workout.calories_burned)
+
         if workout.training_stress_score:
             total_tss.append(workout.training_stress_score)
         total_moving_time += workout.duration
@@ -312,12 +316,14 @@ async def main_stat(request: Request, session: Session = Depends(get_session), p
     max_in_factor = max(in_factor) if in_factor else 0
     max_distance = max(total_distance) if total_distance else 0
     max_np = max(norm_power) if norm_power else 0
-    max_heartrate = max(max_hr)
+    max_heartrate = max(max_hr) if max_hr else 0
     avg_heartrate = sum(avg_heartrate) / len(avg_heartrate) if avg_heartrate else 0
     avg_speed = sum(avg_speed) / len(avg_speed) if avg_speed else 0
     avg_watts = sum(avg_watts) / len(avg_watts) if avg_watts else 0
     total_tss = sum(total_tss)
     avg_cadence = sum(avg_cadence) / len(avg_cadence) if avg_cadence else 0
+    total_ccall = sum(ccall) if ccall else 0
+    max_ccall = max(ccall) if ccall else 0
     return templates.TemplateResponse('statistics.html', {'request': request, 'count_workouts': count_workouts,
                                                           'total_distance': total_distance, 'total_tss': total_tss,
                                                           'total_moving_time': total_moving_time,
@@ -325,4 +331,5 @@ async def main_stat(request: Request, session: Session = Depends(get_session), p
                                                           'avg_speed': avg_speed, 'avg_heartrate': avg_heartrate,
                                                           'max_in_factor': max_in_factor, 'max_distance': max_distance,
                                                           'max_np': max_np, 'max_heartrate': max_heartrate,
-                                                          'avg_cadence': avg_cadence})
+                                                          'avg_cadence': avg_cadence, 'period': period,
+                                                          'total_ccall': total_ccall, 'max_ccall': max_ccall})

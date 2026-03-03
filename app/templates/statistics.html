@@ -25,53 +25,106 @@
     </div>
 {% else %}
 
-{# Сводные карточки #}
-<div class="row g-3 mb-5">
-
+{# Итоги периода #}
+<div class="card-header mb-2">ИТОГИ ПЕРИОДА</div>
+<div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
         <div class="card h-100">
             <div class="card-header">Тренировок</div>
             <div class="card-body">
-                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
-                    {{ count_workouts }}
-                </div>
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">{{ count_workouts }}</div>
             </div>
         </div>
     </div>
-
     <div class="col-6 col-md-3">
         <div class="card h-100">
-            <div class="card-header">Дистанция</div>
+            <div class="card-header">Общая дистанция</div>
             <div class="card-body">
                 <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
-                    {{ "%.1f"|format(total_distance) }} <small class="text-muted" style="font-size: 1rem;">км</small>
+                    {{ "%.1f"|format(total_distance | sum) }} <small class="text-muted" style="font-size: 1rem;">км</small>
                 </div>
             </div>
         </div>
     </div>
-
+    <div class="col-6 col-md-3">
+        <div class="card h-100">
+            <div class="card-header">Время в движении</div>
+            <div class="card-body">
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">{{ total_moving_time }}</div>
+            </div>
+        </div>
+    </div>
     <div class="col-6 col-md-3">
         <div class="card h-100">
             <div class="card-header">TSS</div>
             <div class="card-body">
-                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
-                    {{ "%.0f"|format(total_tss) }}
-                </div>
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">{{ "%.0f"|format(total_tss) }}</div>
             </div>
         </div>
     </div>
-
     <div class="col-6 col-md-3">
         <div class="card h-100">
-            <div class="card-header">Время</div>
+            <div class="card-header">Всего калорий</div>
             <div class="card-body">
                 <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
-                    {{ total_duration }}
+                    {{ "%.0f"|format(total_ccall) }} <small class="text-muted" style="font-size: 1rem;">ккал</small>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
+{# Рекорды периода #}
+<div class="card-header mb-2">РЕКОРДЫ ПЕРИОДА</div>
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card h-100">
+            <div class="card-header">Макс. дистанция</div>
+            <div class="card-body">
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
+                    {{ "%.1f"|format(max_distance) }} <small class="text-muted" style="font-size: 1rem;">км</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card h-100">
+            <div class="card-header">Макс. пульс</div>
+            <div class="card-body">
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
+                    {{ "%.0f"|format(max_heartrate) }} <small class="text-muted" style="font-size: 1rem;">bpm</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card h-100">
+            <div class="card-header">Макс. NP</div>
+            <div class="card-body">
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
+                    {{ "%.0f"|format(max_np) }} <small class="text-muted" style="font-size: 1rem;">Вт</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card h-100">
+            <div class="card-header">Макс. IF</div>
+            <div class="card-body">
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">{{ "%.2f"|format(max_in_factor) }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card h-100">
+            <div class="card-header">Макс. калорий</div>
+            <div class="card-body">
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
+                    {{ "%.0f"|format(max_ccall) }} <small class="text-muted" style="font-size: 1rem;">ккал</small>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 {# Средние показатели #}
@@ -79,15 +132,19 @@
     <div class="card-header">СРЕДНИЕ ПОКАЗАТЕЛИ</div>
     <div class="card-body">
         <div class="row g-3">
-            <div class="col-6 col-md-4 text-center">
+            <div class="col-6 col-md-3 text-center">
                 <div class="text-muted text-uppercase small">Мощность</div>
                 <div style="font-family: monospace; font-size: 1.5rem; font-weight: 700;">{{ "%.0f"|format(avg_watts) }} Вт</div>
             </div>
-            <div class="col-6 col-md-4 text-center">
+            <div class="col-6 col-md-3 text-center">
                 <div class="text-muted text-uppercase small">Скорость</div>
                 <div style="font-family: monospace; font-size: 1.5rem; font-weight: 700;">{{ "%.1f"|format(avg_speed) }} км/ч</div>
             </div>
-            <div class="col-6 col-md-4 text-center">
+            <div class="col-6 col-md-3 text-center">
+                <div class="text-muted text-uppercase small">Каденс</div>
+                <div style="font-family: monospace; font-size: 1.5rem; font-weight: 700;">{{ "%.0f"|format(avg_cadence) }} rpm</div>
+            </div>
+            <div class="col-6 col-md-3 text-center">
                 <div class="text-muted text-uppercase small">Пульс</div>
                 <div style="font-family: monospace; font-size: 1.5rem; font-weight: 700;">{{ "%.0f"|format(avg_heartrate) }} bpm</div>
             </div>
