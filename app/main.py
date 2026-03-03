@@ -269,10 +269,12 @@ async def chat(request: Request, user_question: str = Form(...), session: Sessio
 
 @app.get('/statistics')
 async def main_stat(request: Request, session: Session = Depends(get_session), period: int = 7):
+
     # Делаем запрос к базе данных
     week_ago = datetime.now() - timedelta(days=period)
     workouts_for_range = session.exec(
         select(Workout).join(UploadedFile).where(UploadedFile.uploaded_at >= week_ago)).all()
+
     # Списки с сырыми данными
     count_workouts = len(workouts_for_range)
     raw_distance = []
@@ -287,6 +289,7 @@ async def main_stat(request: Request, session: Session = Depends(get_session), p
     raw_max_hr = []
     raw_ccall = []
     raw_chart_dates = []
+
     # Собираем все данные
     for workout in workouts_for_range:
         raw_chart_dates.append(workout.source_file.uploaded_at.strftime('%d.%m'))
@@ -335,4 +338,10 @@ async def main_stat(request: Request, session: Session = Depends(get_session), p
                                                           'max_in_factor': max_in_factor, 'max_distance': max_distance,
                                                           'max_np': max_np, 'max_heartrate': max_heartrate,
                                                           'avg_cadence_num': avg_cadence_num, 'period': period,
-                                                          'total_ccall': total_ccall, 'max_ccall': max_ccall})
+                                                          'total_ccall': total_ccall, 'max_ccall': max_ccall,
+                                                          'raw_distance': raw_distance, 'raw_tss': raw_tss,
+                                                          'raw_watts': raw_watts, 'raw_speed': raw_speed,
+                                                          'raw_heartrate': raw_heartrate, 'raw_cadence': raw_cadence,
+                                                          'raw_in_factor': raw_in_factor,
+                                                          'raw_norm_power': raw_norm_power, 'raw_max_hr': raw_max_hr,
+                                                          'raw_ccall': raw_ccall, 'raw_chart_dates': raw_chart_dates})
