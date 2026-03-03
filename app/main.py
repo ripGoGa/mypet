@@ -269,67 +269,70 @@ async def chat(request: Request, user_question: str = Form(...), session: Sessio
 
 @app.get('/statistics')
 async def main_stat(request: Request, session: Session = Depends(get_session), period: int = 7):
+    # Делаем запрос к базе данных
     week_ago = datetime.now() - timedelta(days=period)
     workouts_for_range = session.exec(
         select(Workout).join(UploadedFile).where(UploadedFile.uploaded_at >= week_ago)).all()
+    # Списки с сырыми данными
     count_workouts = len(workouts_for_range)
-    total_distance = []
-    total_tss = []
+    raw_distance = []
+    raw_tss = []
     total_moving_time = timedelta(days=0)
-    avg_watts = []
-    avg_speed = []
-    avg_heartrate = []
-    avg_cadence = []
-    in_factor = []
-    norm_power = []
-    max_hr = []
-    ccall = []
+    raw_watts = []
+    raw_speed = []
+    raw_heartrate = []
+    raw_cadence = []
+    raw_in_factor = []
+    raw_norm_power = []
+    raw_max_hr = []
+    raw_ccall = []
+    raw_chart_dates = []
+    # Собираем все данные
     for workout in workouts_for_range:
-        total_distance.append(workout.distance_km)
-        if workout.calories_burned:
-            ccall.append(workout.calories_burned)
-
-        if workout.training_stress_score:
-            total_tss.append(workout.training_stress_score)
+        raw_chart_dates.append(workout.source_file.uploaded_at.strftime('%d.%m'))
+        raw_distance.append(workout.distance_km)
+        raw_ccall.append(workout.calories_burned)
+        raw_tss.append(workout.training_stress_score)
         total_moving_time += workout.duration
+        raw_max_hr.append(workout.max_heartrate)
+        raw_norm_power.append(workout.normalized_power)
+        raw_in_factor.append(workout.intensity_factor)
+        raw_cadence.append(workout.avg_cadence)
+        raw_watts.append(workout.avg_watts)
+        raw_speed.append(workout.avg_speed)
+        raw_heartrate.append(workout.avg_heartrate)
 
-        if workout.max_heartrate:
-            max_hr.append(workout.max_heartrate)
+    # Очищаем данные от None
+    cleaned_in_factor = [el for el in raw_in_factor if el is not None]
+    cleaned_np = [el for el in raw_norm_power if el is not None]
+    cleaned_tss = [el for el in raw_tss if el is not None]
+    cleaned_watts = [el for el in raw_watts if el is not None]
+    cleaned_speed = [el for el in raw_speed if el is not None]
+    cleaned_heartrate = [el for el in raw_heartrate if el is not None]
+    cleaned_cadence = [el for el in raw_cadence if el is not None]
+    cleaned_max_hr = [el for el in raw_max_hr if el is not None]
+    cleaned_ccall = [el for el in raw_ccall if el is not None]
 
-        if workout.normalized_power:
-            norm_power.append(workout.normalized_power)
-
-        if workout.intensity_factor:
-            in_factor.append(workout.intensity_factor)
-
-        if workout.avg_cadence:
-            avg_cadence.append(workout.avg_cadence)
-
-        if workout.avg_watts:
-            avg_watts.append(workout.avg_watts)
-
-        if workout.avg_speed:
-            avg_speed.append(workout.avg_speed)
-
-        if workout.avg_heartrate:
-            avg_heartrate.append(workout.avg_heartrate)
-    max_in_factor = max(in_factor) if in_factor else 0
-    max_distance = max(total_distance) if total_distance else 0
-    max_np = max(norm_power) if norm_power else 0
-    max_heartrate = max(max_hr) if max_hr else 0
-    avg_heartrate = sum(avg_heartrate) / len(avg_heartrate) if avg_heartrate else 0
-    avg_speed = sum(avg_speed) / len(avg_speed) if avg_speed else 0
-    avg_watts = sum(avg_watts) / len(avg_watts) if avg_watts else 0
-    total_tss = sum(total_tss)
-    avg_cadence = sum(avg_cadence) / len(avg_cadence) if avg_cadence else 0
-    total_ccall = sum(ccall) if ccall else 0
-    max_ccall = max(ccall) if ccall else 0
+    # Рассчитываем значения
+    max_in_factor = max(cleaned_in_factor) if cleaned_in_factor else 0
+    max_distance = max(raw_distance) if raw_distance else 0
+    max_np = max(cleaned_np) if cleaned_np else 0
+    max_heartrate = max(cleaned_max_hr) if cleaned_max_hr else 0
+    max_ccall = max(cleaned_ccall) if cleaned_ccall else 0
+    avg_heartrate_num = sum(cleaned_heartrate) / len(cleaned_heartrate) if cleaned_heartrate else 0
+    avg_speed_num = sum(cleaned_speed) / len(cleaned_speed) if cleaned_speed else 0
+    avg_watts_num = sum(cleaned_watts) / len(cleaned_watts) if cleaned_watts else 0
+    avg_cadence_num = sum(cleaned_cadence) / len(cleaned_cadence) if cleaned_cadence else 0
+    total_ccall = sum(cleaned_ccall) if cleaned_ccall else 0
+    total_tss_num = sum(cleaned_tss) if cleaned_tss else 0
     return templates.TemplateResponse('statistics.html', {'request': request, 'count_workouts': count_workouts,
-                                                          'total_distance': total_distance, 'total_tss': total_tss,
+                                                          'raw_total_distance': raw_distance,
+                                                          'total_tss_num': total_tss_num,
                                                           'total_moving_time': total_moving_time,
-                                                          'avg_watts': avg_watts,
-                                                          'avg_speed': avg_speed, 'avg_heartrate': avg_heartrate,
+                                                          'avg_watts_num': avg_watts_num,
+                                                          'avg_speed_num': avg_speed_num,
+                                                          'avg_heartrate_num': avg_heartrate_num,
                                                           'max_in_factor': max_in_factor, 'max_distance': max_distance,
                                                           'max_np': max_np, 'max_heartrate': max_heartrate,
-                                                          'avg_cadence': avg_cadence, 'period': period,
+                                                          'avg_cadence_num': avg_cadence_num, 'period': period,
                                                           'total_ccall': total_ccall, 'max_ccall': max_ccall})
