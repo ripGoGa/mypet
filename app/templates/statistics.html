@@ -41,8 +41,7 @@
             <div class="card-header">Общая дистанция</div>
             <div class="card-body">
                 <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
-                    {# Изменение здесь: используем raw_distance #}
-                    {{ "%.1f"|format(raw_distance | sum) }} <small class="text-muted" style="font-size: 1rem;">км</small>
+                    {{ "%.1f"|format(raw_total_distance | sum) }} <small class="text-muted" style="font-size: 1rem;">км</small>
                 </div>
             </div>
         </div>
@@ -60,6 +59,74 @@
             <div class="card-header">TSS</div>
             <div class="card-body">
                 <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">{{ "%.0f"|format(total_tss_num) }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Средние показатели #}
+<div class="card mb-4 border-dark">
+    <div class="card-header bg-black text-white">СРЕДНИЕ ПОКАЗАТЕЛИ</div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-6 col-md-3 text-center">
+                <div class="text-muted text-uppercase small">Мощность</div>
+                <div style="font-family: monospace; font-size: 1.5rem; font-weight: 700;">{{ "%.0f"|format(avg_watts_num) }} Вт</div>
+            </div>
+            <div class="col-6 col-md-3 text-center">
+                <div class="text-muted text-uppercase small">Скорость</div>
+                <div style="font-family: monospace; font-size: 1.5rem; font-weight: 700;">{{ "%.1f"|format(avg_speed_num) }} км/ч</div>
+            </div>
+            <div class="col-6 col-md-3 text-center">
+                <div class="text-muted text-uppercase small">Каденс</div>
+                <div style="font-family: monospace; font-size: 1.5rem; font-weight: 700;">{{ "%.0f"|format(avg_cadence_num) }} rpm</div>
+            </div>
+            <div class="col-6 col-md-3 text-center">
+                <div class="text-muted text-uppercase small">Пульс</div>
+                <div style="font-family: monospace; font-size: 1.5rem; font-weight: 700;">{{ "%.0f"|format(avg_heartrate_num) }} bpm</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Рекорды периода #}
+<div class="card-header mb-2">РЕКОРДЫ ПЕРИОДА</div>
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card h-100">
+            <div class="card-header">Макс. дистанция</div>
+            <div class="card-body">
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
+                    {{ "%.1f"|format(max_distance) }} <small class="text-muted" style="font-size: 1rem;">км</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card h-100">
+            <div class="card-header">Макс. пульс</div>
+            <div class="card-body">
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
+                    {{ "%.0f"|format(max_heartrate) }} <small class="text-muted" style="font-size: 1rem;">bpm</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card h-100">
+            <div class="card-header">Макс. NP</div>
+            <div class="card-body">
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
+                    {{ "%.0f"|format(max_np) }} <small class="text-muted" style="font-size: 1rem;">Вт</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card h-100">
+            <div class="card-header">Макс. IF</div>
+            <div class="card-body">
+                <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">{{ "%.2f"|format(max_in_factor) }}</div>
             </div>
         </div>
     </div>
@@ -84,6 +151,131 @@
         </div>
     </div>
 </div>
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card h-100 border-dark">
+            <div class="card-header bg-transparent border-dark fw-bold text-uppercase">Скорость (км\ч)</div>
+            <div class="card-body">
+                <canvas id="speedChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100 border-dark">
+            <div class="card-header bg-transparent border-dark fw-bold text-uppercase">Пульс (bpm)</div>
+            <div class="card-body">
+                <canvas id="hrChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
 
-{# Рекорды периода #}
-<div class="card-header mb-2">РЕКОРДЫ
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // 1. Мост между Python и JavaScript
+    const chartLabels = {{ raw_chart_dates | tojson }};
+    const tssData = {{ raw_tss | tojson }};
+    const wattsData = {{ raw_watts | tojson }};
+    const speedData = {{ raw_speed | tojson }};
+    const hrData = {{ raw_heartrate | tojson }};
+
+    // 2. Инициализация графика TSS (Столбцы)
+    const ctxTss = document.getElementById('tssChart').getContext('2d');
+    new Chart(ctxTss, {
+        type: 'bar', // Тип графика: столбчатый
+        data: {
+            labels: chartLabels, // Подписи оси X (наши даты)
+            datasets: [{
+                label: 'TSS',
+                data: tssData, // Значения оси Y
+                backgroundColor: 'rgba(0, 0, 0, 0.8)', // Цвет заливки (черный)
+                borderRadius: 4 // Скругление углов столбцов
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true } // Ось Y всегда начинается с нуля
+            }
+        }
+    });
+
+    // 3. Инициализация графика Мощности (Линия)
+    const ctxWatts = document.getElementById('wattsChart').getContext('2d');
+    new Chart(ctxWatts, {
+        type: 'line', // Тип графика: линия
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Ср. Мощность (Вт)',
+                data: wattsData,
+                borderColor: 'rgba(0, 0, 0, 1)', // Цвет линии (черный)
+                backgroundColor: 'rgba(0, 0, 0, 0.1)', // Цвет заливки под линией
+                borderWidth: 2,
+                tension: 0.3, // Сглаживание углов линии
+                fill: true, // Закрасить область под линией
+                spanGaps: true // ПРОПУСКАТЬ NULL (Связывать точки, если нет данных)
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: false } // Мощность не обязательно с нуля начинать
+            }
+        }
+    });
+
+    // 4. Инициализация графика Скорости (Линия)
+    const ctxSpeed = document.getElementById('speedChart').getContext('2d');
+    new Chart(ctxSpeed, {
+        type: 'line', // Тип графика: линия
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Скорость (км\ч)',
+                data: speedData,
+                borderColor: 'rgba(0, 0, 0, 1)', // Цвет линии (черный)
+                backgroundColor: 'rgba(0, 0, 0, 0.1)', // Цвет заливки под линией
+                borderWidth: 2,
+                tension: 0.3, // Сглаживание углов линии
+                fill: true, // Закрасить область под линией
+                spanGaps: true // ПРОПУСКАТЬ NULL (Связывать точки, если нет данных)
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: false } // Мощность не обязательно с нуля начинать
+            }
+        }
+    });
+
+    // 5. Инициализация графика Пульса (Линия)
+    const ctxHr = document.getElementById('hrChart').getContext('2d');
+    new Chart(ctxHr, {
+        type: 'line', // Тип графика: линия
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Пульс (bpm)',
+                data: hrData,
+                borderColor: 'rgba(0, 0, 0, 1)', // Цвет линии (черный)
+                backgroundColor: 'rgba(0, 0, 0, 0.1)', // Цвет заливки под линией
+                borderWidth: 2,
+                tension: 0.3, // Сглаживание углов линии
+                fill: true, // Закрасить область под линией
+                spanGaps: true // ПРОПУСКАТЬ NULL (Связывать точки, если нет данных)
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: false } // Мощность не обязательно с нуля начинать
+            }
+        }
+    });
+</script>
+
+{% endif %}
+{% endblock %}

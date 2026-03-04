@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="refactor(stats): separate raw and cleaned data for accurate metrics&#10;&#10;- Restructured data collection to preserve raw sequences for future chart integration.&#10;- Implemented list comprehensions to safely filter 'None' values from sensor data.&#10;- Updated math operations (sum, len, max) to use cleaned datasets, preventing incorrect averages and division errors.">
+    <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="feat(stats): integrate Chart.js for TSS and Power visualization&#10;&#10;- Added an interactive bar chart to track Training Stress Score (TSS) over the selected period.&#10;- Implemented a line chart for Average Power (Watts) with 'spanGaps' enabled to handle missing sensor data gracefully.&#10;- Configured Jinja 'tojson' filters to safely pass raw Python data arrays to the JavaScript environment.&#10;- Cleaned up the 'TemplateResponse' context by removing the redundant 'raw_total_distance' variable.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/templates/statistics.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/statistics.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -90,14 +89,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1758819487803</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Create models for UploadedFile and Workout">
-      <option name="closed" value="true" />
-      <created>1759774948613</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1759774948613</updated>
     </task>
     <task id="LOCAL-00011" summary="Prep for refactoring: created separate 'services' folder and added 'file_validator' function">
       <option name="closed" value="true" />
@@ -483,7 +474,15 @@
       <option name="project" value="LOCAL" />
       <updated>1772547293163</updated>
     </task>
-    <option name="localTasksCounter" value="59" />
+    <task id="LOCAL-00059" summary="feat(stats): integrate Chart.js for TSS and Power visualization&#10;&#10;- Added an interactive bar chart to track Training Stress Score (TSS) over the selected period.&#10;- Implemented a line chart for Average Power (Watts) with 'spanGaps' enabled to handle missing sensor data gracefully.&#10;- Configured Jinja 'tojson' filters to safely pass raw Python data arrays to the JavaScript environment.&#10;- Cleaned up the 'TemplateResponse' context by removing the redundant 'raw_total_distance' variable.">
+      <option name="closed" value="true" />
+      <created>1772548569769</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1772548569769</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -499,7 +498,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="feat: add ChatMessage model and UserProfile relationship&#10;&#10;- Add ChatMessage model (user_id, role, content, created_at)&#10;- Update UserProfile with messages relationship (back_populates)&#10;- Prepare database schema for persistent AI chat history&#10;- Define foreign key constraints for user-message linking" />
     <MESSAGE value="feat: add chat method to OllamaService" />
     <MESSAGE value="feat: implement get_chat_response with full history context" />
     <MESSAGE value="refactor: GET/coach, preparation for creating an AI chat" />
@@ -524,6 +522,7 @@
     <MESSAGE value="feat(stats): add peak metrics and improve data safety&#10;&#10;- Added calculation for peak heart rate, normalized power, and max distance.&#10;- Fixed 'ValueError' by adding safety checks for max() on empty sequences.&#10;- Improved average calculations (power, heart rate, cadence) to correctly handle missing sensor data.&#10;- Set default statistics view to a 7-day period." />
     <MESSAGE value="fix(stats): correct cadence and calories math, append new peak metrics&#10;&#10;- Fixed average cadence calculation by properly dividing.&#10;- Corrected 'total_ccall' logic.&#10;- Added 'max_ccall' to track the highest calorie burn in a single workout.&#10;- Ensured safe data handling for calorie aggregations to prevent zero-division or empty max() errors." />
     <MESSAGE value="refactor(stats): separate raw and cleaned data for accurate metrics&#10;&#10;- Restructured data collection to preserve raw sequences for future chart integration.&#10;- Implemented list comprehensions to safely filter 'None' values from sensor data.&#10;- Updated math operations (sum, len, max) to use cleaned datasets, preventing incorrect averages and division errors." />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor(stats): separate raw and cleaned data for accurate metrics&#10;&#10;- Restructured data collection to preserve raw sequences for future chart integration.&#10;- Implemented list comprehensions to safely filter 'None' values from sensor data.&#10;- Updated math operations (sum, len, max) to use cleaned datasets, preventing incorrect averages and division errors." />
+    <MESSAGE value="feat(stats): integrate Chart.js for TSS and Power visualization&#10;&#10;- Added an interactive bar chart to track Training Stress Score (TSS) over the selected period.&#10;- Implemented a line chart for Average Power (Watts) with 'spanGaps' enabled to handle missing sensor data gracefully.&#10;- Configured Jinja 'tojson' filters to safely pass raw Python data arrays to the JavaScript environment.&#10;- Cleaned up the 'TemplateResponse' context by removing the redundant 'raw_total_distance' variable." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(stats): integrate Chart.js for TSS and Power visualization&#10;&#10;- Added an interactive bar chart to track Training Stress Score (TSS) over the selected period.&#10;- Implemented a line chart for Average Power (Watts) with 'spanGaps' enabled to handle missing sensor data gracefully.&#10;- Configured Jinja 'tojson' filters to safely pass raw Python data arrays to the JavaScript environment.&#10;- Cleaned up the 'TemplateResponse' context by removing the redundant 'raw_total_distance' variable." />
   </component>
 </project>
