@@ -46,10 +46,12 @@ async def hello_root(request: Request, session: Session = Depends(get_session)):
 
 
 @app.get('/workouts', response_class=HTMLResponse)
-async def list_workouts(request: Request, session: Session = Depends(get_session), page: int = 1, period: int = 0):
-    limit = 10
+async def list_workouts(request: Request, session: Session = Depends(get_session), page: int = 1, period: int = 0,
+                        limit: int = 10):
     if page < 1:
         page = 1
+    if limit > 100 or limit < 1:
+        limit = 10
     offset = (page - 1) * limit
 
     # 1. Чистый запрос
@@ -72,7 +74,8 @@ async def list_workouts(request: Request, session: Session = Depends(get_session
 
     return templates.TemplateResponse('workouts.html', {'request': request, 'workouts': workouts,
                                                         'current_page': page,
-                                                        'total_pages': total_pages, 'period': period})
+                                                        'total_pages': total_pages, 'period': period,
+                                                        'limit': limit})
 
 
 @app.get('/imports', response_class=HTMLResponse)

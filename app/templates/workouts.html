@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block title %} Мои тренировки{% endblock %}
 {% block content %}
+<div style="margin-bottom: 15px;">
+    Показывать по:
+    <a href="/workouts?limit=5{% if period %}&period={{ period }}{% endif %}">5</a> |
+    <a href="/workouts?limit=10{% if period %}&period={{ period }}{% endif %}">10</a> |
+    <a href="/workouts?limit=25{% if period %}&period={{ period }}{% endif %}">25</a>
+</div>
     {% if workouts %}
         <table border="1">
             <tr>
@@ -34,13 +40,13 @@
 
     <div>
         {% if current_page > 1 %}
-            <a href="/workouts?page={{ current_page - 1 }}{% if period %}&period={{ period }}{% endif %}">← Предыдущая</a>
+            <a href="/workouts?page={{ current_page - 1 }}{% if period %}&period={{ period }}{% endif %}&limit={{ limit }}">← Предыдущая</a>
         {% endif %}
 
         Страница {{ current_page }} из {{ total_pages }}
 
         {% if current_page < total_pages %}
-            <a href="/workouts?page={{ current_page + 1 }}{% if period %}&period={{ period }}{% endif %}">Следующая →</a>
+            <a href="/workouts?page={{ current_page + 1 }}{% if period %}&period={{ period }}{% endif %}&limit={{ limit }}">Следующая →</a>
         {% endif %}
     </div>
 {% endblock %}
