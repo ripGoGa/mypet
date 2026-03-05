@@ -46,17 +46,33 @@ async def hello_root(request: Request, session: Session = Depends(get_session)):
 
 
 @app.get('/workouts', response_class=HTMLResponse)
-async def list_workouts(request: Request, session: Session = Depends(get_session), page: int = 1):
+async def list_workouts(request: Request, session: Session = Depends(get_session), page: int = 1, period: int = 0):
+    limit = 10
     if page < 1:
         page = 1
-    limit = 10
     offset = (page - 1) * limit
-    total_count = session.exec(select(func.count(Workout.id))).one()
+
+    # 1. Чистый запрос
+    query_workouts = select(Workout)
+    query_count = select(func.count(Workout.id))
+
+    # 2. Формируем запрос из роута статистики
+    if period:
+        target_date = datetime.now() - timedelta(days=period)
+        query_workouts = query_workouts.join(UploadedFile).where(UploadedFile.uploaded_at >= target_date)
+        query_count = query_count.join(UploadedFile).where(UploadedFile.uploaded_at >= target_date)
+
+    # 3. Формируем запрос для простого просмотра тренировок
+    query_workouts = query_workouts.order_by(desc(Workout.id)).limit(limit).offset(offset)
+
+    # 4. Делаем запрос в базу
+    workouts = session.exec(query_workouts).all()
+    total_count = session.exec(query_count).one()
     total_pages = ceil(total_count / limit)
-    workouts = session.exec(select(Workout).order_by(desc(Workout.id)).limit(limit).offset(offset)).all()
+
     return templates.TemplateResponse('workouts.html', {'request': request, 'workouts': workouts,
                                                         'current_page': page,
-                                                        'total_pages': total_pages})
+                                                        'total_pages': total_pages, 'period': period})
 
 
 @app.get('/imports', response_class=HTMLResponse)
@@ -269,7 +285,6 @@ async def chat(request: Request, user_question: str = Form(...), session: Sessio
 
 @app.get('/statistics')
 async def main_stat(request: Request, session: Session = Depends(get_session), period: int = 7):
-
     # Делаем запрос к базе данных
     week_ago = datetime.now() - timedelta(days=period)
     workouts_for_range = session.exec(

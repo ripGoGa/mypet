@@ -26,7 +26,12 @@
 {% else %}
 
 {# Итоги периода #}
-<div class="card-header mb-2">ИТОГИ ПЕРИОДА</div>
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <div class="card-header border-0 mb-0 text-uppercase fw-bold">Итоги периода</div>
+    <a href="/workouts?period={{ period }}" class="btn btn-sm btn-outline-dark text-uppercase" style="letter-spacing: 1px;">
+        Список тренировок &rarr;
+    </a>
+</div>
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
         <div class="card h-100">

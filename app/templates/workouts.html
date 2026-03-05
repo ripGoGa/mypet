@@ -34,13 +34,13 @@
 
     <div>
         {% if current_page > 1 %}
-            <a href="/workouts?page={{ current_page - 1 }}">← Предыдущая</a>
+            <a href="/workouts?page={{ current_page - 1 }}{% if period %}&period={{ period }}{% endif %}">← Предыдущая</a>
         {% endif %}
 
         Страница {{ current_page }} из {{ total_pages }}
 
         {% if current_page < total_pages %}
-            <a href="/workouts?page={{ current_page + 1 }}">Следующая →</a>
+            <a href="/workouts?page={{ current_page + 1 }}{% if period %}&period={{ period }}{% endif %}">Следующая →</a>
         {% endif %}
     </div>
 {% endblock %}
