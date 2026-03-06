@@ -7,9 +7,9 @@
     <div class="col-md-8 col-lg-6">
 
         {% if message %}
-            <div class="alert {{ 'alert-danger' if is_error else 'alert-success' }} rounded-0 border-0 mb-4 d-flex align-items-center" role="alert">
+            <div class="alert alert-dark rounded-0 border-0 mb-4 d-flex align-items-center" role="alert">
                 <div class="fw-bold text-uppercase me-2">
-                    {{ 'ERROR:' if is_error else 'SUCCESS:' }}
+                    ОТЧЕТ:
                 </div>
                 <div>{{ message }}</div>
             </div>
@@ -25,9 +25,9 @@
 
                     <div class="mb-4">
                         <label for="formFileLg" class="form-label text-uppercase text-muted fw-bold small">
-                            Выберите файл тренировки
+                            Выберите файлы тренировок
                         </label>
-                        <input class="form-control form-control-lg border-dark" id="formFileLg" type="file" name="file" accept=".csv, .fit" required>
+                        <input class="form-control form-control-lg border-dark" id="formFileLg" type="file" name="files" accept=".csv, .fit" multiple required>
                         <div class="form-text mt-2">
                             Поддерживаемые форматы: <span class="fw-bold text-dark">.FIT</span> (Garmin/Wahoo), <span class="fw-bold text-dark">.CSV</span>
                         </div>

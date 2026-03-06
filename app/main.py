@@ -80,51 +80,50 @@ async def list_workouts(request: Request, session: Session = Depends(get_session
 
 @app.get('/imports', response_class=HTMLResponse)
 async def imports(request: Request):
-    ok = request.query_params.get('ok')
-    err = request.query_params.get('err')
-
+    success_count = int(request.query_params.get('success')) if request.query_params.get('success') else 0
+    dup_count = int(request.query_params.get('dup')) if request.query_params.get('dup') else 0
+    err_count = int(request.query_params.get('err')) if request.query_params.get('err') else 0
     message = None
-    is_error = False
-    if ok == '1':
-        message = 'Файл успешно сохранен'
-    elif err == 'dup':
-        message = 'Такой файл уже импортирован'
-        is_error = True
-    elif err == 'type':
-        message = 'Можно загружать только CSV-файлы!'
-        is_error = True
-
-    return templates.TemplateResponse('imports.html', {'request': request, 'message': message, 'is_error': is_error})
+    if 'success' in request.query_params or 'dup' in request.query_params or 'err' in request.query_params:
+        message = f'Успешно загружено: {success_count}, Пропущено дубликатов: {dup_count}, Ошибок: {err_count}'
+    return templates.TemplateResponse('imports.html', {'request': request, 'message': message})
 
 
 @app.post('/imports')
-async def import_csv(file: UploadFile = File(...), session: Session = Depends(get_session)):
+async def import_csv(files: list[UploadFile] = File(...), session: Session = Depends(get_session)):
     user = session.exec(select(UserProfile)).first()
+    success_count = 0
+    dup_count = 0
+    type_err_count = 0
+
     if not user:
         return RedirectResponse(url='/profile/create', status_code=303)
-    try:
-        validate_file_type(filename=file.filename, content_type=file.content_type)
-        content = await file.read()
-        file_path, hash_value = save_file_with_hash(content, session)
-        uploaded_file = UploadedFile(original_name=file.filename, sha256=hash_value, uploaded_at=datetime.now(UTC))
-        session.add(uploaded_file)
-        session.flush()
+    for file in files:
+        try:
+            validate_file_type(filename=file.filename, content_type=file.content_type)
+            content = await file.read()
+            file_path, hash_value = save_file_with_hash(content, session)
+            uploaded_file = UploadedFile(original_name=file.filename, sha256=hash_value, uploaded_at=datetime.now(UTC))
+            session.add(uploaded_file)
+            session.flush()
+            parse_csv_to_workout(file_path=file_path, uf_id=uploaded_file.id, session=session, user_id=user.id)
+            session.commit()
+            success_count += 1
 
-        parse_csv_to_workout(file_path=file_path, uf_id=uploaded_file.id, session=session, user_id=user.id)
-        session.commit()
-        return RedirectResponse(url='/imports?ok=1', status_code=303)
-    except ParseCsvError:
-        session.rollback()
-        return RedirectResponse(url='/imports?err=parse', status_code=303)
-    except FileValidationError:
-        session.rollback()
-        return RedirectResponse(url='/imports?err=type', status_code=303)
-    except FileAlreadyExistsError:
-        session.rollback()
-        return RedirectResponse(url='/imports?err=dup', status_code=303)
-    except OSError:
-        session.rollback()
-        return RedirectResponse(url='/imports?err=write', status_code=303)
+        except ParseCsvError:
+            session.rollback()
+            type_err_count += 1
+        except FileValidationError:
+            session.rollback()
+            type_err_count += 1
+        except FileAlreadyExistsError:
+            session.rollback()
+            dup_count += 1
+        except OSError:
+            session.rollback()
+            type_err_count += 1
+    return RedirectResponse(url=f'/imports?success={success_count}&dup={dup_count}&err={type_err_count}',
+                            status_code=303)
 
 
 @app.get('/profile', response_class=HTMLResponse)
