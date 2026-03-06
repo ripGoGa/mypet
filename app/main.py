@@ -122,6 +122,11 @@ async def import_csv(files: list[UploadFile] = File(...), session: Session = Dep
         except OSError:
             session.rollback()
             type_err_count += 1
+
+        except Exception as e:
+            session.rollback()
+            type_err_count += 1
+            print(f"Неизвестная ошибка при загрузке {file.filename}: {e}")  # Для дебага в консоли
     return RedirectResponse(url=f'/imports?success={success_count}&dup={dup_count}&err={type_err_count}',
                             status_code=303)
 
