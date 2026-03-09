@@ -1,6 +1,8 @@
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Optional, List, Text
+
+from pydantic import BaseModel
 from sqlmodel import SQLModel, Field, Relationship
 
 
@@ -61,3 +63,14 @@ class ChatMessage(SQLModel, table=True):
     content: str
     created_at: datetime = Field(default_factory=datetime.now)
     user: Optional['UserProfile'] = Relationship(back_populates='messages')
+
+
+class Users(SQLModel, table=True):
+    id: Optional[int] = Field(primary_key=True, default=None)
+    email: str = Field(unique=True)
+    hashed_password: str
+
+
+class UserCreate(BaseModel):
+    email: str
+    password: str
