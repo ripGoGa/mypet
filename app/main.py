@@ -12,7 +12,7 @@ from app.db import create_db_and_tables, get_session
 from fastapi import FastAPI, UploadFile, File, Depends, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from app.models.models import UploadedFile, Workout, UserProfile, ChatMessage, AthleteProfile
+from app.models.models import UploadedFile, Workout, UserProfile, ChatMessage, AthleteProfile, Users, UserCreate
 from starlette.requests import Request
 from pathlib import Path
 from sqlmodel import Session, select
@@ -20,6 +20,7 @@ from datetime import datetime, UTC, date, timedelta
 from sqlalchemy import desc, func
 
 from app.services.parse_cvs import parse_csv_to_workout, ParseCsvError
+from app.services.security import get_password_hash
 
 app = FastAPI(title="Bike Tracker")
 
@@ -367,3 +368,18 @@ async def main_stat(request: Request, session: Session = Depends(get_session), p
                                                           'raw_in_factor': raw_in_factor,
                                                           'raw_norm_power': raw_norm_power, 'raw_max_hr': raw_max_hr,
                                                           'raw_ccall': raw_ccall, 'raw_chart_dates': raw_chart_dates})
+
+
+@app.post('/register')
+async def register(request: Request, user_data: UserCreate, session=Depends(get_session)):
+    # Делаем запрос в БД и проверяем существует данный пользователь или нет
+    query = session.exec(select(Users).where(Users.email == user_data.email)).first()
+    if query:
+        raise HTTPException(status_code=400, detail='Этот email уже зарегистрирован')
+    # Создаем хэш пароля и добавляем новую запись в БД
+    hashed_pas = get_password_hash(user_data.password)
+    new_user = Users(email=user_data.email, hashed_password=hashed_pas)
+    session.add(new_user)
+    session.commit()
+    return {'message': 'Успех'}
+
