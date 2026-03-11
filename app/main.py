@@ -12,7 +12,8 @@ from app.db import create_db_and_tables, get_session
 from fastapi import FastAPI, UploadFile, File, Depends, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from app.models.models import UploadedFile, Workout, UserProfile, ChatMessage, AthleteProfile, Users, UserCreate
+from app.models.models import UploadedFile, Workout, UserProfile, ChatMessage, AthleteProfile, Users, UserCreate, \
+    UserLogin
 from starlette.requests import Request
 from pathlib import Path
 from sqlmodel import Session, select
@@ -20,7 +21,7 @@ from datetime import datetime, UTC, date, timedelta
 from sqlalchemy import desc, func
 
 from app.services.parse_cvs import parse_csv_to_workout, ParseCsvError
-from app.services.security import get_password_hash
+from app.services.security import get_password_hash, verify_password, create_access_token
 
 app = FastAPI(title="Bike Tracker")
 
@@ -371,7 +372,7 @@ async def main_stat(request: Request, session: Session = Depends(get_session), p
 
 
 @app.post('/register')
-async def register(request: Request, user_data: UserCreate, session=Depends(get_session)):
+def register(request: Request, user_data: UserCreate, session=Depends(get_session)):
     # Делаем запрос в БД и проверяем существует данный пользователь или нет
     query = session.exec(select(Users).where(Users.email == user_data.email)).first()
     if query:
@@ -383,3 +384,15 @@ async def register(request: Request, user_data: UserCreate, session=Depends(get_
     session.commit()
     return {'message': 'Успех'}
 
+
+@app.post('/login')
+def login(request: Request, user_data: UserLogin, session=Depends(get_session)) -> dict:
+    # Ищем пользователя в БД
+    query = session.exec(select(Users).where(Users.email == user_data.email)).first()
+    if not query:
+        raise HTTPException(status_code=400, detail='Пользователь не найден или не верный пароль')
+    # Проверяем пароль
+    if verify_password(plain_password=user_data.password, hashed_password=query.hashed_password):
+        jwt_token = create_access_token(data={'sub': user_data.email})
+        return {'access_token': jwt_token, 'token_type': 'bearer'}
+    raise HTTPException(status_code=400, detail='Пользователь не найден или не верный пароль')

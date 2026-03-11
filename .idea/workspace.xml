@@ -7,8 +7,8 @@
     <list default="true" id="7e1a5cf2-d893-489c-bc94-af214a6f7d61" name="Changes" comment="feat(workouts): add period filtering and preserve query in pagination&#10;&#10;- Refactored '/workouts' route to use the Query Builder pattern for dynamic SQL filtering.&#10;- Implemented optional 'period' parameter to filter workouts by recent days.&#10;- Updated pagination links in 'workouts.html' to persist the 'period' query parameter across page navigation.&#10;- Fixed potential SQL offset error by ensuring 'page' cannot drop below 1.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/security.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/security.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
