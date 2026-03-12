@@ -1,6 +1,9 @@
 from math import ceil
 from typing import Optional
 
+import jwt
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+
 from app.services.ai_coach import get_ollama_service, OllamaService
 from app.services.file_service import (
     validate_file_type,
@@ -21,11 +24,24 @@ from datetime import datetime, UTC, date, timedelta
 from sqlalchemy import desc, func
 
 from app.services.parse_cvs import parse_csv_to_workout, ParseCsvError
-from app.services.security import get_password_hash, verify_password, create_access_token
+from app.services.security import get_password_hash, verify_password, create_access_token, SECRET_KEY, ALGORITHM
 
 app = FastAPI(title="Bike Tracker")
 
 templates = Jinja2Templates(directory='app/templates')
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
+
+
+def get_current_user(token: str = Depends(oauth2_scheme), session=Depends(get_session)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user = session.exec(select(Users).where(Users.email == payload['sub'])).first()
+        if not user:
+            raise HTTPException(status_code=401, detail='Ошибка авторизации')
+        return user
+    except jwt.InvalidTokenError as e:
+        raise HTTPException(status_code=401, detail='Ошибка авторизации')
 
 
 def on_startup() -> None:
@@ -386,13 +402,18 @@ def register(request: Request, user_data: UserCreate, session=Depends(get_sessio
 
 
 @app.post('/login')
-def login(request: Request, user_data: UserLogin, session=Depends(get_session)) -> dict:
+def login(request: Request, from_data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_session)) -> dict:
     # Ищем пользователя в БД
-    query = session.exec(select(Users).where(Users.email == user_data.email)).first()
+    query = session.exec(select(Users).where(Users.email == from_data.username)).first()
     if not query:
         raise HTTPException(status_code=400, detail='Пользователь не найден или не верный пароль')
     # Проверяем пароль
-    if verify_password(plain_password=user_data.password, hashed_password=query.hashed_password):
-        jwt_token = create_access_token(data={'sub': user_data.email})
+    if verify_password(plain_password=from_data.password, hashed_password=query.hashed_password):
+        jwt_token = create_access_token(data={'sub': from_data.username})
         return {'access_token': jwt_token, 'token_type': 'bearer'}
     raise HTTPException(status_code=400, detail='Пользователь не найден или не верный пароль')
+
+
+@app.get('/me')
+def me(user=Depends(get_current_user)) -> dict:
+    return {'id': user.id, 'email': user.email}
