@@ -1,69 +1,73 @@
 {% extends "base.html" %}
 
-{% block title %}Создание профиля{% endblock %}
+{% block title %}AI Coach // Регистрация Атлета{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">🚴 Регистрация атлета</h4>
+    <div class="col-md-6 col-lg-5">
+        <div class="card mt-4">
+            <div class="card-header text-center text-white" style="background-color: #3b82f6; border-bottom: none;">
+                🚴 РЕГИСТРАЦИЯ АТЛЕТА
             </div>
             <div class="card-body p-4">
-                <form method="POST" action="/profile/create">
+                <form action="/profile/create" method="POST">
 
-                    <h5 class="text-secondary mb-3">Личные данные</h5>
+                    <h6 class="text-muted fw-bold text-uppercase mb-3" style="font-size: 0.85rem;">Личные данные</h6>
+
                     <div class="mb-3">
-                        <label class="form-label">Имя</label>
-                        <input type="text" name="name" class="form-control" placeholder="Иван" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email_address" class="form-control" placeholder="ivan@example.com" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Дата рождения</label>
-                        <input type="date" name="birth_date" class="form-control">
+                        <label for="name" class="form-label" style="font-size: 0.85rem;">Имя</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
                     </div>
 
-                    <h5 class="text-secondary mb-3 mt-4">Физические данные</h5>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <label class="form-label">Вес (кг)</label>
-                            <input type="number" step="0.1" name="weight_kg" class="form-control" required>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label">Рост (см)</label>
-                            <input type="number" name="height_cm" class="form-control">
-                        </div>
+                    <div class="mb-4">
+                        <label for="birth_date" class="form-label" style="font-size: 0.85rem;">Дата рождения</label>
+                        <input type="date" class="form-control" id="birth_date" name="birth_date">
                     </div>
 
-                    <h5 class="text-secondary mb-3 mt-4">Тренировки</h5>
-                    <div class="row g-2 mb-3">
+                    <h6 class="text-muted fw-bold text-uppercase mb-3 mt-4" style="font-size: 0.85rem;">Физические данные</h6>
+
+                    <div class="row mb-4">
                         <div class="col-6">
-                            <label class="form-label">FTP (Ватт)</label>
-                            <input type="number" name="current_ftp" class="form-control" required>
+                            <label for="weight_kg" class="form-label" style="font-size: 0.85rem;">Вес (кг)</label>
+                            <input type="number" step="0.1" class="form-control" id="weight_kg" name="weight_kg" required>
                         </div>
                         <div class="col-6">
-                            <label class="form-label">Часов в неделю</label>
-                            <input type="number" name="weekly_hours" class="form-control" required>
+                            <label for="height_cm" class="form-label" style="font-size: 0.85rem;">Рост (см)</label>
+                            <input type="number" class="form-control" id="height_cm" name="height_cm">
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Оборудование</label>
-                        <input type="text" name="gear" class="form-control" placeholder="Велосипед, станок...">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Локация</label>
-                        <input type="text" name="environment_location" class="form-control" placeholder="Город, климат">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Ограничения / Травмы</label>
-                        <textarea name="limitations" class="form-control" rows="2"></textarea>
+                    <h6 class="text-muted fw-bold text-uppercase mb-3 mt-4" style="font-size: 0.85rem;">Тренировки</h6>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label for="current_ftp" class="form-label" style="font-size: 0.85rem;">FTP (Ватт)</label>
+                            <input type="number" class="form-control" id="current_ftp" name="current_ftp" required>
+                        </div>
+                        <div class="col-6">
+                            <label for="weekly_hours" class="form-label" style="font-size: 0.85rem;">Часов в неделю</label>
+                            <input type="number" step="0.1" class="form-control" id="weekly_hours" name="weekly_hours" required>
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100 btn-lg mt-3">Создать профиль</button>
+                    <div class="mb-3">
+                        <label for="gear" class="form-label" style="font-size: 0.85rem;">Оборудование</label>
+                        <input type="text" class="form-control" id="gear" name="gear" placeholder="Велосипед, станок..." required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="environment_location" class="form-label" style="font-size: 0.85rem;">Локация</label>
+                        <input type="text" class="form-control" id="environment_location" name="environment_location" placeholder="Город, климат" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="limitations" class="form-label" style="font-size: 0.85rem;">Ограничения / Травмы</label>
+                        <textarea class="form-control" id="limitations" name="limitations" rows="3" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 text-uppercase tracking-wider py-3 mt-2">
+                        Создать профиль
+                    </button>
                 </form>
             </div>
         </div>
