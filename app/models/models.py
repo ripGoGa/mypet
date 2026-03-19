@@ -38,12 +38,12 @@ class Workout(SQLModel, table=True):
 
 class UserProfile(SQLModel, table=True):
     id: Optional[int] = Field(primary_key=True, foreign_key='users.id')
-    email_address: str
     name: str
     birth_date: Optional[date]
     height_cm: Optional[int]
     updated_at: datetime = Field(default_factory=datetime.now)
     user: Optional['Users'] = Relationship(back_populates='user_profile')
+
 
 class AthleteProfile(SQLModel, table=True):
     id: Optional[int] = Field(primary_key=True, foreign_key='users.id')

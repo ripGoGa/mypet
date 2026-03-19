@@ -33,8 +33,13 @@ templates = Jinja2Templates(directory='app/templates')
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), session=Depends(get_session)):
+def get_current_user(request: Request, session=Depends(get_session)):
+    """"Проверяет токен на соответствие"""
+    token = request.cookies.get('access_token')
+    if not token:
+        raise HTTPException(status_code=401, detail='Ошибка авторизации')
     try:
+        # Пробует декодировать подпись токена с помощью секретного ключа
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user = session.exec(select(Users).where(Users.email == payload['sub'])).first()
         if not user:
@@ -160,9 +165,8 @@ async def show_profile(request: Request, session: Session = Depends(get_session)
 
 
 @app.get('/profile/create', response_class=HTMLResponse)
-async def check_created_profile(request: Request, session: Session = Depends(get_session)):
-    profile = session.exec(select(UserProfile)).first()
-    if profile is None:
+async def check_created_profile(request: Request, user: Users = Depends(get_current_user)):
+    if user.user_profile is None:
         return templates.TemplateResponse('profile_create.html', {'request': request})
     return RedirectResponse(url='/profile', status_code=303)
 
@@ -178,18 +182,15 @@ async def create_profile(
         environment_location: str = Form(...),
         birth_date: Optional[date] = Form(None),
         height_cm: Optional[int] = Form(None),
-        email_address: str = Form(...),
-        session: Session = Depends(get_session)
-):
-    if session.exec(select(UserProfile)).first() is None:
-        user_profile = UserProfile(name=name, birth_date=birth_date, height_cm=height_cm, email_address=email_address)
-        session.add(user_profile)
-        session.commit()
-        athlete_profile = AthleteProfile(id=user_profile.id, weight_kg=weight_kg, current_ftp=current_ftp, gear=gear,
-                                         environment_location=environment_location, limitations=limitations,
-                                         weekly_hours=weekly_hours)
-        session.add(athlete_profile)
-        session.commit()
+        session: Session = Depends(get_session),
+        user: Users = Depends(get_current_user)):
+    user_profile = UserProfile(id=user.id, name=name, birth_date=birth_date, height_cm=height_cm)
+    session.add(user_profile)
+    athlete_profile = AthleteProfile(id=user.id, weight_kg=weight_kg, current_ftp=current_ftp, gear=gear,
+                                     environment_location=environment_location, limitations=limitations,
+                                     weekly_hours=weekly_hours)
+    session.add(athlete_profile)
+    session.commit()
 
     return RedirectResponse(url='/profile', status_code=303)
 
@@ -387,22 +388,28 @@ async def main_stat(request: Request, session: Session = Depends(get_session), p
                                                           'raw_ccall': raw_ccall, 'raw_chart_dates': raw_chart_dates})
 
 
+@app.get('/register', response_class=HTMLResponse)
+async def get_register_page(request: Request):
+    # This just sends the HTML file to the browser
+    return templates.TemplateResponse('register.html', {'request': request})
+
+
 @app.post('/register')
-def register(request: Request, user_data: UserCreate, session=Depends(get_session)):
+def register(request: Request, email: str = Form(...), password: str = Form(...), session=Depends(get_session)):
     # Делаем запрос в БД и проверяем существует данный пользователь или нет
-    query = session.exec(select(Users).where(Users.email == user_data.email)).first()
+    query = session.exec(select(Users).where(Users.email == email)).first()
     if query:
         raise HTTPException(status_code=400, detail='Этот email уже зарегистрирован')
     # Создаем хэш пароля и добавляем новую запись в БД
-    hashed_pas = get_password_hash(user_data.password)
-    new_user = Users(email=user_data.email, hashed_password=hashed_pas)
+    hashed_pas = get_password_hash(password)
+    new_user = Users(email=email, hashed_password=hashed_pas)
     session.add(new_user)
     session.commit()
-    return {'message': 'Успех'}
+    return RedirectResponse(url='/login', status_code=303)
 
 
 @app.post('/login')
-def login(request: Request, from_data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_session)) -> dict:
+def login(request: Request, from_data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_session)):
     # Ищем пользователя в БД
     query = session.exec(select(Users).where(Users.email == from_data.username)).first()
     if not query:
@@ -410,8 +417,16 @@ def login(request: Request, from_data: OAuth2PasswordRequestForm = Depends(), se
     # Проверяем пароль
     if verify_password(plain_password=from_data.password, hashed_password=query.hashed_password):
         jwt_token = create_access_token(data={'sub': from_data.username})
-        return {'access_token': jwt_token, 'token_type': 'bearer'}
+        response = RedirectResponse(url='/profile/create', status_code=303)
+        response.set_cookie(key='access_token', value=jwt_token, httponly=True)
+        return response
     raise HTTPException(status_code=400, detail='Пользователь не найден или не верный пароль')
+
+
+@app.get('/login', response_class=HTMLResponse)
+async def get_register_page(request: Request):
+    # This just sends the HTML file to the browser
+    return templates.TemplateResponse('login.html', {'request': request})
 
 
 @app.get('/me')

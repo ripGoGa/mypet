@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}AI Coach // Login{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card mt-5">
+            <div class="card-header text-center">
+                Вход в систему
+            </div>
+            <div class="card-body p-4">
+                <form action="/login" method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label text-uppercase fw-bold" style="font-size: 0.8rem;">Email</label>
+                        <input type="email" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label text-uppercase fw-bold" style="font-size: 0.8rem;">Пароль</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 text-uppercase tracking-wider py-2">
+                        Войти
+                    </button>
+                </form>
+                <div class="mt-4 text-center">
+                    <a href="/register" class="text-muted text-decoration-none text-uppercase" style="font-size: 0.8rem;">
+                        Нет аккаунта? Зарегистрироваться
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

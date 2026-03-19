@@ -4,7 +4,7 @@ import datetime
 import jwt
 from passlib.context import CryptContext
 
-SECRET_KEY = 'ss_key'
+SECRET_KEY = 'Mysecretkey2131jbvadjladvbcvabaljfghdvbcnxcnmbvxcnmxbvxmbnvc'
 ALGORITHM = 'HS256'
 
 my_cc = CryptContext(schemes=['bcrypt'], deprecated='auto')
