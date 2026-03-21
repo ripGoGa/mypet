@@ -196,11 +196,12 @@ async def create_profile(
 
 
 @app.get('/profile/edit', response_class=HTMLResponse)
-async def check_edited_profile(request: Request, session: Session = Depends(get_session)):
-    user_profile = session.exec(select(UserProfile)).first()
+async def check_edited_profile(request: Request,
+                               user: Users = Depends(get_current_user)):
+    user_profile = user.user_profile
 
     if user_profile is not None:
-        athlete_profile = session.exec(select(AthleteProfile).where(AthleteProfile.id == user_profile.id)).first()
+        athlete_profile = user.athlete_profile
         return templates.TemplateResponse('profile_edit.html', {'request': request, 'user_profile': user_profile,
                                                                 'athlete_profile': athlete_profile})
 
@@ -210,7 +211,6 @@ async def check_edited_profile(request: Request, session: Session = Depends(get_
 @app.post('/profile/edit', response_class=HTMLResponse)
 async def edit_profile(
         name: str = Form(...),
-        email_address: str = Form(...),
         weight_kg: float = Form(...),
         current_ftp: int = Form(...),
         weekly_hours: float = Form(...),
@@ -219,15 +219,15 @@ async def edit_profile(
         limitations: str = Form(...),
         birth_date: Optional[date] = Form(None),
         height_cm: Optional[int] = Form(None),
-        session: Session = Depends(get_session)
+        session: Session = Depends(get_session),
+        user: Users = Depends(get_current_user)
 ):
-    # Получаем данные из базы
-    user_profile = session.exec(select(UserProfile)).first()
-    athlete_profile = session.exec(select(AthleteProfile).where(AthleteProfile.id == user_profile.id)).first()
+    # Получаем данные из профиля
+    user_profile = user.user_profile
+    athlete_profile = user.athlete_profile
 
     # Обновляем UserProfile
     user_profile.name = name
-    user_profile.email_address = email_address
     user_profile.birth_date = birth_date
     user_profile.height_cm = height_cm
     user_profile.updated_at = datetime.now()

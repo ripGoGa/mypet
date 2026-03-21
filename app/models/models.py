@@ -53,7 +53,7 @@ class AthleteProfile(SQLModel, table=True):
     weekly_hours: Optional[int]  # Сколько времени есть на тренировки в неделю
     gear: Optional[str]  # какое оборудование есть у пользователя(велосипед, станки..)
     environment_location: Optional[str]  # окружение, локация
-    user: Optional['Users'] = Relationship(back_populates='athlete_info')
+    user: Optional['Users'] = Relationship(back_populates='athlete_profile')
 
 
 class ChatMessage(SQLModel, table=True):
@@ -70,7 +70,7 @@ class Users(SQLModel, table=True):
     email: str = Field(unique=True)
     hashed_password: str
     messages: List['ChatMessage'] = Relationship(back_populates='user')
-    athlete_info: Optional['AthleteProfile'] = Relationship(back_populates='user')
+    athlete_profile: Optional['AthleteProfile'] = Relationship(back_populates='user')
     user_profile: Optional['UserProfile'] = Relationship(back_populates='user')
 
 
