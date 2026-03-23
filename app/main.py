@@ -409,7 +409,7 @@ def register(request: Request, email: str = Form(...), password: str = Form(...)
 
 
 @app.post('/login')
-def login(request: Request, from_data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_session)):
+def login(request: Request, session=Depends(get_session)):
     # Ищем пользователя в БД
     query = session.exec(select(Users).where(Users.email == from_data.username)).first()
     if not query:
@@ -424,11 +424,18 @@ def login(request: Request, from_data: OAuth2PasswordRequestForm = Depends(), se
 
 
 @app.get('/login', response_class=HTMLResponse)
-async def get_register_page(request: Request):
-    # This just sends the HTML file to the browser
+def get_login_page(request: Request):
+    # Показываем страницу в браузере
     return templates.TemplateResponse('login.html', {'request': request})
 
 
 @app.get('/me')
 def me(user=Depends(get_current_user)) -> dict:
     return {'id': user.id, 'email': user.email}
+
+
+@app.get('/logout')
+def get_logout(request: Request, user: Users = Depends(get_current_user)):
+    response = RedirectResponse(url='/', status_code=303)
+    response.delete_cookie(key='access_token')
+    return response
