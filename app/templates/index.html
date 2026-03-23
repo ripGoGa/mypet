@@ -1,101 +1,81 @@
 {% extends "base.html" %}
-
-{% block title %}Панель управления{% endblock %}
+{% block title %}AI Coach // System{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-10">
 
-        <div class="mb-5 pb-3 border-bottom border-dark">
-            <small class="text-uppercase text-muted fw-bold ls-1">System Status: Active</small>
-            <h1 class="display-3 fw-bold text-uppercase mt-2">
-                {% if user_profile %}
-                    Welcome back, {{ user_profile.name }}
-                {% else %}
-                    Welcome, Athlete
-                {% endif %}
-            </h1>
-            <p class="text-secondary lead">
-                AI Cycling Analytics Core v0.1
-            </p>
+    {% if request.query_params.get('logged_out') %}
+        <div class="p-3 mb-4 border border-dark text-center text-uppercase fw-bold text-white" style="background-color: #000; letter-spacing: 1px;">
+            Вы успешно вышли из системы.
+        </div>
+    {% endif %}
+
+    {% if user_profile %}
+
+        <p class="text-uppercase fw-bold text-muted mb-1" style="font-size: 0.8rem; letter-spacing: 1px;">System Status: Active</p>
+        <h1 class="display-4 fw-bold text-uppercase mb-2">Welcome Back, {{ user_profile.name | upper }}</h1>
+        <p class="text-muted fs-5 mb-5 border-bottom border-dark pb-4">AI Cycling Analytics Core v0.1</p>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card h-100 border-dark">
+                    <div class="card-body text-center p-5 d-flex flex-column justify-content-center">
+                        <h1 class="display-4 mb-3">↓</h1>
+                        <h3 class="fw-bold text-uppercase mb-2">Import Data</h3>
+                        <p class="text-muted mb-4">Загрузка .FIT и .CSV файлов</p>
+                        <a href="/imports" class="btn btn-outline-dark text-uppercase fw-bold py-2 w-100" style="letter-spacing: 1px;">Upload</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card h-100 border-dark text-white" style="background-color: #000;">
+                    <div class="card-body text-center p-5 d-flex flex-column justify-content-center">
+                        <h1 class="display-3 fw-bold mb-3 tracking-tighter" style="font-family: monospace;">AI //</h1>
+                        <h3 class="fw-bold text-uppercase mb-2">AI Coach</h3>
+                        <p class="text-light mb-4" style="opacity: 0.8;">Анализ и рекомендации</p>
+                        <a href="/coach" class="btn btn-light text-uppercase fw-bold py-2 w-100" style="letter-spacing: 1px;">Start Chat</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-dark">
+                    <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="fw-bold text-uppercase mb-1">Database</h5>
+                            <p class="text-muted mb-0" style="font-size: 0.85rem;">Архив всех тренировок</p>
+                        </div>
+                        <a href="/workouts" class="text-dark fs-3 text-decoration-none">→</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-dark">
+                    <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="fw-bold text-uppercase mb-1">Metrics</h5>
+                            <p class="text-muted mb-0" style="font-size: 0.85rem;">Графики и тренды</p>
+                        </div>
+                        <a href="/statistics" class="text-dark fs-3 text-decoration-none">→</a>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        {% if not user_profile %}
-            <div class="text-center py-5">
-                <h3 class="mb-4">Требуется инициализация профиля</h3>
-                <a href="/profile/create" class="btn btn-dark btn-lg rounded-0 px-5 py-3 text-uppercase fw-bold">
-                    Создать профиль
-                </a>
+    {% else %}
+
+        <div class="text-center py-5 mt-5">
+            <h1 class="display-3 fw-bold text-uppercase mb-3" style="letter-spacing: -2px;">AI Cycling Analytics</h1>
+            <p class="lead text-muted mx-auto mb-5" style="max-width: 600px;">
+                Загружайте тренировки, анализируйте данные и получайте персонализированные рекомендации от искусственного интеллекта.
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="/register" class="btn btn-dark px-5 py-3 text-uppercase fw-bold" style="letter-spacing: 1px;">Начать тренировки</a>
+                <a href="/login" class="btn btn-outline-dark px-5 py-3 text-uppercase fw-bold" style="letter-spacing: 1px;">Войти</a>
             </div>
-        {% else %}
-            <div class="row g-4">
+        </div>
 
-                <div class="col-md-6">
-                    <a href="/imports" class="text-decoration-none">
-                        <div class="card h-100 border-dark hover-effect text-center p-5">
-                            <div class="display-1 fw-bold mb-3" style="line-height: 1;">&darr;</div>
-                            <h4 class="text-uppercase fw-bold text-black">Import Data</h4>
-                            <p class="text-muted small">Загрузка .FIT и .CSV файлов</p>
-                            <span class="btn btn-outline-dark rounded-0 mt-3 text-uppercase small">Upload</span>
-                        </div>
-                    </a>
-                </div>
+    {% endif %}
 
-                <div class="col-md-6">
-                    <a href="/coach" class="text-decoration-none">
-                        <div class="card h-100 border-black bg-black text-white hover-effect-invert text-center p-5">
-                            <div class="display-4 fw-bold mb-3 font-monospace">AI //</div>
-                            <h4 class="text-uppercase fw-bold text-white">AI Coach</h4>
-                            <p class="text-white-50 small">Анализ и рекомендации</p>
-                            <span class="btn btn-light rounded-0 mt-3 text-uppercase small fw-bold">Start Chat</span>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="col-md-6">
-                    <a href="/workouts" class="text-decoration-none">
-                        <div class="card h-100 border-dark hover-effect p-4 d-flex flex-row align-items-center justify-content-between">
-                            <div>
-                                <h5 class="text-uppercase fw-bold text-black mb-1">Database</h5>
-                                <p class="text-muted small mb-0">Архив всех тренировок</p>
-                            </div>
-                            <span class="fs-2">&rarr;</span>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="col-md-6">
-                    <a href="/statistics" class="text-decoration-none">
-                        <div class="card h-100 border-dark hover-effect p-4 d-flex flex-row align-items-center justify-content-between">
-                            <div>
-                                <h5 class="text-uppercase fw-bold text-black mb-1">Metrics</h5>
-                                <p class="text-muted small mb-0">Графики и тренды</p>
-                            </div>
-                            <span class="fs-2">&rarr;</span>
-                        </div>
-                    </a>
-                </div>
-
-            </div>
-        {% endif %}
-
-    </div>
-</div>
-
-<style>
-    .hover-effect {
-        transition: all 0.2s ease;
-    }
-    .hover-effect:hover {
-        background-color: #f0f0f0;
-        transform: translateY(-2px);
-    }
-    .hover-effect-invert {
-        transition: all 0.2s ease;
-    }
-    .hover-effect-invert:hover {
-        background-color: #1a1a1a !important;
-        transform: translateY(-2px);
-    }
-</style>
 {% endblock %}

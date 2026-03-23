@@ -112,7 +112,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="/coach">AI COACH // SYSTEM</a>
+            <a class="navbar-brand" href="/">AI COACH // SYSTEM</a>
 
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -120,21 +120,16 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto gap-3">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/coach">чат</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/workouts">тренировки</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/statistics">статистика</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/profile">профиль</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/imports">импорт</a>
-                    </li>
+                                {% if request.cookies.get('access_token') %}
+                                    <li class="nav-item"><a class="nav-link" href="/coach">chat</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="/workouts">workouts</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="/statistics">statistics</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="/imports">import workout</a></li>
+                                    <li class="nav-item"><a class="nav-link text-white fw-bold" href="/profile">profile</a></li>
+                                {% else %}
+                                    <li class="nav-item"><a class="nav-link" href="/login">login</a></li>
+                                    <li class="nav-item"><a class="nav-link text-white fw-bold" href="/register">register</a></li>
+                                {% endif %}
                 </ul>
             </div>
         </div>

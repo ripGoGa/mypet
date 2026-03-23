@@ -61,11 +61,19 @@ def ensure_data_store() -> None:
 
 
 @app.get('/', response_class=HTMLResponse)
-async def hello_root(request: Request, session: Session = Depends(get_session)):
+async def hello_root(request: Request, session=Depends(get_session)):
     # Пытаемся узнать имя пользователя для приветствия
-    user = session.exec(select(UserProfile)).first()
+    token = request.cookies.get('access_token')
+    user_profile = None
+    if token:
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            user = session.exec(select(Users).where(Users.email == payload['sub'])).first()
+            user_profile = user.user_profile
+        except jwt.InvalidTokenError:
+            pass
 
-    return templates.TemplateResponse('index.html', {'request': request, 'user_profile': user})
+    return templates.TemplateResponse('index.html', {'request': request, 'user_profile': user_profile})
 
 
 @app.get('/workouts', response_class=HTMLResponse)
@@ -155,13 +163,11 @@ async def import_csv(files: list[UploadFile] = File(...), session: Session = Dep
 
 
 @app.get('/profile', response_class=HTMLResponse)
-async def show_profile(request: Request, session: Session = Depends(get_session)):
-    user_profile = session.exec(select(UserProfile)).first()
-    if user_profile is None:
+def show_profile(request: Request, user: Users = Depends(get_current_user)):
+    if user.user_profile is None:
         return RedirectResponse(url='/profile/create', status_code=303)
-    athlete_profile = session.exec(select(AthleteProfile).where(AthleteProfile.id == user_profile.id)).first()
-    return templates.TemplateResponse('profile.html', {'request': request, 'user_profile': user_profile,
-                                                       'athlete_profile': athlete_profile})
+    return templates.TemplateResponse('profile.html', {'request': request, 'user_profile': user.user_profile,
+                                                       'athlete_profile': user.athlete_profile})
 
 
 @app.get('/profile/create', response_class=HTMLResponse)
@@ -409,7 +415,7 @@ def register(request: Request, email: str = Form(...), password: str = Form(...)
 
 
 @app.post('/login')
-def login(request: Request, session=Depends(get_session)):
+def login(request: Request, from_data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_session)):
     # Ищем пользователя в БД
     query = session.exec(select(Users).where(Users.email == from_data.username)).first()
     if not query:
@@ -436,6 +442,6 @@ def me(user=Depends(get_current_user)) -> dict:
 
 @app.get('/logout')
 def get_logout(request: Request, user: Users = Depends(get_current_user)):
-    response = RedirectResponse(url='/', status_code=303)
+    response = RedirectResponse(url='/?logged_out=true', status_code=303)
     response.delete_cookie(key='access_token')
     return response
