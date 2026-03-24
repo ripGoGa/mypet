@@ -1,35 +1,35 @@
 {% extends "base.html" %}
-
-{% block title %}AI Coach // Login{% endblock %}
+{% block title %}Вход в систему // AI Coach{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card mt-5">
-            <div class="card-header text-center">
-                Вход в систему
+<div class="row justify-content-center" style="margin-top: 10vh;">
+    <div class="col-12 col-md-6 col-lg-4">
+
+        <div class="card border-dark rounded-0 p-4 p-md-5">
+            <div class="text-center border-bottom border-dark pb-3 mb-4">
+                <h5 class="text-uppercase fw-bold mb-1" style="letter-spacing: 1px;">Вход в систему</h5>
+                <p class="text-muted mb-0" style="font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">AI Cycling Analytics Core v0.1</p>
             </div>
-            <div class="card-body p-4">
-                <form action="/login" method="POST">
-                    <div class="mb-3">
-                        <label for="username" class="form-label text-uppercase fw-bold" style="font-size: 0.8rem;">Email</label>
-                        <input type="email" class="form-control" id="username" name="username" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="password" class="form-label text-uppercase fw-bold" style="font-size: 0.8rem;">Пароль</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 text-uppercase tracking-wider py-2">
-                        Войти
-                    </button>
-                </form>
-                <div class="mt-4 text-center">
-                    <a href="/register" class="text-muted text-decoration-none text-uppercase" style="font-size: 0.8rem;">
-                        Нет аккаунта? Зарегистрироваться
-                    </a>
+
+            <form action="/login" method="post">
+                <div class="mb-4">
+                    <label for="username" class="form-label text-uppercase fw-bold" style="font-size: 0.8rem; letter-spacing: 1px;">Email</label>
+                    <input type="email" class="form-control rounded-0 border-dark" id="username" name="username" required>
                 </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label text-uppercase fw-bold" style="font-size: 0.8rem; letter-spacing: 1px;">Пароль</label>
+                    <input type="password" class="form-control rounded-0 border-dark" id="password" name="password" required>
+                </div>
+
+                <button type="submit" class="btn btn-dark w-100 rounded-0 text-uppercase fw-bold py-3 mb-4" style="letter-spacing: 1px;">Войти</button>
+            </form>
+
+            <div class="text-center border-top border-light pt-3">
+                <a href="/register" class="text-muted text-decoration-none text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">Нет аккаунта? Зарегистрироваться</a>
             </div>
         </div>
+
     </div>
 </div>
 {% endblock %}

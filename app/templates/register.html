@@ -1,45 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI COACH // REGISTER</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-white text-black font-sans min-h-screen flex flex-col items-center justify-center">
+{% extends "base.html" %}
+{% block title %}Регистрация // AI Coach{% endblock %}
 
-    <div class="w-full max-w-md p-8">
-        <h1 class="text-3xl font-bold mb-2 uppercase tracking-wide">Register</h1>
-        <p class="text-gray-500 mb-8 uppercase text-sm tracking-widest border-b border-black pb-4">
-            AI Cycling Analytics Core v0.1
-        </p>
-
-        <form action="/register" method="POST" class="space-y-6">
-
-            <div>
-                <label for="email" class="block text-sm font-bold uppercase tracking-wider mb-2">Email</label>
-                <input type="email" id="email" name="email" required
-                       class="w-full border border-black p-3 focus:outline-none focus:ring-2 focus:ring-gray-400">
+{% block content %}
+<div class="row justify-content-center" style="margin-top: 10vh;">
+    <div class="col-12 col-md-6 col-lg-4">
+        
+        <div class="card border-dark rounded-0 p-4 p-md-5">
+            <div class="text-center border-bottom border-dark pb-3 mb-4">
+                <h5 class="text-uppercase fw-bold mb-1" style="letter-spacing: 1px;">Регистрация</h5>
+                <p class="text-muted mb-0" style="font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">AI Cycling Analytics Core v0.1</p>
             </div>
 
-            <div>
-                <label for="password" class="block text-sm font-bold uppercase tracking-wider mb-2">Password</label>
-                <input type="password" id="password" name="password" required
-                       class="w-full border border-black p-3 focus:outline-none focus:ring-2 focus:ring-gray-400">
+            <form action="/register" method="post">
+                <div class="mb-4">
+                    <label for="email" class="form-label text-uppercase fw-bold" style="font-size: 0.8rem; letter-spacing: 1px;">Email</label>
+                    <input type="email" class="form-control rounded-0 border-dark" id="email" name="email" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="password" class="form-label text-uppercase fw-bold" style="font-size: 0.8rem; letter-spacing: 1px;">Пароль</label>
+                    <input type="password" class="form-control rounded-0 border-dark" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-dark w-100 rounded-0 text-uppercase fw-bold py-3 mb-4" style="letter-spacing: 1px;">Создать профиль</button>
+            </form>
+
+            <div class="text-center border-top border-light pt-3">
+                <a href="/login" class="text-muted text-decoration-none text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">Уже есть аккаунт? Войти</a>
             </div>
-
-            <button type="submit"
-                    class="w-full bg-black text-white font-bold uppercase tracking-widest py-4 mt-4 hover:bg-gray-800 transition-colors">
-                Создать профиль
-            </button>
-        </form>
-
-        <div class="mt-6 text-center border-t border-gray-200 pt-6">
-            <a href="/login" class="text-sm text-gray-500 hover:text-black uppercase tracking-wider transition-colors">
-                Already have an account? Log In
-            </a>
         </div>
-    </div>
 
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}
