@@ -136,8 +136,9 @@ async def import_csv(files: list[UploadFile] = File(...), session: Session = Dep
         try:
             validate_file_type(filename=file.filename, content_type=file.content_type)
             content = await file.read()
-            file_path, hash_value = save_file_with_hash(content, session)
-            uploaded_file = UploadedFile(original_name=file.filename, sha256=hash_value, uploaded_at=datetime.now(UTC))
+            file_path, hash_value = save_file_with_hash(content, session, user.id)
+            uploaded_file = UploadedFile(original_name=file.filename, sha256=hash_value, uploaded_at=datetime.now(UTC),
+                                         user_id=user.id)
             session.add(uploaded_file)
             session.flush()
             parse_csv_to_workout(file_path=file_path, uf_id=uploaded_file.id, session=session, user_id=user_profile.id)

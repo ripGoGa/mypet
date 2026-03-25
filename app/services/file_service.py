@@ -24,11 +24,12 @@ def validate_file_type(filename: str, content_type: str) -> None:
         raise FileValidationError('Можно загружать только CSV-файлы!')
 
 
-def save_file_with_hash(content: bytes, session: Session) -> tuple[str, str]:
+def save_file_with_hash(content: bytes, session: Session, user_id: int) -> tuple[str, str]:
     hash_value = hashlib.sha256(content).hexdigest()
     filename = f"{hash_value}.csv"
     path = Path('data/csv') / f'{filename}'
-    existing = session.exec(select(UploadedFile).where((UploadedFile.sha256 == hash_value))).first()
+    existing = session.exec(select(UploadedFile).where(UploadedFile.sha256 == hash_value,
+                                                       UploadedFile.user_id == user_id)).first()
     if existing:
         raise FileAlreadyExistsError('Файл с таким содержимым уже существует')
     try:

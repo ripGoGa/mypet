@@ -9,10 +9,10 @@ from sqlmodel import SQLModel, Field, Relationship
 class UploadedFile(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     original_name: str
-    sha256: str = Field(unique=True)
+    sha256: str
     uploaded_at: datetime
     workouts: List['Workout'] = Relationship(back_populates='source_file')
-    user_id: Optional[int] = Field(foreign_key='users.id')
+    user_id: int
 
 
 class Workout(SQLModel, table=True):
