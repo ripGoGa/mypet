@@ -112,7 +112,7 @@ async def list_workouts(request: Request, session: Session = Depends(get_session
 
 
 @app.get('/imports', response_class=HTMLResponse)
-async def imports(request: Request):
+async def imports(request: Request, user: Users = Depends(get_current_user)):
     success_count = int(request.query_params.get('success')) if request.query_params.get('success') else 0
     dup_count = int(request.query_params.get('dup')) if request.query_params.get('dup') else 0
     err_count = int(request.query_params.get('err')) if request.query_params.get('err') else 0
@@ -123,13 +123,14 @@ async def imports(request: Request):
 
 
 @app.post('/imports')
-async def import_csv(files: list[UploadFile] = File(...), session: Session = Depends(get_session)):
-    user = session.exec(select(UserProfile)).first()
+async def import_csv(files: list[UploadFile] = File(...), session: Session = Depends(get_session),
+                     user: Users = Depends(get_current_user)):
+    user_profile = user.user_profile
     success_count = 0
     dup_count = 0
     type_err_count = 0
 
-    if not user:
+    if not user_profile:
         return RedirectResponse(url='/profile/create', status_code=303)
     for file in files:
         try:
@@ -139,7 +140,7 @@ async def import_csv(files: list[UploadFile] = File(...), session: Session = Dep
             uploaded_file = UploadedFile(original_name=file.filename, sha256=hash_value, uploaded_at=datetime.now(UTC))
             session.add(uploaded_file)
             session.flush()
-            parse_csv_to_workout(file_path=file_path, uf_id=uploaded_file.id, session=session, user_id=user.id)
+            parse_csv_to_workout(file_path=file_path, uf_id=uploaded_file.id, session=session, user_id=user_profile.id)
             session.commit()
             success_count += 1
 
