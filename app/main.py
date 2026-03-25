@@ -77,17 +77,19 @@ async def hello_root(request: Request, session=Depends(get_session)):
 
 
 @app.get('/workouts', response_class=HTMLResponse)
-async def list_workouts(request: Request, session: Session = Depends(get_session), page: int = 1, period: int = 0,
+async def list_workouts(request: Request, session: Session = Depends(get_session),
+                        user: Users = Depends(get_current_user), page: int = 1, period: int = 0,
                         limit: int = 10):
     if page < 1:
         page = 1
     if limit > 100 or limit < 1:
         limit = 10
     offset = (page - 1) * limit
+    user_id = user.id
 
     # 1. Чистый запрос
-    query_workouts = select(Workout)
-    query_count = select(func.count(Workout.id))
+    query_workouts = select(Workout).where(Workout.user_id == user_id)
+    query_count = select(func.count(Workout.id)).where(Workout.user_id == user_id)
 
     # 2. Формируем запрос из роута статистики
     if period:
@@ -96,7 +98,7 @@ async def list_workouts(request: Request, session: Session = Depends(get_session
         query_count = query_count.join(UploadedFile).where(UploadedFile.uploaded_at >= target_date)
 
     # 3. Формируем запрос для простого просмотра тренировок
-    query_workouts = query_workouts.order_by(desc(Workout.id)).limit(limit).offset(offset)
+    query_workouts = (query_workouts.order_by(desc(Workout.id)).limit(limit).offset(offset))
 
     # 4. Делаем запрос в базу
     workouts = session.exec(query_workouts).all()
