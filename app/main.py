@@ -320,11 +320,13 @@ async def chat(request: Request, user_question: str = Form(...), session: Sessio
 
 
 @app.get('/statistics')
-async def main_stat(request: Request, session: Session = Depends(get_session), period: int = 7):
+async def main_stat(request: Request, session: Session = Depends(get_session), user: Users = Depends(get_current_user)
+                    , period: int = 7):
     # Делаем запрос к базе данных
     week_ago = datetime.now() - timedelta(days=period)
     workouts_for_range = session.exec(
-        select(Workout).join(UploadedFile).where(UploadedFile.uploaded_at >= week_ago)).all()
+        select(Workout).join(UploadedFile).where(UploadedFile.uploaded_at >= week_ago,
+                                                 UploadedFile.user_id == user.id)).all()
 
     # Списки с сырыми данными
     count_workouts = len(workouts_for_range)
