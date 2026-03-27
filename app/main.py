@@ -266,53 +266,42 @@ async def workout_detail(workout_id: int, request: Request, session: Session = D
 
 
 @app.get('/coach', response_class=HTMLResponse)
-async def coach_page(request: Request, session: Session = Depends(get_session)):
-    profile = session.exec(select(UserProfile)).first()
-    if not profile:
+async def coach_page(request: Request, session: Session = Depends(get_session),
+                     user: Users = Depends(get_current_user)):
+    if not user.user_profile:
         return RedirectResponse(url="/profile/create", status_code=303)
-    message_history = session.exec(select(ChatMessage).where(profile.id == ChatMessage.user_id).order_by(
+    message_history = session.exec(select(ChatMessage).where(user.id == ChatMessage.user_id).order_by(
         ChatMessage.created_at)).all()
 
     return templates.TemplateResponse('coach.html', {'request': request, 'message_history': message_history})
 
 
-@app.post('/coach/advice', response_class=HTMLResponse)
-async def get_advice(request: Request, session: Session = Depends(get_session), num_workouts: int = Form(5),
-                     ollama_service: OllamaService = Depends(get_ollama_service)):
-    workouts = session.exec(select(Workout).order_by(desc(Workout.id)).limit(num_workouts)).all()
-    profile = session.exec(select(UserProfile)).first()
-    if not profile:
-        return RedirectResponse(url="/profile/create", status_code=303)
-    advice = await ollama_service.get_training_advice(profile, workouts)
-    return templates.TemplateResponse('advice.html', {'request': request, 'advice': advice})
-
-
 @app.post('/coach/chat', response_class=HTMLResponse)
 async def chat(request: Request, user_question: str = Form(...), session: Session = Depends(get_session),
-               ollama_service=Depends(get_ollama_service)):
+               ollama_service=Depends(get_ollama_service), user: Users = Depends(get_current_user)):
     # Получаем данные
-    user_profile = session.exec(select(UserProfile)).first()
-    if not user_profile:
+    if not user.user_profile:
         return RedirectResponse(url="/profile/create", status_code=303)
-    athlete_profile = session.exec(select(AthleteProfile).where(AthleteProfile.id == user_profile.id)).first()
-
     week_ago = datetime.now() - timedelta(days=7)
-    workouts = session.exec(select(Workout).join(UploadedFile).where(UploadedFile.uploaded_at >= week_ago)).all()
+    workouts = session.exec(select(Workout).join(UploadedFile).where(UploadedFile.uploaded_at >= week_ago,
+                                                                     UploadedFile.user_id == user.id)).all()
     summary = ollama_service.format_workouts(workouts)
-    message_history = session.exec(select(ChatMessage).where(ChatMessage.user_id == user_profile.id).where(
+    message_history = session.exec(select(ChatMessage).where(ChatMessage.user_id == user.id).where(
         ChatMessage.created_at >= week_ago)).all()
-    prompt = await ollama_service.build_chat_messages(user_profile=user_profile, athlete_profile=athlete_profile,
-                                                      user_message=user_question, summary=summary,
+    prompt = await ollama_service.build_chat_messages(user_profile=user.user_profile,
+                                                      athlete_profile=user.athlete_profile,
+                                                      user_message=user_question,
+                                                      summary=summary,
                                                       message_history=message_history)
 
     # Сохраняем вопрос пользователя
-    user_message = ChatMessage(user_id=user_profile.id, role='user', content=user_question)
+    user_message = ChatMessage(user_id=user.id, role='user', content=user_question)
     session.add(user_message)
     session.commit()
     # Вызываем ИИ и передаем старую историю + новый вопрос
     answer = await ollama_service.chat(messages=prompt)
     # Сохраняем новый ответ в контекст
-    assistant_message = ChatMessage(user_id=user_profile.id, role='assistant', content=answer)
+    assistant_message = ChatMessage(user_id=user.id, role='assistant', content=answer)
     session.add(assistant_message)
     session.commit()
 
