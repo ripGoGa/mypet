@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Ошибка // AI Coach{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center" style="margin-top: 15vh;">
+    <div class="col-12 col-md-8 col-lg-6">
+        
+        <div class="card border-dark rounded-0 p-4 p-md-5 text-center" style="border-width: 2px !important;">
+            
+            <h1 class="display-1 fw-bold text-uppercase mb-0" style="letter-spacing: -2px;">{{ status_code }}</h1>
+            <div class="border-bottom border-dark my-4 w-25 mx-auto" style="border-width: 2px !important;"></div>
+            
+            <h4 class="text-uppercase fw-bold mb-4" style="letter-spacing: 1px;">Системное уведомление</h4>
+            
+            <p class="lead mb-5" style="font-family: monospace;">{{ detail }}</p>
+            
+            <div class="d-flex justify-content-center gap-3">
+                <button onclick="window.history.back()" class="btn btn-outline-dark rounded-0 text-uppercase fw-bold px-4 py-2" style="letter-spacing: 1px;">Назад</button>
+                <a href="/" class="btn btn-dark rounded-0 text-uppercase fw-bold px-4 py-2" style="letter-spacing: 1px;">На главную</a>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}

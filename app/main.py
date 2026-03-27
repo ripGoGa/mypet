@@ -440,3 +440,10 @@ def get_logout(request: Request, user: Users = Depends(get_current_user)):
     response = RedirectResponse(url='/?logged_out=true', status_code=303)
     response.delete_cookie(key='access_token')
     return response
+
+
+@app.exception_handler(HTTPException)
+def error(request: Request, exc: HTTPException):
+    status_code = exc.status_code
+    detail = exc.detail
+    return templates.TemplateResponse('error.html', {'request': request, 'detail': detail, 'status_code': status_code})
