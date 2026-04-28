@@ -2,6 +2,7 @@ from math import ceil
 from typing import Optional
 
 import jwt
+import uvicorn
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from app.services.ai_coach import get_ollama_service, OllamaService
@@ -410,15 +411,19 @@ def register(request: Request, email: str = Form(...), password: str = Form(...)
 
 
 @app.post('/login')
-def login(request: Request, from_data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_session)):
+def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_session)):
     # Ищем пользователя в БД
-    query = session.exec(select(Users).where(Users.email == from_data.username)).first()
+    query = session.exec(select(Users).where(Users.email == form_data.username)).first()
     if not query:
         raise HTTPException(status_code=400, detail='Пользователь не найден или не верный пароль')
     # Проверяем пароль
-    if verify_password(plain_password=from_data.password, hashed_password=query.hashed_password):
-        jwt_token = create_access_token(data={'sub': from_data.username})
-        response = RedirectResponse(url='/profile/create', status_code=303)
+    if verify_password(plain_password=form_data.password, hashed_password=query.hashed_password):
+        jwt_token = create_access_token(data={'sub': form_data.username})
+        if query.user_profile is None:
+            redirect_url = '/profile/create'
+        else:
+            redirect_url = '/'
+        response = RedirectResponse(url=redirect_url, status_code=303)
         response.set_cookie(key='access_token', value=jwt_token, httponly=True)
         return response
     raise HTTPException(status_code=400, detail='Пользователь не найден или не верный пароль')
@@ -447,3 +452,6 @@ def error(request: Request, exc: HTTPException):
     status_code = exc.status_code
     detail = exc.detail
     return templates.TemplateResponse('error.html', {'request': request, 'detail': detail, 'status_code': status_code})
+
+
+
