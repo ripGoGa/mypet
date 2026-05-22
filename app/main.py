@@ -441,7 +441,7 @@ def me(user=Depends(get_current_user)) -> dict:
 
 
 @app.get('/logout')
-def get_logout(request: Request, user: Users = Depends(get_current_user)):
+def get_logout(request: Request):
     response = RedirectResponse(url='/?logged_out=true', status_code=303)
     response.delete_cookie(key='access_token')
     return response
