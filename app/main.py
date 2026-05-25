@@ -5,6 +5,8 @@ import jwt
 import uvicorn
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
+from app.db.session import get_session
+from app.repository.user_repo import UserRepository
 from app.services.ai_coach import get_ollama_service, OllamaService
 from app.services.file_service import (
     validate_file_type,
@@ -12,7 +14,7 @@ from app.services.file_service import (
     FileValidationError,
     FileAlreadyExistsError
 )
-from app.db import create_db_and_tables, get_session
+
 from fastapi import FastAPI, UploadFile, File, Depends, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -26,6 +28,7 @@ from sqlalchemy import desc, func
 
 from app.services.parse_cvs import parse_csv_to_workout, ParseCsvError
 from app.services.security import get_password_hash, verify_password, create_access_token, SECRET_KEY, ALGORITHM
+from app.services.user_service import UserService, get_user_service
 
 app = FastAPI(title="Bike Tracker")
 
@@ -397,16 +400,10 @@ async def get_register_page(request: Request):
 
 
 @app.post('/register')
-def register(request: Request, email: str = Form(...), password: str = Form(...), session=Depends(get_session)):
-    # Делаем запрос в БД и проверяем существует данный пользователь или нет
-    query = session.exec(select(Users).where(Users.email == email)).first()
-    if query:
-        raise HTTPException(status_code=400, detail='Этот email уже зарегистрирован')
-    # Создаем хэш пароля и добавляем новую запись в БД
-    hashed_pas = get_password_hash(password)
-    new_user = Users(email=email, hashed_password=hashed_pas)
-    session.add(new_user)
-    session.commit()
+def register(request: Request, email: str = Form(...), password: str = Form(...),
+             service: UserService = Depends(get_user_service)):
+    # call the method for register a new user
+    service.register_new_user(email, password)
     return RedirectResponse(url='/login', status_code=303)
 
 
@@ -452,6 +449,3 @@ def error(request: Request, exc: HTTPException):
     status_code = exc.status_code
     detail = exc.detail
     return templates.TemplateResponse('error.html', {'request': request, 'detail': detail, 'status_code': status_code})
-
-
-
