@@ -5,7 +5,7 @@ import jwt
 import uvicorn
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
-from app.db.session import get_session
+from app.db.session import get_session, create_db_and_tables
 from app.repository.user_repo import UserRepository
 from app.services.ai_coach import get_ollama_service, OllamaService
 from app.services.file_service import (
@@ -408,22 +408,19 @@ def register(request: Request, email: str = Form(...), password: str = Form(...)
 
 
 @app.post('/login')
-def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_session)):
-    # Ищем пользователя в БД
-    query = session.exec(select(Users).where(Users.email == form_data.username)).first()
-    if not query:
-        raise HTTPException(status_code=400, detail='Пользователь не найден или не верный пароль')
-    # Проверяем пароль
-    if verify_password(plain_password=form_data.password, hashed_password=query.hashed_password):
-        jwt_token = create_access_token(data={'sub': form_data.username})
-        if query.user_profile is None:
-            redirect_url = '/profile/create'
-        else:
-            redirect_url = '/'
-        response = RedirectResponse(url=redirect_url, status_code=303)
-        response.set_cookie(key='access_token', value=jwt_token, httponly=True)
-        return response
-    raise HTTPException(status_code=400, detail='Пользователь не найден или не верный пароль')
+def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(),
+          service: UserService = Depends(get_user_service)):
+    # Looking and verifying a user
+    user = service.authenticate_user(email=form_data.username, password=form_data.password)
+    # Create the jwt_token
+    jwt_token = create_access_token(data={'sub': form_data.username})
+    if user.user_profile is None:
+        redirect_url = '/profile/create'
+    else:
+        redirect_url = '/'
+    response = RedirectResponse(url=redirect_url, status_code=303)
+    response.set_cookie(key='access_token', value=jwt_token, httponly=True)
+    return response
 
 
 @app.get('/login', response_class=HTMLResponse)
