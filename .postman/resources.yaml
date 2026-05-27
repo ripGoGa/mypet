@@ -5,3 +5,4 @@ workspace:
 localResources:
   docs:
     - ../README.ru.md
+    - ../README.md
