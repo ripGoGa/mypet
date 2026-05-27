@@ -13,3 +13,21 @@ def test_registration(email, password):
     response = client.post('/register', data={'email': email, 'password': password},
                            follow_redirects=False)
     assert response.status_code == 303
+
+
+def test_successful_login():
+    client.post('/register', data={'email': 'runner_99@ya.ru', 'password': 'secure_pass'},
+                follow_redirects=False)
+    response = client.post('/login', data={'username': 'runner_99@ya.ru', 'password': 'secure_pass'},
+                           follow_redirects=False)
+    assert response.status_code == 303
+    assert 'access_token' in response.cookies
+
+
+def test_unsuccessful_login():
+    client.post('/register', data={'email': 'runner_99@ya.ru', 'password': 'secure_pass'},
+                follow_redirects=False)
+    response = client.post('/login', data={'username': 'runner_99@ya.ru', 'password': 'secure_pas'},
+                           follow_redirects=False)
+    assert response.status_code == 200
+    assert 'access_token' not in response.cookies
