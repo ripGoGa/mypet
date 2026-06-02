@@ -7,6 +7,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from app.db.session import get_session, create_db_and_tables
 from app.repository.user_repo import UserRepository
+from app.schemas.profile import ProfileCreateDTO
 from app.services.ai_coach import get_ollama_service, OllamaService
 from app.services.file_service import (
     validate_file_type,
@@ -27,6 +28,7 @@ from datetime import datetime, UTC, date, timedelta
 from sqlalchemy import desc, func
 
 from app.services.parse_cvs import parse_csv_to_workout, ParseCsvError
+from app.services.profile_service import ProfileService, get_profile_service
 from app.services.security import get_password_hash, verify_password, create_access_token, SECRET_KEY, ALGORITHM
 from app.services.user_service import UserService, get_user_service
 
@@ -196,16 +198,12 @@ async def create_profile(
         environment_location: str = Form(...),
         birth_date: Optional[date] = Form(None),
         height_cm: Optional[int] = Form(None),
-        session: Session = Depends(get_session),
+        service: ProfileService = Depends(get_profile_service),
         user: Users = Depends(get_current_user)):
-    user_profile = UserProfile(id=user.id, name=name, birth_date=birth_date, height_cm=height_cm)
-    session.add(user_profile)
-    athlete_profile = AthleteProfile(id=user.id, weight_kg=weight_kg, current_ftp=current_ftp, gear=gear,
-                                     environment_location=environment_location, limitations=limitations,
-                                     weekly_hours=weekly_hours)
-    session.add(athlete_profile)
-    session.commit()
-
+    profile = ProfileCreateDTO(name=name, weight_kg=weight_kg, current_ftp=current_ftp, limitations=limitations,
+                               weekly_hours=weekly_hours, gear=gear, environment_location=environment_location,
+                               birth_date=birth_date, height_cm=height_cm)
+    service.create_new_profile(user_data=profile, user_id=user.id)
     return RedirectResponse(url='/profile', status_code=303)
 
 

@@ -1,0 +1,28 @@
+from fastapi import Depends
+from sqlmodel import Session
+
+from app.db.session import get_session
+from app.models.models import UserProfile, AthleteProfile
+from app.repository.profile_repo import ProfileRepository
+from app.schemas.profile import ProfileCreateDTO
+
+
+class ProfileService:
+    def __init__(self, profile_repo: ProfileRepository):
+        self.profile_repo = profile_repo
+
+    def create_new_profile(self, user_data: ProfileCreateDTO, user_id: int):
+        user_profile = UserProfile(id=user_id, name=user_data.name, birth_date=user_data.birth_date,
+                                   height_cm=user_data.height_cm)
+        athlete_profile = AthleteProfile(id=user_id, weight_kg=user_data.weight_kg, current_ftp=user_data.current_ftp,
+                                         gear=user_data.gear, environment_location=user_data.environment_location,
+                                         limitations=user_data.limitations,
+                                         weekly_hours=user_data.weekly_hours)
+        result = self.profile_repo.add_user_profile(user_profile=user_profile, athlete_profile=athlete_profile)
+        return result
+
+
+def get_profile_service(session: Session = Depends(get_session)) -> ProfileService:
+    repo = ProfileRepository(session=session)
+    new_profile_service = ProfileService(profile_repo=repo)
+    return new_profile_service
