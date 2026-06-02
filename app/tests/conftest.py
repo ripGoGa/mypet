@@ -4,6 +4,7 @@ import pytest
 from sqlmodel import Session, create_engine
 from app.main import app
 from app.db.session import get_session
+from fastapi.testclient import TestClient
 
 ORIGINAL_DB_PATH = "app/data/app.db"
 TEST_DB_PATH = "app/data/test_app.db"
@@ -41,3 +42,17 @@ def setup_test_database():
             os.remove(TEST_DB_PATH)
         except PermissionError:
             pass
+
+
+@pytest.fixture()
+def client():
+    with TestClient(app) as client:
+        yield client
+
+
+@pytest.fixture()
+def authorized_client(client):
+    client.post('/register', data={'email': 'test_client@ya.ru', 'password': 'secure_pass'})
+    client.post('/login', data={'username': 'test_client@ya.ru', 'password': 'secure_pass'})
+    yield client
+
