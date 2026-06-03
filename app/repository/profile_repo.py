@@ -3,6 +3,7 @@ from typing import Optional
 
 from sqlmodel import Session
 
+from app.core.exceptions import ProfileAlreadyExistsError
 from app.models.models import UserProfile, AthleteProfile
 
 
@@ -21,10 +22,7 @@ class ProfileRepository:
                      updated_at: datetime = datetime.now) -> UserProfile:
         pass
 
-    def add_athlete_profile(self, weight_kg: Optional[float], current_ftp: Optional[int], limitations: Optional[str],
-                            weekly_hours: Optional[int], gear: Optional[str],
-                            environment_location: Optional[str]) -> AthleteProfile:
-        pass
+    def check_profile(self, user_id: int) -> Optional[UserProfile]:
+        return self.session.get(UserProfile, user_id)
 
-    def edit_athlete_profile(self) -> AthleteProfile:
-        pass
+

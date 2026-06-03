@@ -5,6 +5,7 @@ import jwt
 import uvicorn
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
+from app.core.exceptions import ProfileAlreadyExistsError
 from app.db.session import get_session, create_db_and_tables
 from app.repository.user_repo import UserRepository
 from app.schemas.profile import ProfileCreateDTO
@@ -200,10 +201,13 @@ async def create_profile(
         height_cm: Optional[int] = Form(None),
         service: ProfileService = Depends(get_profile_service),
         user: Users = Depends(get_current_user)):
-    profile = ProfileCreateDTO(name=name, weight_kg=weight_kg, current_ftp=current_ftp, limitations=limitations,
-                               weekly_hours=weekly_hours, gear=gear, environment_location=environment_location,
-                               birth_date=birth_date, height_cm=height_cm)
-    service.create_new_profile(user_data=profile, user_id=user.id)
+    try:
+        profile = ProfileCreateDTO(name=name, weight_kg=weight_kg, current_ftp=current_ftp, limitations=limitations,
+                                   weekly_hours=weekly_hours, gear=gear, environment_location=environment_location,
+                                   birth_date=birth_date, height_cm=height_cm)
+        service.create_new_profile(user_data=profile, user_id=user.id)
+    except ProfileAlreadyExistsError:
+        raise HTTPException(status_code=400, detail='Профиль уже существует')
     return RedirectResponse(url='/profile', status_code=303)
 
 
