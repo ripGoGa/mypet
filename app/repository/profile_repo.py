@@ -3,7 +3,6 @@ from typing import Optional
 
 from sqlmodel import Session
 
-from app.core.exceptions import ProfileAlreadyExistsError
 from app.models.models import UserProfile, AthleteProfile
 
 
