@@ -1,7 +1,7 @@
 from fastapi import HTTPException, Depends
 from sqlmodel import Session
 
-from app.core.exceptions import UserRegistrationError, UserAlreadyExistError
+from app.core.exceptions import UserAlreadyExistError, UserEmailPasswordError
 from app.db.session import get_session
 from app.models.models import Users
 from app.repository.user_repo import UserRepository
@@ -23,11 +23,11 @@ class UserService:
         # Looking for a user in the db or raise an exp
         user = self.user_repo.get_by_email(email)
         if not user:
-            raise UserRegistrationError
+            raise UserEmailPasswordError
         # Verify user and return Users obj
         if verify_password(plain_password=password, hashed_password=user.hashed_password):
             return user
-        raise UserRegistrationError
+        raise UserEmailPasswordError
 
 
 def get_user_service(session: Session = Depends(get_session)) -> UserService:

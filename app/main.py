@@ -1,6 +1,6 @@
 from math import ceil
 from typing import Optional
-
+from app.routers import login, register
 import jwt
 import uvicorn
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -20,8 +20,7 @@ from app.services.file_service import (
 from fastapi import FastAPI, UploadFile, File, Depends, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from app.models.models import UploadedFile, Workout, UserProfile, ChatMessage, AthleteProfile, Users, UserCreate, \
-    UserLogin
+from app.models.models import UploadedFile, Workout, ChatMessage, Users
 from starlette.requests import Request
 from pathlib import Path
 from sqlmodel import Session, select
@@ -34,6 +33,9 @@ from app.services.security import get_password_hash, verify_password, create_acc
 from app.services.user_service import UserService, get_user_service
 
 app = FastAPI(title="Bike Tracker")
+
+app.include_router(login.router)
+app.include_router(register.router)
 
 templates = Jinja2Templates(directory='app/templates')
 
@@ -395,52 +397,9 @@ async def main_stat(request: Request, session: Session = Depends(get_session), u
                                                           'raw_ccall': raw_ccall, 'raw_chart_dates': raw_chart_dates})
 
 
-@app.get('/register', response_class=HTMLResponse)
-async def get_register_page(request: Request):
-    # This just sends the HTML file to the browser
-    return templates.TemplateResponse('register.html', {'request': request})
-
-
-@app.post('/register')
-def register(request: Request, email: str = Form(...), password: str = Form(...),
-             service: UserService = Depends(get_user_service)):
-    # call the method for register a new user
-    service.register_new_user(email, password)
-    return RedirectResponse(url='/login', status_code=303)
-
-
-@app.post('/login')
-def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(),
-          service: UserService = Depends(get_user_service)):
-    # Looking and verifying a user
-    user = service.authenticate_user(email=form_data.username, password=form_data.password)
-    # Create the jwt_token
-    jwt_token = create_access_token(data={'sub': form_data.username})
-    if user.user_profile is None:
-        redirect_url = '/profile/create'
-    else:
-        redirect_url = '/'
-    response = RedirectResponse(url=redirect_url, status_code=303)
-    response.set_cookie(key='access_token', value=jwt_token, httponly=True)
-    return response
-
-
-@app.get('/login', response_class=HTMLResponse)
-def get_login_page(request: Request):
-    # Показываем страницу в браузере
-    return templates.TemplateResponse('login.html', {'request': request})
-
-
 @app.get('/me')
 def me(user=Depends(get_current_user)) -> dict:
     return {'id': user.id, 'email': user.email}
-
-
-@app.get('/logout')
-def get_logout(request: Request):
-    response = RedirectResponse(url='/?logged_out=true', status_code=303)
-    response.delete_cookie(key='access_token')
-    return response
 
 
 @app.exception_handler(HTTPException)

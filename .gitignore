@@ -27,3 +27,6 @@ Thumbs.db
 data/csv/
 data/streams/
 app.db
+
+# Файл слепок проекта
+project_dump.txt
