@@ -1,22 +1,15 @@
 from math import ceil
-from typing import Optional
-from app.routers import login, register
+from app.core.dependencies import get_current_user
+from app.routers import login, register, profile
 import jwt
-import uvicorn
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-
-from app.core.exceptions import ProfileAlreadyExistsError
 from app.db.session import get_session, create_db_and_tables
-from app.repository.user_repo import UserRepository
-from app.schemas.profile import ProfileCreateDTO
-from app.services.ai_coach import get_ollama_service, OllamaService
+from app.services.ai_coach import get_ollama_service
 from app.services.file_service import (
     validate_file_type,
     save_file_with_hash,
     FileValidationError,
     FileAlreadyExistsError
 )
-
 from fastapi import FastAPI, UploadFile, File, Depends, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -26,36 +19,16 @@ from pathlib import Path
 from sqlmodel import Session, select
 from datetime import datetime, UTC, date, timedelta
 from sqlalchemy import desc, func
-
 from app.services.parse_cvs import parse_csv_to_workout, ParseCsvError
-from app.services.profile_service import ProfileService, get_profile_service
-from app.services.security import get_password_hash, verify_password, create_access_token, SECRET_KEY, ALGORITHM
-from app.services.user_service import UserService, get_user_service
+from app.services.security import SECRET_KEY, ALGORITHM
 
 app = FastAPI(title="Bike Tracker")
 
 app.include_router(login.router)
 app.include_router(register.router)
+app.include_router(profile.router)
 
 templates = Jinja2Templates(directory='app/templates')
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
-
-
-def get_current_user(request: Request, session=Depends(get_session)):
-    """"Проверяет токен на соответствие"""
-    token = request.cookies.get('access_token')
-    if not token:
-        raise HTTPException(status_code=401, detail='Ошибка авторизации')
-    try:
-        # Пробует декодировать подпись токена с помощью секретного ключа
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user = session.exec(select(Users).where(Users.email == payload['sub'])).first()
-        if not user:
-            raise HTTPException(status_code=401, detail='Ошибка авторизации')
-        return user
-    except jwt.InvalidTokenError as e:
-        raise HTTPException(status_code=401, detail='Ошибка авторизации')
 
 
 def on_startup() -> None:
@@ -173,96 +146,6 @@ async def import_csv(files: list[UploadFile] = File(...), session: Session = Dep
             print(f"Неизвестная ошибка при загрузке {file.filename}: {e}")  # Для дебага в консоли
     return RedirectResponse(url=f'/imports?success={success_count}&dup={dup_count}&err={type_err_count}',
                             status_code=303)
-
-
-@app.get('/profile', response_class=HTMLResponse)
-def show_profile(request: Request, user: Users = Depends(get_current_user)):
-    if user.user_profile is None:
-        return RedirectResponse(url='/profile/create', status_code=303)
-    return templates.TemplateResponse('profile.html', {'request': request, 'user_profile': user.user_profile,
-                                                       'athlete_profile': user.athlete_profile})
-
-
-@app.get('/profile/create', response_class=HTMLResponse)
-async def check_created_profile(request: Request, user: Users = Depends(get_current_user)):
-    if user.user_profile is None:
-        return templates.TemplateResponse('profile_create.html', {'request': request})
-    return RedirectResponse(url='/profile', status_code=303)
-
-
-@app.post("/profile/create", response_class=HTMLResponse)
-async def create_profile(
-        name: str = Form(...),
-        weight_kg: float = Form(...),
-        current_ftp: int = Form(...),
-        limitations: str = Form(...),
-        weekly_hours: float = Form(...),
-        gear: str = Form(...),
-        environment_location: str = Form(...),
-        birth_date: Optional[date] = Form(None),
-        height_cm: Optional[int] = Form(None),
-        service: ProfileService = Depends(get_profile_service),
-        user: Users = Depends(get_current_user)):
-    try:
-        profile = ProfileCreateDTO(name=name, weight_kg=weight_kg, current_ftp=current_ftp, limitations=limitations,
-                                   weekly_hours=weekly_hours, gear=gear, environment_location=environment_location,
-                                   birth_date=birth_date, height_cm=height_cm)
-        service.create_new_profile(user_data=profile, user_id=user.id)
-    except ProfileAlreadyExistsError:
-        raise HTTPException(status_code=400, detail='Профиль уже существует')
-    return RedirectResponse(url='/profile', status_code=303)
-
-
-@app.get('/profile/edit', response_class=HTMLResponse)
-async def check_edited_profile(request: Request,
-                               user: Users = Depends(get_current_user)):
-    user_profile = user.user_profile
-
-    if user_profile is not None:
-        athlete_profile = user.athlete_profile
-        return templates.TemplateResponse('profile_edit.html', {'request': request, 'user_profile': user_profile,
-                                                                'athlete_profile': athlete_profile})
-
-    return RedirectResponse(url='/profile/create', status_code=303)
-
-
-@app.post('/profile/edit', response_class=HTMLResponse)
-async def edit_profile(
-        name: str = Form(...),
-        weight_kg: float = Form(...),
-        current_ftp: int = Form(...),
-        weekly_hours: float = Form(...),
-        gear: str = Form(...),
-        environment_location: str = Form(...),
-        limitations: str = Form(...),
-        birth_date: Optional[date] = Form(None),
-        height_cm: Optional[int] = Form(None),
-        session: Session = Depends(get_session),
-        user: Users = Depends(get_current_user)
-):
-    # Получаем данные из профиля
-    user_profile = user.user_profile
-    athlete_profile = user.athlete_profile
-
-    # Обновляем UserProfile
-    user_profile.name = name
-    user_profile.birth_date = birth_date
-    user_profile.height_cm = height_cm
-    user_profile.updated_at = datetime.now()
-
-    # Обновляем AthleteProfile
-    athlete_profile.weight_kg = weight_kg
-    athlete_profile.current_ftp = current_ftp
-    athlete_profile.weekly_hours = weekly_hours
-    athlete_profile.gear = gear
-    athlete_profile.environment_location = environment_location
-    athlete_profile.limitations = limitations
-
-    # Сохраняем, отправляем в базу
-    session.add(user_profile)
-    session.add(athlete_profile)
-    session.commit()
-    return RedirectResponse(url='/profile', status_code=303)
 
 
 @app.get('/workouts/{workout_id}', response_class=HTMLResponse)
