@@ -55,7 +55,7 @@ async def hello_root(request: Request, session=Depends(get_session)):
         except jwt.InvalidTokenError:
             pass
 
-    return templates.TemplateResponse('index.html', {'request': request, 'user_profile': user_profile})
+    return templates.TemplateResponse(request, 'index.html', {'user_profile': user_profile})
 
 
 @app.get('/workouts', response_class=HTMLResponse)
@@ -87,10 +87,10 @@ async def list_workouts(request: Request, session: Session = Depends(get_session
     total_count = session.exec(query_count).one()
     total_pages = ceil(total_count / limit)
 
-    return templates.TemplateResponse('workouts.html', {'request': request, 'workouts': workouts,
-                                                        'current_page': page,
-                                                        'total_pages': total_pages, 'period': period,
-                                                        'limit': limit})
+    return templates.TemplateResponse(request, 'workouts.html', {'workouts': workouts,
+                                                                 'current_page': page,
+                                                                 'total_pages': total_pages, 'period': period,
+                                                                 'limit': limit})
 
 
 @app.get('/imports', response_class=HTMLResponse)
@@ -101,7 +101,7 @@ async def imports(request: Request, user: Users = Depends(get_current_user)):
     message = None
     if 'success' in request.query_params or 'dup' in request.query_params or 'err' in request.query_params:
         message = f'Успешно загружено: {success_count}, Пропущено дубликатов: {dup_count}, Ошибок: {err_count}'
-    return templates.TemplateResponse('imports.html', {'request': request, 'message': message})
+    return templates.TemplateResponse(request, 'imports.html', {'message': message})
 
 
 @app.post('/imports')
@@ -153,7 +153,7 @@ async def workout_detail(workout_id: int, request: Request, session: Session = D
     workout = session.exec(select(Workout).where(Workout.id == workout_id)).first()
     if not workout:
         raise HTTPException(status_code=404, detail='Тренировка не найдена')
-    return templates.TemplateResponse('workout_detail.html', {'request': request, 'workout': workout})
+    return templates.TemplateResponse(request, 'workout_detail.html', {'workout': workout})
 
 
 @app.get('/coach', response_class=HTMLResponse)
@@ -164,7 +164,7 @@ async def coach_page(request: Request, session: Session = Depends(get_session),
     message_history = session.exec(select(ChatMessage).where(user.id == ChatMessage.user_id).order_by(
         ChatMessage.created_at)).all()
 
-    return templates.TemplateResponse('coach.html', {'request': request, 'message_history': message_history})
+    return templates.TemplateResponse(request, 'coach.html', {'message_history': message_history})
 
 
 @app.post('/coach/chat', response_class=HTMLResponse)
@@ -261,23 +261,27 @@ async def main_stat(request: Request, session: Session = Depends(get_session), u
     avg_cadence_num = sum(cleaned_cadence) / len(cleaned_cadence) if cleaned_cadence else 0
     total_ccall = sum(cleaned_ccall) if cleaned_ccall else 0
     total_tss_num = sum(cleaned_tss) if cleaned_tss else 0
-    return templates.TemplateResponse('statistics.html', {'request': request, 'count_workouts': count_workouts,
-                                                          'raw_total_distance': raw_distance,
-                                                          'total_tss_num': total_tss_num,
-                                                          'total_moving_time': total_moving_time,
-                                                          'avg_watts_num': avg_watts_num,
-                                                          'avg_speed_num': avg_speed_num,
-                                                          'avg_heartrate_num': avg_heartrate_num,
-                                                          'max_in_factor': max_in_factor, 'max_distance': max_distance,
-                                                          'max_np': max_np, 'max_heartrate': max_heartrate,
-                                                          'avg_cadence_num': avg_cadence_num, 'period': period,
-                                                          'total_ccall': total_ccall, 'max_ccall': max_ccall,
-                                                          'raw_distance': raw_distance, 'raw_tss': raw_tss,
-                                                          'raw_watts': raw_watts, 'raw_speed': raw_speed,
-                                                          'raw_heartrate': raw_heartrate, 'raw_cadence': raw_cadence,
-                                                          'raw_in_factor': raw_in_factor,
-                                                          'raw_norm_power': raw_norm_power, 'raw_max_hr': raw_max_hr,
-                                                          'raw_ccall': raw_ccall, 'raw_chart_dates': raw_chart_dates})
+    return templates.TemplateResponse(request, 'statistics.html', {'count_workouts': count_workouts,
+                                                                   'raw_total_distance': raw_distance,
+                                                                   'total_tss_num': total_tss_num,
+                                                                   'total_moving_time': total_moving_time,
+                                                                   'avg_watts_num': avg_watts_num,
+                                                                   'avg_speed_num': avg_speed_num,
+                                                                   'avg_heartrate_num': avg_heartrate_num,
+                                                                   'max_in_factor': max_in_factor,
+                                                                   'max_distance': max_distance,
+                                                                   'max_np': max_np, 'max_heartrate': max_heartrate,
+                                                                   'avg_cadence_num': avg_cadence_num, 'period': period,
+                                                                   'total_ccall': total_ccall, 'max_ccall': max_ccall,
+                                                                   'raw_distance': raw_distance, 'raw_tss': raw_tss,
+                                                                   'raw_watts': raw_watts, 'raw_speed': raw_speed,
+                                                                   'raw_heartrate': raw_heartrate,
+                                                                   'raw_cadence': raw_cadence,
+                                                                   'raw_in_factor': raw_in_factor,
+                                                                   'raw_norm_power': raw_norm_power,
+                                                                   'raw_max_hr': raw_max_hr,
+                                                                   'raw_ccall': raw_ccall,
+                                                                   'raw_chart_dates': raw_chart_dates})
 
 
 @app.get('/me')
@@ -289,4 +293,5 @@ def me(user=Depends(get_current_user)) -> dict:
 def error(request: Request, exc: HTTPException):
     status_code = exc.status_code
     detail = exc.detail
-    return templates.TemplateResponse('error.html', {'request': request, 'detail': detail, 'status_code': status_code})
+    return templates.TemplateResponse(request, 'error.html', {'detail': detail, 'status_code': status_code},
+                                      status_code=status_code)

@@ -50,7 +50,7 @@ class AthleteProfile(SQLModel, table=True):
     weight_kg: Optional[float]
     current_ftp: Optional[int]
     limitations: Optional[str]
-    weekly_hours: Optional[int]  # Сколько времени есть на тренировки в неделю
+    weekly_hours: Optional[float]  # Сколько времени есть на тренировки в неделю
     gear: Optional[str]  # какое оборудование есть у пользователя(велосипед, станки..)
     environment_location: Optional[str]  # окружение, локация
     user: Optional['Users'] = Relationship(back_populates='athlete_profile')

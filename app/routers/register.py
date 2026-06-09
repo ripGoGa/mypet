@@ -23,4 +23,4 @@ def register(request: Request, email: str = Form(...), password: str = Form(...)
 @router.get('/register')
 async def get_register_page(request: Request):
     # This just sends the HTML file to the browser
-    return templates.TemplateResponse('register.html', {'request': request})
+    return templates.TemplateResponse(request, 'register.html')

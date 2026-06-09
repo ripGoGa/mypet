@@ -33,7 +33,7 @@ def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(),
 @router.get('/login')
 def get_login_page(request: Request):
     # Показываем страницу в браузере
-    return templates.TemplateResponse('login.html', {'request': request})
+    return templates.TemplateResponse(request, 'login.html')
 
 
 @router.get('/logout')

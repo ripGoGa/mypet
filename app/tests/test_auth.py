@@ -29,5 +29,5 @@ def test_unsuccessful_login():
                 follow_redirects=False)
     response = client.post('/login', data={'username': 'runner_99@ya.ru', 'password': 'secure_pas'},
                            follow_redirects=False)
-    assert response.status_code == 200
+    assert response.status_code == 400
     assert 'access_token' not in response.cookies

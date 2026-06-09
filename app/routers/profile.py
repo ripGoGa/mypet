@@ -11,7 +11,6 @@ from app.models.models import Users
 from app.schemas.profile import ProfileCreateDTO
 from app.services.profile_service import ProfileService, get_profile_service
 
-
 router = APIRouter()
 
 
@@ -63,14 +62,14 @@ async def create_profile(
 def show_profile(request: Request, user: Users = Depends(get_current_user)):
     if user.user_profile is None:
         return RedirectResponse(url='/profile/create', status_code=303)
-    return templates.TemplateResponse('profile.html', {'request': request, 'user_profile': user.user_profile,
-                                                       'athlete_profile': user.athlete_profile})
+    return templates.TemplateResponse(request, 'profile.html', {'user_profile': user.user_profile,
+                                                                'athlete_profile': user.athlete_profile})
 
 
 @router.get('/profile/create')
 async def check_created_profile(request: Request, user: Users = Depends(get_current_user)):
     if user.user_profile is None:
-        return templates.TemplateResponse('profile_create.html', {'request': request})
+        return templates.TemplateResponse(request, 'profile_create.html')
     return RedirectResponse(url='/profile', status_code=303)
 
 
@@ -81,7 +80,7 @@ async def check_edited_profile(request: Request,
 
     if user_profile is not None:
         athlete_profile = user.athlete_profile
-        return templates.TemplateResponse('profile_edit.html', {'request': request, 'user_profile': user_profile,
-                                                                'athlete_profile': athlete_profile})
+        return templates.TemplateResponse(request, 'profile_edit.html', {'user_profile': user_profile,
+                                                                         'athlete_profile': athlete_profile})
 
     return RedirectResponse(url='/profile/create', status_code=303)
