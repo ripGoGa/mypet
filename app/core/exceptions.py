@@ -1,11 +1,15 @@
 class ProfileAlreadyExistsError(Exception):
-    """"Ошибка в создании пользователя"""
+    """Ошибка в создании пользователя"""
     pass
 
 
 class UserAlreadyExistError(Exception):
-    """"Данный пользователь уже существует"""
+    """Данный пользователь уже существует"""
 
 
 class UserEmailPasswordError(Exception):
-    """"Пользователь не найден или не верный пароль"""
+    """Пользователь не найден или не верный пароль"""
+
+
+class MissingWorkoutError(Exception):
+    """Тренировка не найдена"""
