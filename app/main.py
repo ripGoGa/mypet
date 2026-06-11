@@ -1,8 +1,15 @@
-from math import ceil
-from app.core.dependencies import get_current_user
-from app.routers import login, register, profile
+from datetime import datetime, UTC, timedelta
+from pathlib import Path
 import jwt
+from fastapi import FastAPI, UploadFile, File, Depends, Form, HTTPException
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.templating import Jinja2Templates
+from sqlmodel import Session, select
+from starlette.requests import Request
+from app.core.dependencies import get_current_user
 from app.db.session import get_session, create_db_and_tables
+from app.models.models import UploadedFile, Workout, ChatMessage, Users
+from app.routers import login, register, profile, workout
 from app.services.ai_coach import get_ollama_service
 from app.services.file_service import (
     validate_file_type,
@@ -10,15 +17,6 @@ from app.services.file_service import (
     FileValidationError,
     FileAlreadyExistsError
 )
-from fastapi import FastAPI, UploadFile, File, Depends, Form, HTTPException
-from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
-from app.models.models import UploadedFile, Workout, ChatMessage, Users
-from starlette.requests import Request
-from pathlib import Path
-from sqlmodel import Session, select
-from datetime import datetime, UTC, date, timedelta
-from sqlalchemy import desc, func
 from app.services.parse_cvs import parse_csv_to_workout, ParseCsvError
 from app.services.security import SECRET_KEY, ALGORITHM
 
@@ -27,6 +25,7 @@ app = FastAPI(title="Bike Tracker")
 app.include_router(login.router)
 app.include_router(register.router)
 app.include_router(profile.router)
+app.include_router(workout.router)
 
 templates = Jinja2Templates(directory='app/templates')
 
@@ -56,41 +55,6 @@ async def hello_root(request: Request, session=Depends(get_session)):
             pass
 
     return templates.TemplateResponse(request, 'index.html', {'user_profile': user_profile})
-
-
-@app.get('/workouts', response_class=HTMLResponse)
-async def list_workouts(request: Request, session: Session = Depends(get_session),
-                        user: Users = Depends(get_current_user), page: int = 1, period: int = 0,
-                        limit: int = 10):
-    if page < 1:
-        page = 1
-    if limit > 100 or limit < 1:
-        limit = 10
-    offset = (page - 1) * limit
-    user_id = user.id
-
-    # 1. Чистый запрос
-    query_workouts = select(Workout).where(Workout.user_id == user_id)
-    query_count = select(func.count(Workout.id)).where(Workout.user_id == user_id)
-
-    # 2. Формируем запрос из роута статистики
-    if period:
-        target_date = datetime.now() - timedelta(days=period)
-        query_workouts = query_workouts.join(UploadedFile).where(UploadedFile.uploaded_at >= target_date)
-        query_count = query_count.join(UploadedFile).where(UploadedFile.uploaded_at >= target_date)
-
-    # 3. Формируем запрос для простого просмотра тренировок
-    query_workouts = (query_workouts.order_by(desc(Workout.id)).limit(limit).offset(offset))
-
-    # 4. Делаем запрос в базу
-    workouts = session.exec(query_workouts).all()
-    total_count = session.exec(query_count).one()
-    total_pages = ceil(total_count / limit)
-
-    return templates.TemplateResponse(request, 'workouts.html', {'workouts': workouts,
-                                                                 'current_page': page,
-                                                                 'total_pages': total_pages, 'period': period,
-                                                                 'limit': limit})
 
 
 @app.get('/imports', response_class=HTMLResponse)
@@ -146,14 +110,6 @@ async def import_csv(files: list[UploadFile] = File(...), session: Session = Dep
             print(f"Неизвестная ошибка при загрузке {file.filename}: {e}")  # Для дебага в консоли
     return RedirectResponse(url=f'/imports?success={success_count}&dup={dup_count}&err={type_err_count}',
                             status_code=303)
-
-
-@app.get('/workouts/{workout_id}', response_class=HTMLResponse)
-async def workout_detail(workout_id: int, request: Request, session: Session = Depends(get_session)):
-    workout = session.exec(select(Workout).where(Workout.id == workout_id)).first()
-    if not workout:
-        raise HTTPException(status_code=404, detail='Тренировка не найдена')
-    return templates.TemplateResponse(request, 'workout_detail.html', {'workout': workout})
 
 
 @app.get('/coach', response_class=HTMLResponse)
