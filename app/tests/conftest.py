@@ -54,5 +54,11 @@ def client():
 def authorized_client(client):
     client.post('/register', data={'email': 'test_client@ya.ru', 'password': 'secure_pass'})
     client.post('/login', data={'username': 'test_client@ya.ru', 'password': 'secure_pass'})
+    client
     yield client
 
+
+@pytest.fixture()
+def db_test_session():
+    with Session(test_engine) as session:
+        yield session
