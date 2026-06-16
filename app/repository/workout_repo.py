@@ -31,3 +31,12 @@ class WorkoutRepository:
         workout = self.session.exec(select(Workout).where(Workout.id == workout_id,
                                                           Workout.user_id == user_id)).first()
         return workout
+
+    def get_statistic_workouts(self, user_id: int, period: int = 0) -> Sequence[Workout]:
+        # 1. Чистый запрос
+        query_workouts = select(Workout).where(Workout.user_id == user_id)
+        if period:
+            target_data = datetime.now(UTC) - timedelta(days=period)
+            query_workouts = query_workouts.join(UploadedFile).where(UploadedFile.uploaded_at >= target_data)
+        result = self.session.exec(query_workouts).all()
+        return result
