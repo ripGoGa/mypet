@@ -1,0 +1,17 @@
+from fastapi import APIRouter, Depends
+from starlette.requests import Request
+
+from app.core.dependencies import get_current_user
+from app.core.templating import templates
+from app.models.models import Users
+from app.services.statistics_service import get_statistics_service, StatisticsService
+
+router = APIRouter()
+
+
+@router.get('/statistics')
+def main_stat(request: Request, user: Users = Depends(get_current_user), period: int = 0,
+              service: StatisticsService = Depends(get_statistics_service)):
+    work_dto = service.get_user_stats(user_id=user.id, period=period)
+    return templates.TemplateResponse(request, 'statistics.html', work_dto.model_dump())
+
