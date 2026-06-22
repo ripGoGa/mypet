@@ -40,3 +40,12 @@ class WorkoutRepository:
             query_workouts = query_workouts.join(UploadedFile).where(UploadedFile.uploaded_at >= target_data)
         result = self.session.exec(query_workouts).all()
         return result
+
+    def add_uploaded_file(self, up_file: UploadedFile) -> UploadedFile:
+        self.session.add(up_file)
+        self.session.flush()
+        return up_file
+
+
+    def get_by_hash(self, sha256: str, user_id: int) -> Optional[UploadedFile]:
+        pass
