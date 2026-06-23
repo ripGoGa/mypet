@@ -1,3 +1,4 @@
+import hashlib
 from datetime import datetime, timedelta, UTC
 from math import ceil
 from typing import Optional, Tuple, Sequence, Any
@@ -41,11 +42,13 @@ class WorkoutRepository:
         result = self.session.exec(query_workouts).all()
         return result
 
-    def add_uploaded_file(self, up_file: UploadedFile) -> UploadedFile:
-        self.session.add(up_file)
+    def add_uploaded_file(self, uploaded_file: UploadedFile) -> UploadedFile:
+        self.session.add(uploaded_file)
         self.session.flush()
-        return up_file
-
+        return uploaded_file
 
     def get_by_hash(self, sha256: str, user_id: int) -> Optional[UploadedFile]:
-        pass
+        existing = self.session.exec(
+            select(UploadedFile).where(UploadedFile.sha256 == sha256,
+                                       UploadedFile.user_id == user_id)).first()
+        return existing

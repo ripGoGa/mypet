@@ -3,10 +3,12 @@ from pathlib import Path
 from typing import Optional, List, Text
 
 from pydantic import BaseModel
+from sqlalchemy import UniqueConstraint
 from sqlmodel import SQLModel, Field, Relationship
 
 
 class UploadedFile(SQLModel, table=True):
+    __table_args__ = (UniqueConstraint('sha256', 'user_id'),)
     id: int = Field(default=None, primary_key=True)
     original_name: str
     sha256: str
