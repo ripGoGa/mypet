@@ -1,23 +1,18 @@
-from datetime import datetime, UTC, timedelta
+from datetime import datetime, timedelta
 from pathlib import Path
+
 import jwt
-from fastapi import FastAPI, UploadFile, File, Depends, Form, HTTPException
+from fastapi import FastAPI, Depends, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select
 from starlette.requests import Request
+
 from app.core.dependencies import get_current_user
 from app.db.session import get_session, create_db_and_tables
 from app.models.models import UploadedFile, Workout, ChatMessage, Users
 from app.routers import login, register, profile, workout, statistics, imports
 from app.services.ai_coach import get_ollama_service
-from app.services.file_service import (
-    validate_file_type,
-    save_file_with_hash,
-    FileValidationError,
-    FileAlreadyExistsError
-)
-from app.services.parse_cvs import parse_csv_to_workout, ParseCsvError
 from app.services.security import SECRET_KEY, ALGORITHM
 
 app = FastAPI(title="Bike Tracker")

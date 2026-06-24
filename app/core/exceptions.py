@@ -13,3 +13,15 @@ class UserEmailPasswordError(Exception):
 
 class MissingWorkoutError(Exception):
     """Тренировка не найдена"""
+
+
+class AIProviderNotAvailable(Exception):
+    """"Сервис ИИ не доступен"""
+
+
+class AIProviderTimeOut(Exception):
+    """"Превышено время ожидания"""
+
+
+class AIProvideInternalError(Exception):
+    """"Внутренняя ошибка ИИ"""
