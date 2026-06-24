@@ -25,3 +25,7 @@ class AIProviderTimeOut(Exception):
 
 class AIProvideInternalError(Exception):
     """"Внутренняя ошибка ИИ"""
+
+
+class DownloadPromptError(Exception):
+    """"Произошла ошибка файл промпта не найден"""

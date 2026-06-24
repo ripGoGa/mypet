@@ -1,11 +1,10 @@
-import hashlib
 from datetime import datetime, timedelta, UTC
-from math import ceil
-from typing import Optional, Tuple, Sequence, Any
+from typing import Optional, Sequence
 
 from sqlalchemy import func, desc
 from sqlmodel import Session, select
-from app.models.models import Users, Workout, UploadedFile
+
+from app.models.models import Workout, UploadedFile
 
 
 class WorkoutRepository:
