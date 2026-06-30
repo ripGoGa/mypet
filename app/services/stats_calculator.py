@@ -33,6 +33,11 @@ class StatsCalculator:
         self._raw_ccall = []
         self._raw_chart_dates = []
 
+        # 4. Счетчики тяжести тренировок
+        self.light_count = 0
+        self.medium_count = 0
+        self.hard_count = 0
+
         for workout in workouts:
 
             # Наполнение сумматоров (Тут 0 безопасен, так как мы просто плюсуем к общему объему)
@@ -71,6 +76,16 @@ class StatsCalculator:
             else:
                 date_str = "Unknown"
             self._raw_chart_dates.append(date_str)
+
+            # Наполнение счетчиков
+            if workout.training_stress_score is None:
+                self.light_count += 1
+            elif workout.training_stress_score <= 70:
+                self.light_count += 1
+            elif workout.training_stress_score < 101:
+                self.medium_count += 1
+            elif workout.training_stress_score >= 101:
+                self.hard_count += 1
 
     # Общие объемы и Максимумы
     @property

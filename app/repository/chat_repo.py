@@ -21,3 +21,6 @@ class ChatRepository:
         self.session.add(message)
         self.session.flush()
         return message
+
+    def commit(self):
+        self.session.commit()
