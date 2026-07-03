@@ -33,8 +33,3 @@ class WorkoutService:
             return workout
         raise MissingWorkoutError
 
-
-def get_workout_service(session: Session = Depends(get_session)) -> WorkoutService:
-    repo = WorkoutRepository(session=session)
-    new_work_service = WorkoutService(work_repo=repo)
-    return new_work_service

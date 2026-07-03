@@ -56,10 +56,7 @@ class ImportService:
         return success_count, dup_count, type_err_count
 
 
-def get_import_service(session: Session = Depends(get_session)) -> ImportService:
-    repo = WorkoutRepository(session=session)
-    new_import_service = ImportService(workout_repo=repo, session=session)
-    return new_import_service
+
 
 
 

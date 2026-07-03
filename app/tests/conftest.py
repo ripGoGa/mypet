@@ -10,8 +10,8 @@ from fastapi.testclient import TestClient
 
 from app.models.models import Users, UserProfile, AthleteProfile, UploadedFile, Workout
 
-ORIGINAL_DB_PATH = "app/data/app.db"
-TEST_DB_PATH = "app/data/test_app.db"
+ORIGINAL_DB_PATH = "data/app.db"
+TEST_DB_PATH = "data/test_app.db"
 TEST_DATABASE_URL = f"sqlite:///{TEST_DB_PATH}"
 
 test_engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})

@@ -29,8 +29,3 @@ class UserService:
             return user
         raise UserEmailPasswordError
 
-
-def get_user_service(session: Session = Depends(get_session)) -> UserService:
-    repo = UserRepository(session=session)
-    new_user_service = UserService(user_repo=repo)
-    return new_user_service

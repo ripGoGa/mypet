@@ -1,9 +1,11 @@
 from datetime import datetime, timedelta
 from typing import Sequence
 
+from fastapi import Depends
 from sqlalchemy import select
 from sqlmodel import Session
 
+from app.db.session import get_session
 from app.models.models import ChatMessage
 
 
@@ -24,3 +26,10 @@ class ChatRepository:
 
     def commit(self):
         self.session.commit()
+
+    def get_all_chat_history(self, user_id: int) -> Sequence[ChatMessage]:
+        messages = self.session.exec(select(ChatMessage).where(ChatMessage.user_id == user_id)).all()
+        return messages
+
+
+

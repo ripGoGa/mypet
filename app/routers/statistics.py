@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends
 from starlette.requests import Request
 
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_statistics_service
 from app.core.templating import templates
 from app.models.models import Users
-from app.services.statistics_service import get_statistics_service, StatisticsService
+from app.services.statistics_service import  StatisticsService
 
 router = APIRouter()
 

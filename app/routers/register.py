@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, Form
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
+from app.core.dependencies import get_user_service
 from app.core.exceptions import UserAlreadyExistError
 from app.core.templating import templates
-from app.services.user_service import UserService, get_user_service
+from app.services.user_service import UserService
 
 router = APIRouter()
 

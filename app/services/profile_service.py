@@ -34,8 +34,3 @@ class ProfileService:
         result = self.profile_repo.edit_profile(user_profile=user_profile, athlete_profile=athlete_profile)
         return result
 
-
-def get_profile_service(session: Session = Depends(get_session)) -> ProfileService:
-    repo = ProfileRepository(session=session)
-    new_profile_service = ProfileService(profile_repo=repo)
-    return new_profile_service

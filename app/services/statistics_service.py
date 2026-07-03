@@ -17,8 +17,3 @@ class StatisticsService:
         result = WorkoutsDTO.model_validate(statistic, from_attributes=True)
         return result
 
-
-def get_statistics_service(session: Session = Depends(get_session)) -> StatisticsService:
-    repo = WorkoutRepository(session=session)
-    new_statistics_service = StatisticsService(workout_repo=repo)
-    return new_statistics_service
