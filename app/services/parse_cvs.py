@@ -59,9 +59,9 @@ def parse_csv_to_workout(file_path: Path, user_id: int, uf_id: int, session: Ses
         intensity_factor = round(normalized_power / ftp, 3)
         training_stress_score = round(((moving_mask.sum() * normalized_power * intensity_factor) / (ftp * 3600)) * 100, 1)
     else:
-        normalized_power = 'нет данных'
-        intensity_factor = 'нет данных'
-        training_stress_score = 'нет данных'
+        normalized_power = None
+        intensity_factor = None
+        training_stress_score = None
 
     # Калории
     calories_burned = int(avg_watts * (moving_mask.sum() / 3600) * 3.6)

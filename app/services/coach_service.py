@@ -41,7 +41,7 @@ class CoachService:
         # Собираем финальный промпт
 
         profile_section = self.user_profile.format(**athlete_data)
-        content_section = self.current_content.format(current_data=date.today().isoformat(),
+        content_section = self.current_content.format(current_date=date.today().isoformat(),
                                                       recent_workouts_summary=workout_sum,
                                                       user_message=user_message)
         system_content = f'{self.system_prompt}\n\n{profile_section}'

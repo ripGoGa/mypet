@@ -40,7 +40,7 @@ def get_chat_repo(session: Session = Depends(get_session)) -> ChatRepository:
     return new_chat_repo
 
 
-def get_coach_service(session: Session = Depends()) -> CoachService:
+def get_coach_service(session: Session = Depends(get_session)) -> CoachService:
     workout_repo = WorkoutRepository(session=session)
     chat_repo = ChatRepository(session=session)
     llm_provider = OllamaProvider()

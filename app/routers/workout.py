@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from starlette.requests import Request
+
 from app.core.dependencies import get_current_user, get_workout_service
 from app.core.exceptions import MissingWorkoutError
 from app.core.templating import templates

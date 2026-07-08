@@ -1,11 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from typing import Sequence
+from sqlmodel import Session, select
 
-from fastapi import Depends
-from sqlalchemy import select
-from sqlmodel import Session
-
-from app.db.session import get_session
 from app.models.models import ChatMessage
 
 
@@ -14,7 +10,7 @@ class ChatRepository:
         self.session = session
 
     def get_chat_history(self, user_id: int) -> Sequence[ChatMessage]:
-        week_ago = datetime.now() - timedelta(days=7)
+        week_ago = datetime.now(UTC) - timedelta(days=7)
         messages = self.session.exec(select(ChatMessage).where(ChatMessage.user_id == user_id).where(
             ChatMessage.created_at >= week_ago)).all()
         return messages

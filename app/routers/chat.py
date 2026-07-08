@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 @router.post('/coach/chat')
-async def chat(request:Request, user_question: str = Form(...), service: CoachService = Depends(get_coach_service),
+async def chat(request: Request, user_question: str = Form(...), service: CoachService = Depends(get_coach_service),
                user: Users = Depends(get_current_user)):
     if not user.user_profile:
         return RedirectResponse(url="/profile/create", status_code=303)

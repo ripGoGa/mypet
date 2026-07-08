@@ -1,10 +1,8 @@
 import hashlib
 from datetime import datetime, UTC
 
-from fastapi import Depends
 from sqlmodel import Session
 
-from app.db.session import get_session
 from app.models.models import UploadedFile
 from app.models.models import Users
 from app.repository.workout_repo import WorkoutRepository

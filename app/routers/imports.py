@@ -1,11 +1,9 @@
 from fastapi import APIRouter, Depends, File, UploadFile
-from sqlmodel import Session
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
 from app.core.dependencies import get_current_user, get_import_service
 from app.core.templating import templates
-from app.db.session import get_session
 from app.models.models import Users
 from app.services.import_service import ImportService
 
