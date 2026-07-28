@@ -1,14 +1,21 @@
 import os
 import shutil
+import uuid
 from datetime import datetime, UTC, timedelta
 
 import pytest
+from fastapi import Depends
 from sqlmodel import Session, create_engine, select
+
+from app.infrastructure.llm.ollama_provider import OllamaProvider
 from app.main import app
 from app.db.session import get_session
 from fastapi.testclient import TestClient
 
 from app.models.models import Users, UserProfile, AthleteProfile, UploadedFile, Workout
+from app.repository.chat_repo import ChatRepository
+from app.repository.workout_repo import WorkoutRepository
+from app.services.coach_service import CoachService
 
 ORIGINAL_DB_PATH = "data/app.db"
 TEST_DB_PATH = "data/test_app.db"
@@ -57,8 +64,10 @@ def client():
 @pytest.fixture()
 def authorized_client(client):
     """"Создает авторизованного пользователя"""
-    client.post('/register', data={'email': 'test_client@ya.ru', 'password': 'secure_pass'})
-    client.post('/login', data={'username': 'test_client@ya.ru', 'password': 'secure_pass'})
+    email = f'{uuid.uuid4()}@ya.ru'
+    client.post('/register', data={'email': email, 'password': 'secure_pass'})
+    client.post('/login', data={'username': email, 'password': 'secure_pass'})
+    client.test_email = email
     yield client
 
 
@@ -70,10 +79,16 @@ def db_test_session():
 
 
 @pytest.fixture()
-def test_user_id(authorized_client, db_test_session):
+def test_user_id(authorized_client, db_test_session, test_user):
     """Берем id у юзера для тестов"""
-    user = db_test_session.exec(select(Users).where(Users.email == 'test_client@ya.ru')).first()
+    user = test_user
     return user.id
+
+@pytest.fixture()
+def test_user(authorized_client, db_test_session):
+    """Берем id у юзера для тестов"""
+    user = db_test_session.exec(select(Users).where(Users.email == authorized_client.test_email)).first()
+    return user
 
 
 @pytest.fixture()
@@ -125,3 +140,21 @@ def load_workout(test_user_id, db_test_session):
         db_test_session.commit()
         workouts.append(workout)
     return workouts
+
+
+class FakeLLMProvider:
+    async def send_message(self, messages: list[dict[str, str]]) -> str:
+        return 'Ответ LLM'
+
+
+@pytest.fixture()
+def fake_llm_provider():
+    return FakeLLMProvider()
+
+@pytest.fixture()
+def get_test_coach_service(db_test_session) -> CoachService:
+    workout_repo = WorkoutRepository(session=db_test_session)
+    chat_repo = ChatRepository(session=db_test_session)
+    llm_provider = FakeLLMProvider()
+    new_coach_service = CoachService(workout_repo=workout_repo, chat_repo=chat_repo, llm_provider=llm_provider)
+    return new_coach_service
