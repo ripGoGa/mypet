@@ -84,6 +84,7 @@ def test_user_id(authorized_client, db_test_session, test_user):
     user = test_user
     return user.id
 
+
 @pytest.fixture()
 def test_user(authorized_client, db_test_session):
     """Берем id у юзера для тестов"""
@@ -143,13 +144,18 @@ def load_workout(test_user_id, db_test_session):
 
 
 class FakeLLMProvider:
+    def __init__(self):
+        self.history_messages = []
+
     async def send_message(self, messages: list[dict[str, str]]) -> str:
+        self.history_messages.append(messages)
         return 'Ответ LLM'
 
 
 @pytest.fixture()
 def fake_llm_provider():
     return FakeLLMProvider()
+
 
 @pytest.fixture()
 def get_test_coach_service(db_test_session) -> CoachService:
