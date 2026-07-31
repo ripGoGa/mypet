@@ -1,5 +1,7 @@
 import pytest
 
+from app.core.exceptions import AIProviderNotAvailable
+
 
 @pytest.mark.asyncio
 async def test_generate_coach_response_success(authorized_client, load_athlete_profile, load_user_profile,
@@ -13,4 +15,15 @@ async def test_generate_coach_response_success(authorized_client, load_athlete_p
     assert chat_history[0].content == 'fdfdfd'
     assert chat_history[1].role == 'assistant'
     assert chat_history[1].content == 'Ответ LLM'
+
+
+@pytest.mark.asyncio
+async def test_generate_coach_error(authorized_client, load_athlete_profile, load_user_profile,
+                                    get_test_broken_coach_service, db_test_session, test_user):
+    with pytest.raises(AIProviderNotAvailable):
+        await get_test_broken_coach_service.generate_coach_response(user_message='user message', user=test_user)
+
+    chat_history = get_test_broken_coach_service.chat_repo.get_all_chat_history(user_id=test_user.id)
+    assert len(chat_history) == 0
+
 
