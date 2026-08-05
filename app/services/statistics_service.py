@@ -1,7 +1,3 @@
-from fastapi import Depends
-from sqlmodel import Session
-
-from app.db.session import get_session
 from app.repository.workout_repo import WorkoutRepository
 from app.schemas.workoutDTO import WorkoutsDTO
 from app.services.stats_calculator import StatsCalculator

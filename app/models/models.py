@@ -1,6 +1,5 @@
 from datetime import date, datetime, timedelta
-from pathlib import Path
-from typing import Optional, List, Text
+from typing import Optional, List
 
 from pydantic import BaseModel
 from sqlalchemy import UniqueConstraint
