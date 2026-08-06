@@ -1,4 +1,7 @@
+from types import NoneType
+
 from app.schemas.workoutDTO import WorkoutsDTO
+from app.services.statistics_service import StatisticsService
 
 
 def test_get_user_stats_success(test_workouts, workout_repo, get_fake_statistic_service):
@@ -6,3 +9,10 @@ def test_get_user_stats_success(test_workouts, workout_repo, get_fake_statistic_
     assert isinstance(result, WorkoutsDTO)
     assert workout_repo.history == [(42, 7)]
     assert result.count_workouts == len(test_workouts)
+
+
+def test_zero_workout_stats(empty_workout_repo):
+    result = StatisticsService(workout_repo=empty_workout_repo).get_user_stats(user_id=1)
+    assert isinstance(result, WorkoutsDTO)
+    assert result.count_workouts == 0
+

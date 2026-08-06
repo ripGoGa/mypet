@@ -300,3 +300,7 @@ def workout_repo(test_workouts) -> FakeWorkoutRepository:
 @pytest.fixture()
 def get_fake_statistic_service(workout_repo) -> StatisticsService:
     return StatisticsService(workout_repo=workout_repo)
+
+@pytest.fixture()
+def empty_workout_repo():
+    return FakeWorkoutRepository(test_workouts=[])
