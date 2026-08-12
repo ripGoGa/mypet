@@ -1,10 +1,11 @@
-import copy
 import datetime
 
 import jwt
 from passlib.context import CryptContext
 
-SECRET_KEY = 'Mysecretkey2131jbvadjladvbcvabaljfghdvbcnxcnmbvxcnmxbvxmbnvc'
+from app.core.config import key_settings
+
+SECRET_KEY = key_settings.secret_key
 ALGORITHM = 'HS256'
 
 my_cc = CryptContext(schemes=['bcrypt'], deprecated='auto')

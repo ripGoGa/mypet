@@ -16,3 +16,6 @@ def test_zero_workout_stats(empty_workout_repo):
     assert isinstance(result, WorkoutsDTO)
     assert result.count_workouts == 0
 
+def test_list_workouts(authorized_client, load_workout):
+    authorized_client.get(url='')
+

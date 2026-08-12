@@ -2,6 +2,7 @@
 .venv/
 env/
 venv/
+.env
 
 # Кэш Python
 __pycache__/
@@ -30,3 +31,5 @@ app.db
 
 # Файл слепок проекта
 project_dump.txt
+cycling-coach-project.zip
+*.zip

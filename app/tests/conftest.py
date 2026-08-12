@@ -90,7 +90,7 @@ def test_user_id(authorized_client, db_test_session, test_user):
 
 @pytest.fixture()
 def test_user(authorized_client, db_test_session):
-    """Берем id у юзера для тестов"""
+    """Берем юзера для тестов"""
     user = db_test_session.exec(select(Users).where(Users.email == authorized_client.test_email)).first()
     return user
 
