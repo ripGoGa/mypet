@@ -1,24 +1,22 @@
 import os
 import shutil
 import uuid
-from datetime import datetime, UTC, timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Sequence
 
 import pytest
-from fastapi import Depends
-from sqlmodel import Session, create_engine, select
-
 from app.core.exceptions import AIProviderNotAvailable
+from app.db.session import get_session
 from app.infrastructure.llm.ollama_provider import OllamaProvider
 from app.main import app
-from app.db.session import get_session
-from fastapi.testclient import TestClient
-
-from app.models.models import Users, UserProfile, AthleteProfile, UploadedFile, Workout
+from app.models.models import AthleteProfile, UploadedFile, UserProfile, Users, Workout
 from app.repository.chat_repo import ChatRepository
 from app.repository.workout_repo import WorkoutRepository
 from app.services.coach_service import CoachService
 from app.services.statistics_service import StatisticsService
+from fastapi import Depends
+from fastapi.testclient import TestClient
+from sqlmodel import Session, create_engine, select
 
 ORIGINAL_DB_PATH = "data/app.db"
 TEST_DB_PATH = "data/test_app.db"

@@ -1,14 +1,16 @@
 import hashlib
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
-from sqlmodel import Session
-
-from app.models.models import UploadedFile
-from app.models.models import Users
+from app.models.models import UploadedFile, Users
 from app.repository.workout_repo import WorkoutRepository
-from app.services.file_service import validate_file_type, save_file_with_hash, FileAlreadyExistsError, \
-    FileValidationError
-from app.services.parse_cvs import parse_csv_to_workout, ParseCsvError
+from app.services.file_service import (
+    FileAlreadyExistsError,
+    FileValidationError,
+    save_file_with_hash,
+    validate_file_type,
+)
+from app.services.parse_cvs import ParseCsvError, parse_csv_to_workout
+from sqlmodel import Session
 
 
 class ImportService:
@@ -28,10 +30,12 @@ class ImportService:
                 if self.workout_repo.get_by_hash(sha256=hash_check, user_id=user.id):
                     raise FileAlreadyExistsError
                 file_path, hash_value = save_file_with_hash(content)
-                uploaded_file = UploadedFile(original_name=file.filename, sha256=hash_value, uploaded_at=datetime.now(UTC),
+                uploaded_file = UploadedFile(original_name=file.filename, sha256=hash_value,
+                                             uploaded_at=datetime.now(UTC),
                                              user_id=user.id)
                 self.workout_repo.add_uploaded_file(uploaded_file)
-                parse_csv_to_workout(file_path=file_path, uf_id=uploaded_file.id, session=self.session, user_id=user.id)
+                parse_csv_to_workout(file_path=file_path, uf_id=uploaded_file.id, session=self.session,
+                                     user_id=user.id)
                 success_count += 1
                 self.session.commit()
             except ParseCsvError:

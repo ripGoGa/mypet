@@ -1,11 +1,10 @@
-from fastapi import Depends
-from sqlmodel import Session
-
 from app.core.exceptions import ProfileAlreadyExistsError
 from app.db.session import get_session
-from app.models.models import UserProfile, AthleteProfile
+from app.models.models import AthleteProfile, UserProfile
 from app.repository.profile_repo import ProfileRepository
 from app.schemas.profile import ProfileCreateDTO
+from fastapi import Depends
+from sqlmodel import Session
 
 
 class ProfileService:

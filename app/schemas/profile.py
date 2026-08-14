@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field
-from typing import Optional
 from datetime import date, timedelta
+from typing import Optional
+
+from pydantic import BaseModel, Field
 
 
 class ProfileCreateDTO(BaseModel):

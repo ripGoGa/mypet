@@ -1,6 +1,6 @@
 import httpx
 
-from app.core.exceptions import AIProviderNotAvailable, AIProviderTimeOut, AIProvideInternalError
+from app.core.exceptions import AIProvideInternalError, AIProviderNotAvailable, AIProviderTimeOut
 
 
 class OllamaProvider:
@@ -17,7 +17,8 @@ class OllamaProvider:
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 response = await client.post(f'{self.base_url}/api/chat', json={'model': self.model,
-                                                                                'messages': messages, 'stream': False,
+                                                                                'messages': messages,
+                                                                                'stream': False,
                                                                                 'options': {'num_ctx': 8192}})
                 response.raise_for_status()
                 data = response.json()

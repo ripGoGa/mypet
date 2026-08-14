@@ -1,6 +1,6 @@
 import jwt
 from fastapi import Depends, HTTPException
-from sqlmodel import select, Session
+from sqlmodel import Session, select
 from starlette.requests import Request
 
 from app.db.session import get_session
@@ -13,14 +13,14 @@ from app.repository.workout_repo import WorkoutRepository
 from app.services.coach_service import CoachService
 from app.services.import_service import ImportService
 from app.services.profile_service import ProfileService
-from app.services.security import SECRET_KEY, ALGORITHM
+from app.services.security import ALGORITHM, SECRET_KEY
 from app.services.statistics_service import StatisticsService
 from app.services.user_service import UserService
 from app.services.workout_service import WorkoutService
 
 
-def get_current_user(request: Request, session=Depends(get_session)):
-    """"Проверяет токен на соответствие"""
+def get_current_user(request: Request, session: Session = Depends(get_session)):
+    """Проверяет токен на соответствие"""
     token = request.cookies.get('access_token')
     if not token:
         raise HTTPException(status_code=401, detail='Ошибка авторизации')
@@ -31,8 +31,8 @@ def get_current_user(request: Request, session=Depends(get_session)):
         if not user:
             raise HTTPException(status_code=401, detail='Ошибка авторизации')
         return user
-    except jwt.InvalidTokenError as e:
-        raise HTTPException(status_code=401, detail='Ошибка авторизации')
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail='Ошибка авторизации') from None
 
 
 def get_chat_repo(session: Session = Depends(get_session)) -> ChatRepository:

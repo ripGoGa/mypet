@@ -1,9 +1,9 @@
 from datetime import date, datetime, timedelta
-from typing import Optional, List
+from typing import List, Optional
 
 from pydantic import BaseModel
 from sqlalchemy import UniqueConstraint
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class UploadedFile(SQLModel, table=True):

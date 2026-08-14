@@ -1,17 +1,17 @@
 from pathlib import Path
 
 import jwt
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from sqlmodel import select
 from starlette.requests import Request
 
 from app.core.dependencies import get_current_user
 from app.core.templating import templates
-from app.db.session import get_session, create_db_and_tables
+from app.db.session import create_db_and_tables, get_session
 from app.models.models import Users
-from app.routers import login, register, profile, workout, statistics, imports, chat, coach
-from app.services.security import SECRET_KEY, ALGORITHM
+from app.routers import chat, coach, imports, login, profile, register, statistics, workout
+from app.services.security import ALGORITHM, SECRET_KEY
 
 app = FastAPI(title="Bike Tracker")
 

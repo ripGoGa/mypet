@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Form
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
-from app.core.dependencies import get_current_user, get_coach_service
+from app.core.dependencies import get_coach_service, get_current_user
 from app.models.models import Users
 from app.services.coach_service import CoachService
 

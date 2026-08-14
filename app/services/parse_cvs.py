@@ -1,9 +1,9 @@
-from pathlib import Path
-from sqlmodel import Session, select
-import pandas as pd
 from datetime import timedelta
+from pathlib import Path
 
-from app.models.models import UserProfile, Workout, AthleteProfile
+import pandas as pd
+from app.models.models import AthleteProfile, UserProfile, Workout
+from sqlmodel import Session, select
 
 
 class ParseCsvError(Exception):
@@ -35,7 +35,7 @@ def parse_csv_to_workout(file_path: Path, user_id: int, uf_id: int, session: Ses
 
     # Базовые показатели
     p_30 = df.loc[moving_mask, 'watts'].rolling(30).mean()
-    ftp = session.exec(select(AthleteProfile.current_ftp).where((AthleteProfile.id == user_id))).first()
+    ftp = session.exec(select(AthleteProfile.current_ftp).where(AthleteProfile.id == user_id)).first()
     duration = timedelta(seconds=df['time'].max())
     moving_time = timedelta(seconds=int(moving_mask.sum()))
     distance_km = round(df['distance'].max() / 1000, 2)

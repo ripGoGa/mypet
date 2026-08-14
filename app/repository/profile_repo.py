@@ -3,7 +3,7 @@ from typing import Optional
 
 from sqlmodel import Session
 
-from app.models.models import UserProfile, AthleteProfile
+from app.models.models import AthleteProfile, UserProfile
 
 
 class ProfileRepository:
@@ -17,7 +17,8 @@ class ProfileRepository:
         self.session.commit()
         return user_profile, athlete_profile
 
-    def edit_profile(self, user_profile: UserProfile, athlete_profile: AthleteProfile) -> tuple[UserProfile,AthleteProfile]:
+    def edit_profile(self, user_profile: UserProfile, athlete_profile: AthleteProfile) -> tuple[UserProfile,
+                                                                                            AthleteProfile]:
         curr_user_profile = self.get_user_profile(user_profile.id)
         curr_athlete_profile = self.get_athlete_profile(user_profile.id)
 

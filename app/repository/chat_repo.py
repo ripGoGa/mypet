@@ -1,5 +1,6 @@
-from datetime import datetime, timedelta, UTC
+from datetime import UTC, datetime, timedelta
 from typing import Sequence
+
 from sqlmodel import Session, select
 
 from app.models.models import ChatMessage

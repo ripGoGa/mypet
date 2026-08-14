@@ -1,5 +1,6 @@
 from datetime import timedelta
 from typing import Sequence
+
 from app.models.models import Workout
 
 

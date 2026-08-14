@@ -1,10 +1,10 @@
-from datetime import datetime, timedelta, UTC
+from datetime import UTC, datetime, timedelta
 from typing import Optional, Sequence
 
-from sqlalchemy import func, desc
+from sqlalchemy import desc, func
 from sqlmodel import Session, select
 
-from app.models.models import Workout, UploadedFile
+from app.models.models import UploadedFile, Workout
 
 
 class WorkoutRepository:

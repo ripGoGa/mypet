@@ -2,9 +2,8 @@ from fastapi import APIRouter, Depends
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
-from app.core.dependencies import get_current_user, get_chat_repo
+from app.core.dependencies import get_chat_repo, get_current_user
 from app.core.templating import templates
-
 from app.models.models import Users
 from app.repository.chat_repo import ChatRepository
 

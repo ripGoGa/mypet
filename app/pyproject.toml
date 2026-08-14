@@ -1,0 +1,18 @@
+[tool.ruff]
+
+line-length = 111
+
+[tool.ruff.lint]
+
+select = [
+    "E",
+    "F",
+    "B",
+    "I"
+]
+
+[tool.ruff.lint.flake8-bugbear]
+
+extend-immutable-calls = [
+    "fastapi.Depends",
+]

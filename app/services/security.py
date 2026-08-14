@@ -1,9 +1,8 @@
 import datetime
 
 import jwt
-from passlib.context import CryptContext
-
 from app.core.config import key_settings
+from passlib.context import CryptContext
 
 SECRET_KEY = key_settings.secret_key
 ALGORITHM = 'HS256'

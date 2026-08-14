@@ -20,3 +20,4 @@ class KeySettings(BaseSettings):
 
 
 key_settings = KeySettings()
+

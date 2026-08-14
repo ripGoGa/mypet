@@ -1,16 +1,15 @@
-from pathlib import Path
 from datetime import date
-
-from fastapi import Depends
-from sqlmodel import Session
+from pathlib import Path
 
 from app.core.exceptions import DownloadPromptError
 from app.infrastructure.llm.llm_protocol import LLMProvider
 from app.infrastructure.llm.ollama_provider import OllamaProvider
-from app.models.models import ChatMessage, AthleteProfile, Users
+from app.models.models import AthleteProfile, ChatMessage, Users
 from app.repository.chat_repo import ChatRepository
 from app.repository.workout_repo import WorkoutRepository
 from app.services.stats_calculator import StatsCalculator
+from fastapi import Depends
+from sqlmodel import Session
 
 
 class CoachService:
