@@ -49,8 +49,9 @@ def get_coach_service(session: Session = Depends(get_session)) -> CoachService:
 
 
 def get_import_service(session: Session = Depends(get_session)) -> ImportService:
-    repo = WorkoutRepository(session=session)
-    new_import_service = ImportService(workout_repo=repo, session=session)
+    workout_repo = WorkoutRepository(session=session)
+    profile_repo = ProfileRepository(session=session)
+    new_import_service = ImportService(workout_repo=workout_repo, profile_repo=profile_repo)
     return new_import_service
 
 

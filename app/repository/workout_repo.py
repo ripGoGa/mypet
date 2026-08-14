@@ -51,3 +51,14 @@ class WorkoutRepository:
             select(UploadedFile).where(UploadedFile.sha256 == sha256,
                                        UploadedFile.user_id == user_id)).first()
         return existing
+
+    def add_workout(self, workout: Workout) -> Workout:
+        self.session.add(workout)
+        self.session.flush()
+        return workout
+
+    def commit(self) -> None:
+        self.session.commit()
+
+    def rollback(self) -> None:
+        self.session.rollback()

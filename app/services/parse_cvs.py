@@ -1,9 +1,9 @@
 from datetime import timedelta
 from pathlib import Path
+from typing import Optional
 
 import pandas as pd
-from app.models.models import AthleteProfile, UserProfile, Workout
-from sqlmodel import Session, select
+from app.models.models import Workout
 
 
 class ParseCsvError(Exception):
@@ -24,7 +24,7 @@ def get_metric_or_none(df, column: str, aggregation='mean'):
     return None
 
 
-def parse_csv_to_workout(file_path: Path, user_id: int, uf_id: int, session: Session) -> None:
+def parse_csv_to_workout(file_path: Path, user_id: int, uf_id: int, ftp: Optional[int]) -> Workout:
     df = pd.read_csv(file_path)
 
     # Маска движения
@@ -35,7 +35,6 @@ def parse_csv_to_workout(file_path: Path, user_id: int, uf_id: int, session: Ses
 
     # Базовые показатели
     p_30 = df.loc[moving_mask, 'watts'].rolling(30).mean()
-    ftp = session.exec(select(AthleteProfile.current_ftp).where(AthleteProfile.id == user_id)).first()
     duration = timedelta(seconds=df['time'].max())
     moving_time = timedelta(seconds=int(moving_mask.sum()))
     distance_km = round(df['distance'].max() / 1000, 2)
@@ -66,11 +65,10 @@ def parse_csv_to_workout(file_path: Path, user_id: int, uf_id: int, session: Ses
     # Калории
     calories_burned = int(avg_watts * (moving_mask.sum() / 3600) * 3.6)
 
-    # Запись в базу данных
+    # Собираем объект Workout
     workout = Workout(source_file_id=uf_id, duration=duration, moving_time=moving_time, distance_km=distance_km,
                       avg_watts=avg_watts, normalized_power=normalized_power, intensity_factor=intensity_factor,
                       training_stress_score=training_stress_score, avg_cadence=avg_cadence, avg_speed=avg_speed,
                       avg_speed_without_stop=avg_speed_without_stop, avg_heartrate=avg_heartrate,
                       max_heartrate=max_heartrate, calories_burned=calories_burned, user_id=user_id)
-    session.add(workout)
-    session.flush()
+    return workout

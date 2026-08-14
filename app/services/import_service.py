@@ -2,6 +2,7 @@ import hashlib
 from datetime import UTC, datetime
 
 from app.models.models import UploadedFile, Users
+from app.repository.profile_repo import ProfileRepository
 from app.repository.workout_repo import WorkoutRepository
 from app.services.file_service import (
     FileAlreadyExistsError,
@@ -10,18 +11,19 @@ from app.services.file_service import (
     validate_file_type,
 )
 from app.services.parse_cvs import ParseCsvError, parse_csv_to_workout
-from sqlmodel import Session
 
 
 class ImportService:
-    def __init__(self, workout_repo: WorkoutRepository, session: Session):
+    def __init__(self, workout_repo: WorkoutRepository, profile_repo: ProfileRepository):
         self.workout_repo = workout_repo
-        self.session = session
+        self.profile_repo = profile_repo
 
     async def import_files(self, user: Users, files: list) -> tuple[int, int, int]:
         success_count = 0
         dup_count = 0
         type_err_count = 0
+        athlete_profile = self.profile_repo.get_athlete_profile(user_id=user.id)
+        ftp = athlete_profile.current_ftp if athlete_profile else None
         for file in files:
             try:
                 validate_file_type(filename=file.filename, content_type=file.content_type)
@@ -34,25 +36,26 @@ class ImportService:
                                              uploaded_at=datetime.now(UTC),
                                              user_id=user.id)
                 self.workout_repo.add_uploaded_file(uploaded_file)
-                parse_csv_to_workout(file_path=file_path, uf_id=uploaded_file.id, session=self.session,
+                workout = parse_csv_to_workout(file_path=file_path, uf_id=uploaded_file.id, ftp=ftp,
                                      user_id=user.id)
+                self.workout_repo.add_workout(workout)
                 success_count += 1
-                self.session.commit()
+                self.workout_repo.commit()
             except ParseCsvError:
-                self.session.rollback()
+                self.workout_repo.rollback()
                 type_err_count += 1
             except FileValidationError:
-                self.session.rollback()
+                self.workout_repo.rollback()
                 type_err_count += 1
             except FileAlreadyExistsError:
-                self.session.rollback()
+                self.workout_repo.rollback()
                 dup_count += 1
             except OSError:
-                self.session.rollback()
+                self.workout_repo.rollback()
                 type_err_count += 1
 
             except Exception as e:
-                self.session.rollback()
+                self.workout_repo.rollback()
                 type_err_count += 1
                 print(f"Неизвестная ошибка при загрузке {file.filename}: {e}")  # Для дебага в консоли
         return success_count, dup_count, type_err_count
