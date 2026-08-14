@@ -1,8 +1,6 @@
-from types import NoneType
-
 from app.schemas.workoutDTO import WorkoutsDTO
 from app.services.statistics_service import StatisticsService
-from app.tests.conftest import FakeWorkoutRepository
+from app.tests.fixtures.statistics import FakeWorkoutRepository
 
 
 def test_get_user_stats_success(test_workouts, workout_repo: FakeWorkoutRepository,
