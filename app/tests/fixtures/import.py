@@ -15,14 +15,15 @@ class FakeProfileRepository:
 
 
 class FakeImportWorkoutRepository:
-    def __init__(self):
+    def __init__(self, dup = None):
         self.uploaded_files = []
         self.workouts = []
         self.commit_calls = 0
         self.rollback_calls = 0
+        self.duplicate_file = dup
 
-    def get_by_hash(self, sha256: str, user_id: int) -> None:
-        return None
+    def get_by_hash(self, sha256: str, user_id: int) -> bool | None:
+        return self.duplicate_file
 
     def add_uploaded_file(self, uploaded_file: UploadedFile) -> UploadedFile:
         uploaded_file.id = 1
@@ -62,7 +63,15 @@ def fake_profile_repo(load_athlete_profile: AthleteProfile) -> FakeProfileReposi
 
 @pytest.fixture()
 def fake_import_repository():
-    return FakeImportWorkoutRepository()
+    return FakeImportWorkoutRepository(dup=None)
+
+@pytest.fixture()
+def fake_dup_import_repository():
+    return FakeImportWorkoutRepository(dup=True)
+
+@pytest.fixture()
+def fake_dup_import_service(fake_profile_repo, fake_dup_import_repository):
+    return ImportService(fake_dup_import_repository, fake_profile_repo)
 
 
 @pytest.fixture()

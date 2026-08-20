@@ -24,3 +24,17 @@ async def test_import_files_success(monkeypatch, test_workouts, fake_import_serv
     assert len(fake_import_repository.workouts) == 1
     assert fake_import_repository.commit_calls == 1
     assert fake_import_repository.rollback_calls == 0
+
+@pytest.mark.asyncio
+async def test_import_files_duplicate(monkeypatch, fake_csv_file, test_user,
+                                      fake_dup_import_repository, fake_dup_import_service):
+    def fake_validate_file_type(filename: str, content_type: str) -> None:
+        pass
+
+    monkeypatch.setattr("app.services.import_service.validate_file_type", fake_validate_file_type)
+    result = await fake_dup_import_service.import_files(test_user, [fake_csv_file])
+    assert result == (0, 1, 0)
+    assert len(fake_dup_import_repository.uploaded_files) == 0
+    assert len(fake_dup_import_repository.workouts) == 0
+    assert fake_dup_import_repository.commit_calls == 0
+    assert fake_dup_import_repository.rollback_calls == 1
