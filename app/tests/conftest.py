@@ -13,6 +13,7 @@ from sqlmodel import Session, create_engine, select
 pytest_plugins = (
     'app.tests.fixtures.coach',
     'app.tests.fixtures.statistics',
+    'app.tests.fixtures.import'
 )
 
 ORIGINAL_DB_PATH = "data/app.db"
