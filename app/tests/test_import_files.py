@@ -1,7 +1,9 @@
 import pytest
+from pandas.errors import EmptyDataError
+from sqlalchemy.sql.functions import user
 
 from app.services.file_service import FileValidationError
-from app.services.parse_cvs import ParseCsvError
+from app.services.parse_cvs import ParseCsvError, parse_csv_to_workout
 
 
 @pytest.mark.asyncio
@@ -100,3 +102,13 @@ async def test_import_files_os_error(monkeypatch, fake_import_service, fake_csv_
     assert len(fake_import_repository.workouts) == 0
     assert fake_import_repository.commit_calls == 0
     assert fake_import_repository.rollback_calls == 1
+
+def test_parse_csv_raises_parse_error(tmp_path):
+    empty_file_path = tmp_path / 'empty.csv'
+    empty_file_path.write_text('')
+    with pytest.raises(ParseCsvError) as e:
+        parse_csv_to_workout(file_path=empty_file_path, user_id=1, uf_id=1, ftp=1)
+    assert 'Cannot parse file' in str(e.value)
+    assert e.value.__cause__ is not None
+    assert isinstance(e.value.__cause__, EmptyDataError)
+
