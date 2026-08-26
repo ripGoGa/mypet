@@ -34,3 +34,6 @@ def save_file_with_hash(content: bytes) -> tuple[str, str]:
     except (PermissionError, OSError) as e:
         raise OSError(f"Не удалось сохранить файл: {e}")
     return str(path), hash_value
+
+def delete_file(filepath: str) -> None:
+    Path(filepath).unlink()

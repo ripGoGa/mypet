@@ -7,6 +7,7 @@ from app.repository.workout_repo import WorkoutRepository
 from app.services.file_service import (
     FileAlreadyExistsError,
     FileValidationError,
+    delete_file,
     save_file_with_hash,
     validate_file_type,
 )
@@ -44,6 +45,8 @@ class ImportService:
             except ParseCsvError:
                 self.workout_repo.rollback()
                 type_err_count += 1
+                if file_path:
+                    delete_file(file_path=file_path)
             except FileValidationError:
                 self.workout_repo.rollback()
                 type_err_count += 1
