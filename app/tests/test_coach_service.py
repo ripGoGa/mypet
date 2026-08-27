@@ -1,5 +1,7 @@
 import pytest
+
 from app.core.exceptions import AIProviderNotAvailable
+from app.models.models import ChatMessage
 
 
 @pytest.mark.asyncio
@@ -25,4 +27,15 @@ async def test_generate_coach_error(authorized_client, load_athlete_profile, loa
     chat_history = get_test_broken_coach_service.chat_repo.get_all_chat_history(user_id=test_user.id)
     assert len(chat_history) == 0
 
-
+@pytest.mark.asyncio
+async def test_coach_service_get_chat_history(authorized_client, test_user, db_test_session, get_test_coach_service):
+    user = test_user
+    get_test_coach_service.chat_repo.save_message(ChatMessage(user_id=user.id, role="user", content='fdfdfd'))
+    get_test_coach_service.chat_repo.save_message(ChatMessage(user_id=user.id, role="assistant", content='hi'))
+    get_test_coach_service.chat_repo.commit()
+    chat_history = get_test_coach_service.get_chat_history(user_id=user.id)
+    assert len(chat_history) == 2
+    assert chat_history[0].role == 'user'
+    assert chat_history[0].content == 'fdfdfd'
+    assert chat_history[1].role == 'assistant'
+    assert chat_history[1].content == 'hi'

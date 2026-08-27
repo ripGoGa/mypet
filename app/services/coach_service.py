@@ -1,15 +1,13 @@
 from datetime import date
 from pathlib import Path
+from typing import Sequence
 
 from app.core.exceptions import DownloadPromptError
 from app.infrastructure.llm.llm_protocol import LLMProvider
-from app.infrastructure.llm.ollama_provider import OllamaProvider
-from app.models.models import AthleteProfile, ChatMessage, Users
+from app.models.models import ChatMessage, Users
 from app.repository.chat_repo import ChatRepository
 from app.repository.workout_repo import WorkoutRepository
 from app.services.stats_calculator import StatsCalculator
-from fastapi import Depends
-from sqlmodel import Session
 
 
 class CoachService:
@@ -94,5 +92,5 @@ class CoachService:
             result.append(message_dict)
         return result
 
-
-
+    def get_chat_history(self, user_id: int) -> Sequence[ChatMessage]:
+        return self.chat_repo.get_all_chat_history(user_id)

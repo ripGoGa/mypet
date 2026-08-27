@@ -1,4 +1,5 @@
 import pytest
+
 from app.core.exceptions import AIProviderNotAvailable
 from app.repository.chat_repo import ChatRepository
 from app.repository.workout_repo import WorkoutRepository
