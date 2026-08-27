@@ -1,10 +1,7 @@
 from app.core.exceptions import UserAlreadyExistError, UserEmailPasswordError
-from app.db.session import get_session
 from app.models.models import Users
 from app.repository.user_repo import UserRepository
 from app.services.security import get_password_hash, verify_password
-from fastapi import Depends
-from sqlmodel import Session
 
 
 class UserService:

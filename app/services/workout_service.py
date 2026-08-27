@@ -1,12 +1,9 @@
 from math import ceil
-from typing import Optional, Sequence
+from typing import Sequence
 
 from app.core.exceptions import MissingWorkoutError
-from app.db.session import get_session
 from app.models.models import Workout
 from app.repository.workout_repo import WorkoutRepository
-from fastapi import Depends
-from sqlmodel import Session
 
 
 class WorkoutService:
