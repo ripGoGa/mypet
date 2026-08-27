@@ -1,8 +1,10 @@
+from pathlib import Path
+
 import pytest
 from pandas.errors import EmptyDataError
 from sqlalchemy.sql.functions import user
 
-from app.services.file_service import FileValidationError
+from app.services.file_service import FileValidationError, delete_file
 from app.services.parse_cvs import ParseCsvError, parse_csv_to_workout
 
 
@@ -63,7 +65,7 @@ async def test_import_files_validate_error(monkeypatch, test_user, fake_import_r
 @pytest.mark.asyncio
 async def test_import_files_parse_error(monkeypatch, fake_import_service, fake_csv_file,
                               test_user, fake_import_repository):
-
+    del_files = []
     def fake_parse_csv_to_workout(file_path, user_id, uf_id, ftp):
         raise ParseCsvError
 
@@ -73,15 +75,21 @@ async def test_import_files_parse_error(monkeypatch, fake_import_service, fake_c
     def fake_save_file_with_hash(content:bytes) -> tuple[str, str]:
         return ('c/ride.csv', 'fhakfjkashjfa')
 
+    def fake_delete_file(file_path:str) -> None:
+        del_files.append(file_path)
+
     monkeypatch.setattr('app.services.import_service.parse_csv_to_workout', fake_parse_csv_to_workout)
     monkeypatch.setattr("app.services.import_service.validate_file_type", fake_validate_file_type)
     monkeypatch.setattr("app.services.import_service.save_file_with_hash", fake_save_file_with_hash)
+    monkeypatch.setattr("app.services.import_service.delete_file", fake_delete_file)
     result = await fake_import_service.import_files(test_user, [fake_csv_file])
     assert result == (0, 0, 1)
     assert len(fake_import_repository.uploaded_files) == 1
     assert len(fake_import_repository.workouts) == 0
     assert fake_import_repository.commit_calls == 0
     assert fake_import_repository.rollback_calls == 1
+    assert len(del_files) == 1
+    assert del_files[0] == 'c/ride.csv'
 
 
 @pytest.mark.asyncio
@@ -111,4 +119,6 @@ def test_parse_csv_raises_parse_error(tmp_path):
     assert 'Cannot parse file' in str(e.value)
     assert e.value.__cause__ is not None
     assert isinstance(e.value.__cause__, EmptyDataError)
+
+
 

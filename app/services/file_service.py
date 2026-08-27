@@ -31,9 +31,11 @@ def save_file_with_hash(content: bytes) -> tuple[str, str]:
     path = Path('data/csv') / f'{filename}'
     try:
         path.write_bytes(content)
-    except (PermissionError, OSError) as e:
-        raise OSError(f"Не удалось сохранить файл: {e}")
+    except OSError as e:
+        delete_file(str(path))
+        raise OSError(f"Не удалось сохранить файл: {e}") from e
+
     return str(path), hash_value
 
 def delete_file(filepath: str) -> None:
-    Path(filepath).unlink()
+    Path(filepath).unlink(missing_ok=True)

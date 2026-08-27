@@ -4,11 +4,12 @@ import uuid
 from datetime import UTC, datetime, timedelta
 
 import pytest
+from fastapi.testclient import TestClient
+from sqlmodel import Session, create_engine, select
+
 from app.db.session import get_session
 from app.main import app
 from app.models.models import AthleteProfile, UploadedFile, UserProfile, Users, Workout
-from fastapi.testclient import TestClient
-from sqlmodel import Session, create_engine, select
 
 pytest_plugins = (
     'app.tests.fixtures.coach',
