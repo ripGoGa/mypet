@@ -55,6 +55,12 @@ class FakeUploadFile:
 def fake_csv_file() -> FakeUploadFile:
     return FakeUploadFile(filename='ride.csv', content_type='text/csv', content=b'test csv content')
 
+@pytest.fixture()
+def fake_csv_files() -> list[FakeUploadFile]:
+    return [FakeUploadFile(filename='ride.csv', content_type='text/csv', content=b'test csv content'),
+            FakeUploadFile(filename='ride1.csv', content_type='png', content=b'test csv content'),
+            FakeUploadFile(filename='ride2.csv', content_type='text/csv', content=b'test csv content')]
+
 
 @pytest.fixture()
 def fake_profile_repo(load_athlete_profile: AthleteProfile) -> FakeProfileRepository:

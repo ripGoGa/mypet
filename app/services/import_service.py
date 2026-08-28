@@ -26,6 +26,7 @@ class ImportService:
         athlete_profile = self.profile_repo.get_athlete_profile(user_id=user.id)
         ftp = athlete_profile.current_ftp if athlete_profile else None
         for file in files:
+            file_path = None
             try:
                 validate_file_type(filename=file.filename, content_type=file.content_type)
                 content = await file.read()
@@ -40,8 +41,8 @@ class ImportService:
                 workout = parse_csv_to_workout(file_path=file_path, uf_id=uploaded_file.id, ftp=ftp,
                                      user_id=user.id)
                 self.workout_repo.add_workout(workout)
-                success_count += 1
                 self.workout_repo.commit()
+                success_count += 1
             except ParseCsvError:
                 self.workout_repo.rollback()
                 type_err_count += 1
@@ -56,11 +57,15 @@ class ImportService:
             except OSError:
                 self.workout_repo.rollback()
                 type_err_count += 1
+                if file_path:
+                    delete_file(file_path=file_path)
 
             except Exception as e:
                 self.workout_repo.rollback()
                 type_err_count += 1
                 print(f"Неизвестная ошибка при загрузке {file.filename}: {e}")  # Для дебага в консоли
+                if file_path:
+                    delete_file(file_path=file_path)
         return success_count, dup_count, type_err_count
 
 
