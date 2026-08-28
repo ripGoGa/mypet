@@ -33,3 +33,6 @@ app.db
 project_dump.txt
 cycling-coach-project.zip
 *.zip
+
+# Тестовые файлы
+data/test_*.db
