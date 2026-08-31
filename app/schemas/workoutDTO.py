@@ -29,3 +29,6 @@ class WorkoutsDTO(BaseModel):
     raw_max_hr: list[float]
     raw_ccall: list[float]
     raw_chart_dates: list[str]
+    light_count: int
+    medium_count: int
+    hard_count: int

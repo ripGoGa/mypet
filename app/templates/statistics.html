@@ -174,7 +174,59 @@
         </div>
     </div>
 </div>
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card h-100 border-dark">
+            <div class="card-header bg-transparent border-dark fw-bold text-uppercase">
+                Распределение тренировок
+            </div>
+            <div class="card-body">
+                <canvas id="intensityChart"></canvas>
+            </div>
+        </div>
+    </div>
 
+    <div class="col-md-6">
+        <div class="card h-100 border-dark">
+            <div class="card-header bg-transparent border-dark fw-bold text-uppercase">
+                TRAINING LOAD
+            </div>
+            <div class="card-body">
+                <div class="row g-3 text-center">
+                    <div class="col-4">
+                        <div class="text-muted text-uppercase small">Лёгкие</div>
+                        <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
+                            {{ light_count }}
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="text-muted text-uppercase small">Средние</div>
+                        <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
+                            {{ medium_count }}
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="text-muted text-uppercase small">Тяжёлые</div>
+                        <div style="font-family: monospace; font-size: 2rem; font-weight: 700;">
+                            {{ hard_count }}
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-uppercase fw-bold">Всего тренировок</span>
+                    <span style="font-family: monospace; font-size: 1.5rem; font-weight: 700;">
+                        {{ count_workouts }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
@@ -280,6 +332,38 @@
             }
         }
     });
+    const intensityData = {
+    labels: ['Лёгкие', 'Средние', 'Тяжёлые'],
+    datasets: [{
+        data: [
+            {{ light_count }},
+            {{ medium_count }},
+            {{ hard_count }}
+        ],
+        backgroundColor: [
+    'rgba(220, 220, 220, 0.9)',
+    'rgba(150, 150, 150, 0.9)',
+    'rgba(50, 50, 50, 0.9)'
+                        ],
+        borderColor: '#000',
+        borderWidth: 1
+    }]
+};
+
+const ctxIntensity = document.getElementById('intensityChart').getContext('2d');
+
+new Chart(ctxIntensity, {
+    type: 'doughnut',
+    data: intensityData,
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
 </script>
 
 {% endif %}
