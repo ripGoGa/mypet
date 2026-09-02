@@ -131,7 +131,10 @@ def load_workout(test_user_id, db_test_session):
         db_test_session.add(uploaded_file)
         db_test_session.commit()
         db_test_session.refresh(uploaded_file)
-        workout = Workout(duration=timedelta(hours=1, minutes=30) + timedelta(minutes=num),
+        workout = Workout(sport='bike', started_at=datetime(2025, 12, 12 + num // 2, 10, 30 ),
+                           uploaded_at=datetime.now(UTC) - timedelta(days=num),
+                          max_speed = 2 * num, total_ascent = num,
+                          duration=timedelta(hours=1, minutes=30) + timedelta(minutes=num),
                           moving_time=timedelta(hours=1, minutes=30),
                           distance_km=45,
                           source_file_id=uploaded_file.id,
