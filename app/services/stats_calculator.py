@@ -80,7 +80,7 @@ class StatsCalculator:
 
             # Наполнение счетчиков
             if workout.training_stress_score is None:
-                self.light_count += 1
+                pass
             elif workout.training_stress_score <= 70:
                 self.light_count += 1
             elif workout.training_stress_score < 101:

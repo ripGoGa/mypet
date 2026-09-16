@@ -21,20 +21,6 @@ class Workout(SQLModel, table=True):
     sport: str
     started_at: Optional[datetime]
     duration: timedelta
-    moving_time: timedelta
-    distance_km: float
-    avg_watts: Optional[int]
-    normalized_power: Optional[float]
-    intensity_factor: Optional[float]
-    training_stress_score: Optional[float]
-    avg_cadence: Optional[int]
-    avg_speed: Optional[float]
-    avg_speed_without_stop: Optional[int]
-    max_speed: Optional[float]
-    avg_heartrate: Optional[int] = None
-    max_heartrate: Optional[float] = None
-    calories_burned: Optional[int]
-    total_ascent: Optional[int]
 
     source_file_id: Optional[int] = Field(default=None, foreign_key='uploadedfile.id')
     source_file: Optional['UploadedFile'] = Relationship(back_populates='workouts')

@@ -11,7 +11,7 @@ from app.services.file_service import (
     save_file_with_hash,
     validate_file_type,
 )
-from app.services.parse_cvs import ParseCsvError, parse_csv_to_workout
+from app.services.parse_csv import ParseCsvError, parse_csv_to_workout
 
 
 class ImportService:

@@ -5,7 +5,7 @@ from pandas.errors import EmptyDataError
 from sqlalchemy.sql.functions import user
 
 from app.services.file_service import FileValidationError, delete_file
-from app.services.parse_cvs import ParseCsvError, parse_csv_to_workout
+from app.services.parse_csv import ParseCsvError, parse_csv_to_workout
 
 
 @pytest.mark.asyncio
