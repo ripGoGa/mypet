@@ -7,6 +7,7 @@ from app.db.session import get_session
 from app.infrastructure.llm.ollama_provider import OllamaProvider
 from app.models.models import Users
 from app.repository.chat_repo import ChatRepository
+from app.repository.cycling_repo import CyclingWorkoutRepository
 from app.repository.profile_repo import ProfileRepository
 from app.repository.user_repo import UserRepository
 from app.repository.workout_repo import WorkoutRepository
@@ -74,6 +75,7 @@ def get_user_service(session: Session = Depends(get_session)) -> UserService:
 
 
 def get_workout_service(session: Session = Depends(get_session)) -> WorkoutService:
-    repo = WorkoutRepository(session=session)
-    new_work_service = WorkoutService(work_repo=repo)
+    w_repo = WorkoutRepository(session=session)
+    cycl_repo = CyclingWorkoutRepository(session=session)
+    new_work_service = WorkoutService(work_repo=w_repo, cycling_repo=cycl_repo)
     return new_work_service

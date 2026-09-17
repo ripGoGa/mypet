@@ -1,9 +1,7 @@
 from datetime import timedelta
 from typing import Optional
 
-from sqlmodel import Field, Relationship, SQLModel
-
-from app.models.models import Workout
+from sqlmodel import Field, SQLModel
 
 
 class CyclingWorkout(SQLModel, table=True):

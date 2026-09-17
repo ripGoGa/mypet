@@ -10,6 +10,7 @@ from sqlmodel import Session, create_engine, select
 from app.db.session import get_session
 from app.main import app
 from app.models.models import AthleteProfile, UploadedFile, UserProfile, Users, Workout
+from app.models.training_models import CyclingWorkout
 
 pytest_plugins = (
     'app.tests.fixtures.coach',
@@ -121,7 +122,7 @@ def load_user_profile(test_user_id, db_test_session) -> UserProfile:
 
 
 @pytest.fixture()
-def load_workout(test_user_id, db_test_session):
+def load_workout_and_cycling(test_user_id, db_test_session):
     workouts = []
     for num in range(1, 31, 10):
         uploaded_file = UploadedFile(original_name='test_ride',
@@ -131,16 +132,41 @@ def load_workout(test_user_id, db_test_session):
         db_test_session.add(uploaded_file)
         db_test_session.commit()
         db_test_session.refresh(uploaded_file)
-        workout = Workout(sport='bike', started_at=datetime(2025, 12, 12 + num // 2, 10, 30 ),
-                           uploaded_at=datetime.now(UTC) - timedelta(days=num),
-                          max_speed = 2 * num, total_ascent = num,
-                          duration=timedelta(hours=1, minutes=30) + timedelta(minutes=num),
-                          moving_time=timedelta(hours=1, minutes=30),
-                          distance_km=45,
-                          source_file_id=uploaded_file.id,
-                          user_id=test_user_id
+        workout = Workout(sport = 'cycling',
+                          started_at = datetime.now(UTC) - timedelta(days=num),
+                          duration = timedelta(minutes=1 + num),
+
+                          user_id = test_user_id,
+                          source_file_id = uploaded_file.id
                           )
         db_test_session.add(workout)
         db_test_session.commit()
         workouts.append(workout)
+        cycling = CyclingWorkout(workout_id = workout.id,
+                                 moving_time = workout.duration,
+                                 avg_altitude = 10 + num,
+                                 avg_cadence = 60 + num,
+                                 avg_grade = 2 + num // 5,
+                                 avg_heart_rate = 110 + num,
+                                 avg_power = 120 + num,
+                                 avg_speed = 20 + num // 3,
+                                 avg_temperature = 5 + num,
+                                 max_altitude = 20 + num,
+                                 max_cadence = 70 + num,
+                                 max_heart_rate = 130 + num,
+                                 max_power = 200 + num,
+                                 max_speed = 30 + num,
+                                 max_temperature = 10 + num,
+                                 intensity_factor = 2 + num // 5,
+                                 left_right_balance = 0.49,
+                                 normalized_power = 130 + num,
+                                 threshold_power = 120 + num,
+                                 total_ascent = 40 + num,
+                                 total_descent = 50 + num,
+                                 total_distance = 60 + num,
+                                 total_calories = 1000 + num,
+                                 training_stress_score = 80.0 + num
+                                 )
+        db_test_session.add(cycling)
+        db_test_session.commit()
     return workouts

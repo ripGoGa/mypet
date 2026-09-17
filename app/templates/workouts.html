@@ -18,16 +18,16 @@
                 <th>TSS</th>
                 <th>Подробнее</th>
             </tr>
-            {% for workout in workouts %}
+            {% for workout, cycling in workouts %}
                 <tr>
                     <td>
-                        {{ workout.source_file.uploaded_at }}
+                        {{ workout.started_at }}
                     </td>
-                    <td>{{ workout.distance_km }}</td>
+                    <td>{{ cycling.total_distance }}</td>
                     <td>{{ workout.duration }}</td>
-                    <td>{{ workout.avg_watts }}</td>
-                    <td>{{ workout.avg_heartrate }}</td>
-                    <td>{{ workout.training_stress_score }}</td>
+                    <td>{{ cycling.avg_power }}</td>
+                    <td>{{ cycling.avg_heart_rate }}</td>
+                    <td>{{ cycling.training_stress_score }}</td>
                     <td>
                         <a href="/workouts/{{ workout.id }}">Открыть</a>
                     </td>
