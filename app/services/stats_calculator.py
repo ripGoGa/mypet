@@ -1,11 +1,12 @@
 from datetime import timedelta
 from typing import Sequence
 
+from app.models import CyclingWorkout
 from app.models.models import Workout
 
 
 class StatsCalculator:
-    def __init__(self, workouts: Sequence[Workout]):
+    def __init__(self, workouts: Sequence[tuple[Workout, CyclingWorkout]]):
         self._count_workouts = len(workouts)
 
         # 1. Накопители общих сумм (Totals)
@@ -39,53 +40,53 @@ class StatsCalculator:
         self.medium_count = 0
         self.hard_count = 0
 
-        for workout in workouts:
+        for workout, cycling in workouts:
 
             # Наполнение сумматоров (Тут 0 безопасен, так как мы просто плюсуем к общему объему)
-            self._total_distance += workout.distance_km if workout.distance_km else 0.0
-            self._total_tss_num += workout.training_stress_score if workout.training_stress_score else 0.0
-            self._total_ccall += workout.calories_burned if workout.calories_burned else 0
-            self._total_moving_time += workout.moving_time if workout.moving_time else timedelta(0)
+            self._total_distance += cycling.total_distance if cycling.total_distance else 0.0
+            self._total_tss_num += cycling.training_stress_score if cycling.training_stress_score else 0.0
+            self._total_ccall += cycling.total_calories if cycling.total_calories else 0
+            self._total_moving_time += cycling.moving_time if cycling.moving_time else timedelta(0)
 
             # Поиск максимумов (Обновляем ТОЛЬКО если значение прилетело из базы, игнорируя None)
-            if workout.distance_km is not None:
-                self._max_distance = max(self._max_distance, workout.distance_km)
-            if workout.max_heartrate is not None:
-                self._max_heartrate = max(self._max_heartrate, workout.max_heartrate)
-            if workout.normalized_power is not None:
-                self._max_np = max(self._max_np, workout.normalized_power)
-            if workout.intensity_factor is not None:
-                self._max_in_factor = max(self._max_in_factor, workout.intensity_factor)
-            if workout.calories_burned is not None:
-                self._max_ccall = max(self._max_ccall, workout.calories_burned)
+            if cycling.total_distance is not None:
+                self._max_distance = max(self._max_distance, cycling.total_distance)
+            if cycling.max_heart_rate is not None:
+                self._max_heartrate = max(self._max_heartrate, cycling.max_heart_rate)
+            if cycling.normalized_power is not None:
+                self._max_np = max(self._max_np, cycling.normalized_power)
+            if cycling.intensity_factor is not None:
+                self._max_in_factor = max(self._max_in_factor, cycling.intensity_factor)
+            if cycling.total_calories is not None:
+                self._max_ccall = max(self._max_ccall, cycling.total_calories)
 
             # Наполнение списков для графиков (Честно пишем оригинальные значения или None)
-            self._raw_distance.append(workout.distance_km)
-            self._raw_tss.append(workout.training_stress_score)
-            self._raw_watts.append(workout.avg_watts)
-            self._raw_speed.append(workout.avg_speed)
-            self._raw_heartrate.append(workout.avg_heartrate)
-            self._raw_cadence.append(workout.avg_cadence)
-            self._raw_in_factor.append(workout.intensity_factor)
-            self._raw_norm_power.append(workout.normalized_power)
-            self._raw_max_hr.append(workout.max_heartrate)
-            self._raw_ccall.append(workout.calories_burned)
+            self._raw_distance.append(cycling.total_distance)
+            self._raw_tss.append(cycling.training_stress_score)
+            self._raw_watts.append(cycling.avg_power)
+            self._raw_speed.append(cycling.avg_speed)
+            self._raw_heartrate.append(cycling.avg_heart_rate)
+            self._raw_cadence.append(cycling.avg_cadence)
+            self._raw_in_factor.append(cycling.intensity_factor)
+            self._raw_norm_power.append(cycling.normalized_power)
+            self._raw_max_hr.append(cycling.max_heart_rate)
+            self._raw_ccall.append(cycling.total_calories)
 
             # Форматирование дат
-            if workout.source_file and workout.source_file.uploaded_at:
-                date_str = workout.source_file.uploaded_at.strftime('%Y-%m-%d')
+            if workout.started_at:
+                date_str = workout.started_at.strftime('%Y-%m-%d')
             else:
                 date_str = "Unknown"
             self._raw_chart_dates.append(date_str)
 
             # Наполнение счетчиков
-            if workout.training_stress_score is None:
+            if cycling.training_stress_score is None:
                 pass
-            elif workout.training_stress_score <= 70:
+            elif cycling.training_stress_score <= 70:
                 self.light_count += 1
-            elif workout.training_stress_score < 101:
+            elif cycling.training_stress_score < 101:
                 self.medium_count += 1
-            elif workout.training_stress_score >= 101:
+            elif cycling.training_stress_score >= 101:
                 self.hard_count += 1
 
     # Общие объемы и Максимумы
