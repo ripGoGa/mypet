@@ -2,6 +2,7 @@ import pytest
 
 from app.core.exceptions import AIProviderNotAvailable
 from app.repository.chat_repo import ChatRepository
+from app.repository.cycling_repo import CyclingWorkoutRepository
 from app.repository.workout_repo import WorkoutRepository
 from app.services.coach_service import CoachService
 
@@ -34,7 +35,9 @@ def get_test_coach_service(db_test_session) -> CoachService:
     workout_repo = WorkoutRepository(session=db_test_session)
     chat_repo = ChatRepository(session=db_test_session)
     llm_provider = FakeLLMProvider()
-    new_coach_service = CoachService(workout_repo=workout_repo, chat_repo=chat_repo, llm_provider=llm_provider)
+    cycling_repo = CyclingWorkoutRepository(session=db_test_session)
+    new_coach_service = CoachService(workout_repo=workout_repo, chat_repo=chat_repo,
+                                     llm_provider=llm_provider, cycling_repo=cycling_repo)
     return new_coach_service
 
 
@@ -43,5 +46,7 @@ def get_test_broken_coach_service(db_test_session) -> CoachService:
     workout_repo = WorkoutRepository(session=db_test_session)
     chat_repo = ChatRepository(session=db_test_session)
     llm_provider = BrokenFakeLLMProvider()
-    new_coach_service = CoachService(workout_repo=workout_repo, chat_repo=chat_repo, llm_provider=llm_provider)
+    cycling_repo = CyclingWorkoutRepository(session=db_test_session)
+    new_coach_service = CoachService(workout_repo=workout_repo, chat_repo=chat_repo,
+                                     llm_provider=llm_provider, cycling_repo=cycling_repo)
     return new_coach_service

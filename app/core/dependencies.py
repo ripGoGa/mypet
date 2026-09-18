@@ -45,7 +45,9 @@ def get_coach_service(session: Session = Depends(get_session)) -> CoachService:
     workout_repo = WorkoutRepository(session=session)
     chat_repo = ChatRepository(session=session)
     llm_provider = OllamaProvider()
-    new_coach_service = CoachService(workout_repo=workout_repo, chat_repo=chat_repo, llm_provider=llm_provider)
+    cycling_repo = CyclingWorkoutRepository(session=session)
+    new_coach_service = CoachService(workout_repo=workout_repo, chat_repo=chat_repo,
+                                     llm_provider=llm_provider, cycling_repo=cycling_repo)
     return new_coach_service
 
 

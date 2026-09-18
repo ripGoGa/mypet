@@ -6,19 +6,22 @@ from app.core.exceptions import DownloadPromptError
 from app.infrastructure.llm.llm_protocol import LLMProvider
 from app.models.models import ChatMessage, Users
 from app.repository.chat_repo import ChatRepository
+from app.repository.cycling_repo import CyclingWorkoutRepository
 from app.repository.workout_repo import WorkoutRepository
 from app.services.stats_calculator import StatsCalculator
 
 
 class CoachService:
-    def __init__(self, workout_repo: WorkoutRepository, chat_repo: ChatRepository, llm_provider: LLMProvider):
+    def __init__(self, workout_repo: WorkoutRepository, chat_repo: ChatRepository, llm_provider: LLMProvider,
+                 cycling_repo: CyclingWorkoutRepository):
         self.workout_repo = workout_repo
         self.llm_provider = llm_provider
         self.system_prompt = self._load_prompt('System_Persona.txt')
         self.user_profile = self._load_prompt('User_Profile.txt')
         self.current_content = self._load_prompt('Current_Content.txt')
         self.chat_repo = chat_repo
-
+        self.cycling_repo = cycling_repo
+    
     @staticmethod
     def _load_prompt(filename: str) -> str:
         current_file = Path(__file__)
@@ -54,7 +57,8 @@ class CoachService:
         self.chat_repo.commit()
         return ai_response
 
-    def _build_athlete_data(self, user: Users) -> dict:
+    @staticmethod
+    def _build_athlete_data(user: Users) -> dict:
         # Объединяем данные отлета в один словарь для промпта
         athlete_data = user.athlete_profile.model_dump()
         athlete_data.update(user.user_profile.model_dump())
@@ -67,7 +71,7 @@ class CoachService:
 
     def _build_workouts(self, user: Users) -> str:
         # Достаем тренировки за неделю
-        workouts = self.workout_repo.get_statistic_workouts(user_id=user.id, period=7)
+        workouts = self.cycling_repo.get_statistic_workouts(user_id=user.id, period=7)
 
         # Собираем статистику
         stats_workouts = StatsCalculator(workouts)
