@@ -1,23 +1,21 @@
 import datetime
 
+import bcrypt
 import jwt
 from app.core.config import key_settings
-from passlib.context import CryptContext
 
 SECRET_KEY = key_settings.secret_key
 ALGORITHM = 'HS256'
 
-my_cc = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 
 def get_password_hash(password: str) -> str:
-    hash_password = my_cc.hash(password)
+    hash_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     return hash_password
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    result = my_cc.verify(plain_password, hashed_password)
-    return result
+    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
 
 def create_access_token(data: dict) -> str:
