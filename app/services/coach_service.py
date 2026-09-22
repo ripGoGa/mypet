@@ -8,7 +8,7 @@ from app.models.models import ChatMessage, Users
 from app.repository.chat_repo import ChatRepository
 from app.repository.cycling_repo import CyclingWorkoutRepository
 from app.repository.workout_repo import WorkoutRepository
-from app.services.stats_calculator import StatsCalculator
+from app.services.cycling_stats_calculator import CyclingStatsCalculator
 
 
 class CoachService:
@@ -74,7 +74,7 @@ class CoachService:
         workouts = self.cycling_repo.get_statistic_workouts(user_id=user.id, period=7)
 
         # Собираем статистику
-        stats_workouts = StatsCalculator(workouts)
+        stats_workouts = CyclingStatsCalculator(workouts)
         work_sum = 'Статистика тренировок за 7 дней'
         if not workouts:
             work_sum = 'Тренировок пока нет'

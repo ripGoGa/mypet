@@ -5,7 +5,7 @@ from app.models import CyclingWorkout
 from app.models.models import Workout
 
 
-class StatsCalculator:
+class CyclingStatsCalculator:
     def __init__(self, workouts: Sequence[tuple[Workout, CyclingWorkout]]):
         self._count_workouts = len(workouts)
 

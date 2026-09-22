@@ -37,7 +37,7 @@
 
 ### 3. Калькуляторы статистики: один класс на вид спорта
 
-`StatsCalculator` сейчас жёстко завязан на cycling-поля. По Single Responsibility —
+`CyclingStatsCalculator` сейчас жёстко завязан на cycling-поля. По Single Responsibility —
 не городить `if sport == 'cycling' / elif sport == 'running'` внутри одного класса,
 а сделать отдельные калькуляторы:
 
@@ -69,7 +69,7 @@
 3. ⬜ Остановиться на беге, доработать cycling-путь целиком, доказав архитектуру:
    - Репозиторий: метод возвращающий `tuple[Workout, CyclingWorkout]` (или список пар)
      по `user_id` / `period`, без `Relationship`, через явный запрос по `workout_id`
-   - `CyclingStatsCalculator` — переписать текущий `StatsCalculator` под новую сигнатуру
+   - `CyclingStatsCalculator` — переписать текущий `CyclingStatsCalculator` под новую сигнатуру
      (принимает пары, а не голые `Workout`)
    - `CyclingStatsDTO` — переименовать/адаптировать текущий `WorkoutsDTO`
    - Обновить `parse_csv_to_workout` / `ImportService`, чтобы создавали и `Workout`,
