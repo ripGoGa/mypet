@@ -15,7 +15,8 @@ from app.models.training_models import CyclingWorkout
 pytest_plugins = (
     'app.tests.fixtures.coach',
     'app.tests.fixtures.statistics',
-    'app.tests.fixtures.import'
+    'app.tests.fixtures.import',
+    "app.tests.fixtures.cycling_stat_calc"
 )
 
 ORIGINAL_DB_PATH = "data/app.db"

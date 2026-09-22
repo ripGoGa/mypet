@@ -1,15 +1,14 @@
 from datetime import timedelta
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Tuple
 
 import fitparse
 from app.core.exceptions import MultiSessionError, ParseFitError, ZeroSessionError
-from app.models import CyclingWorkout
 from app.models.models import Workout
 
 
 def parse_fit_cycling(
-    file_path: Path, user_id: int, uploaded_file_id: int
+    file_path: str, user_id: int, uploaded_file_id: int
 ) -> Tuple[Workout, dict]:
     try:
         fit_file = fitparse.FitFile(file_path)
@@ -25,7 +24,7 @@ def parse_fit_cycling(
                           user_id=user_id,
                           source_file_id=uploaded_file_id)
 
-        cycling_w_dict = {}
+        cycling_w_dict = dict()
         cycling_w_dict["moving_time"] = timedelta(seconds=session.get("total_timer_time"))
         cycling_w_dict["avg_altitude"] = round(session.get("enhanced_avg_altitude"), 1)
         cycling_w_dict["avg_cadence"] = session.get("avg_cadence")
@@ -49,7 +48,7 @@ def parse_fit_cycling(
 
         cycling_w_dict["total_ascent"] = session.get("total_ascent")
         cycling_w_dict["total_descent"] = session.get("total_descent")
-        cycling_w_dict["total_distance"] = session.get("total_distance") / 1000
+        cycling_w_dict["total_distance"] = round(session.get("total_distance") / 1000, 2)
         cycling_w_dict["total_calories"] = session.get("total_calories")
         cycling_w_dict["training_stress_score"] = session.get("training_stress_score")
 
