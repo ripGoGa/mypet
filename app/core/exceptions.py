@@ -1,5 +1,6 @@
 class ProfileAlreadyExistsError(Exception):
     """Ошибка в создании пользователя"""
+
     pass
 
 
@@ -16,25 +17,31 @@ class MissingWorkoutError(Exception):
 
 
 class AIProviderNotAvailable(Exception):
-    """"Сервис ИИ не доступен"""
+    """ "Сервис ИИ не доступен"""
 
 
 class AIProviderTimeOut(Exception):
-    """"Превышено время ожидания"""
+    """ "Превышено время ожидания"""
 
 
 class AIProvideInternalError(Exception):
-    """"Внутренняя ошибка ИИ"""
+    """ "Внутренняя ошибка ИИ"""
 
 
 class DownloadPromptError(Exception):
-    """"Произошла ошибка файл промпта не найден"""
+    """ "Произошла ошибка файл промпта не найден"""
+
 
 class ParseFitError(Exception):
     """Ошибка в парсере FIT-файлов"""
 
+
 class MultiSessionError(ParseFitError):
     """Файл содержит 2 или более сессии"""
 
+
 class ZeroSessionError(ParseFitError):
     """Файл не содержит сессии"""
+
+class NoSportError(ParseFitError):
+    """Файл сессии не содержит данных о спорте"""

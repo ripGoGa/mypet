@@ -1,7 +1,7 @@
 from typing import Tuple
 
 import fitparse
-from app.core.exceptions import MultiSessionError, ParseFitError, ZeroSessionError
+from app.core.exceptions import MultiSessionError, NoSportError, ParseFitError, ZeroSessionError
 
 
 def read_fit_file(file_path: str) -> Tuple[dict, str]:
@@ -13,7 +13,11 @@ def read_fit_file(file_path: str) -> Tuple[dict, str]:
         if len(session_data) == 0:
             raise ZeroSessionError
         session = session_data[0].get_values()
-        return session, session.get("sport")
+        sport = session.get("sport")
+        if sport is None:
+            raise NoSportError
+        return session, sport
 
     except fitparse.FitParseError as err:
         raise ParseFitError from err
+
