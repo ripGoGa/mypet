@@ -14,13 +14,11 @@ class FileAlreadyExistsError(Exception):
     pass
 
 
-def validate_file_type(filename: str, content_type: str) -> None:
-    ct = (content_type or "").lower()
-    allowed_ct = {"text/csv"}
-    if filename.lower().endswith(".csv") and ct in allowed_ct:
+def validate_file_type(filename: str) -> None:
+    if filename.lower().endswith(".fit"):
         pass
     else:
-        raise FileValidationError("Можно загружать только CSV-файлы!")
+        raise FileValidationError("Можно загружать только FIT-файлы!")
 
 
 def save_file_with_hash(content: bytes) -> tuple[str, str]:

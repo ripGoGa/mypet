@@ -1,8 +1,9 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
 
-from app.core.exceptions import ParseFitError, NoSportError
+from app.core.exceptions import NoSportError, ParseFitError
 from app.services.read_fit_file import read_fit_file
-from unittest.mock import patch, MagicMock
 
 
 def test_read_fit_file_success(cycling_stats_file):
