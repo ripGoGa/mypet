@@ -1,21 +1,13 @@
-from typing import Optional
+from typing import List
 
 import pytest
 
-from app.models.models import AthleteProfile, UploadedFile, Workout
+from app.models.models import UploadedFile, Workout
 from app.services.import_service import ImportService
 
 
-class FakeProfileRepository:
-    def __init__(self, athlete_profile: AthleteProfile):
-        self.athlete_profile = athlete_profile
-
-    def get_athlete_profile(self, user_id: int) -> Optional[AthleteProfile]:
-        return self.athlete_profile
-
-
 class FakeImportWorkoutRepository:
-    def __init__(self, dup = None):
+    def __init__(self, dup=None):
         self.uploaded_files = []
         self.workouts = []
         self.commit_calls = 0
@@ -42,9 +34,8 @@ class FakeImportWorkoutRepository:
 
 
 class FakeUploadFile:
-    def __init__(self, filename: str, content_type: str, content: bytes):
+    def __init__(self, filename: str, content: bytes):
         self.filename = filename
-        self.content_type = content_type
         self.content = content
 
     async def read(self) -> bytes:
@@ -52,35 +43,30 @@ class FakeUploadFile:
 
 
 @pytest.fixture()
-def fake_csv_file() -> FakeUploadFile:
-    return FakeUploadFile(filename='ride.csv', content_type='text/csv', content=b'test csv content')
-
-@pytest.fixture()
-def fake_csv_files() -> list[FakeUploadFile]:
-    return [FakeUploadFile(filename='ride.csv', content_type='text/csv', content=b'test csv content'),
-            FakeUploadFile(filename='ride1.csv', content_type='png', content=b'test csv content'),
-            FakeUploadFile(filename='ride2.csv', content_type='text/csv', content=b'test csv content')]
+def fake_uploaded_file() -> FakeUploadFile:
+    return FakeUploadFile("file.fit", b"")
 
 
 @pytest.fixture()
-def fake_profile_repo(load_athlete_profile: AthleteProfile) -> FakeProfileRepository:
-    return FakeProfileRepository(load_athlete_profile)
+def fake_uploaded_files() -> List[FakeUploadFile]:
+    return [FakeUploadFile("file.fit", b""), FakeUploadFile("file2.fit", b""), FakeUploadFile("file.csv", b"")]
 
 
 @pytest.fixture()
 def fake_import_repository():
     return FakeImportWorkoutRepository(dup=None)
 
+
 @pytest.fixture()
 def fake_dup_import_repository():
     return FakeImportWorkoutRepository(dup=True)
 
-@pytest.fixture()
-def fake_dup_import_service(fake_profile_repo, fake_dup_import_repository):
-    return ImportService(fake_dup_import_repository, fake_profile_repo)
-
 
 @pytest.fixture()
-def fake_import_service(fake_profile_repo: FakeProfileRepository, fake_import_repository: FakeImportWorkoutRepository):
-    return ImportService(workout_repo=fake_import_repository, profile_repo=fake_profile_repo)
+def fake_dup_import_service(fake_dup_import_repository):
+    return ImportService(fake_dup_import_repository)
 
+
+@pytest.fixture()
+def fake_import_service(fake_import_repository: FakeImportWorkoutRepository):
+    return ImportService(workout_repo=fake_import_repository)

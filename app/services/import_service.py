@@ -4,7 +4,6 @@ from datetime import UTC, datetime
 from app.core.exceptions import ParseFitError
 from app.models import CyclingWorkout
 from app.models.models import UploadedFile, Users
-from app.repository.profile_repo import ProfileRepository
 from app.repository.workout_repo import WorkoutRepository
 from app.services.file_service import (
     FileAlreadyExistsError,
@@ -21,9 +20,8 @@ MODELS = {"cycling": CyclingWorkout}
 
 
 class ImportService:
-    def __init__(self, workout_repo: WorkoutRepository, profile_repo: ProfileRepository):
+    def __init__(self, workout_repo: WorkoutRepository):
         self.workout_repo = workout_repo
-        self.profile_repo = profile_repo
 
     async def import_files(self, user: Users, files: list) -> tuple[int, int, int]:
         success_count = 0
