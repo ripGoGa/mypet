@@ -36,6 +36,7 @@ class CyclingWorkout(SQLModel, table=True):
 
     training_stress_score: Optional[float]
 
+
 class RunningWorkout(SQLModel, table=True):
     id: int = Field(primary_key=True, default=None)
     workout_id: int = Field(foreign_key="workout.id", unique=True)
@@ -63,5 +64,3 @@ class RunningWorkout(SQLModel, table=True):
     total_elapsed_time: Optional[float]
     total_strides: Optional[int]
     total_timer_time: Optional[float]
-
-
