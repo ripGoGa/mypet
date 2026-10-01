@@ -15,24 +15,27 @@ class CyclingWorkoutRepository:
 
     def get_workouts(self, user_id: int, period: int, limit: int, offset: int) -> tuple[
         Sequence[tuple[Workout, CyclingWorkout]], int]:
-        # 1. Чистый запрос
+        # 1. Чистый запрос (join + user_id)
         query_workouts = (
             select(Workout, CyclingWorkout)
             .where(Workout.user_id == user_id)
             .join(CyclingWorkout, CyclingWorkout.workout_id == Workout.id)
         )
 
-        query_count = select(func.count(Workout.id)).where(Workout.user_id == user_id)
-        # 2. Формируем запрос из роута статистики
+        # 2. Фильтр по периоду
         if period:
             target_date = datetime.now(UTC) - timedelta(days=period)
             query_workouts = query_workouts.where(Workout.started_at >= target_date)
-            query_count = query_count.where(Workout.started_at >= target_date)
-        # 3. Формируем запрос для простого просмотра тренировок
+
+        # 3. Считаем total_count по уже отфильтрованному запросу
+        total_count = self.session.exec(select(func.count()).select_from(query_workouts.subquery())).one()
+
+        # 4. Сортировка и пагинация
         query_workouts = (query_workouts.order_by(desc(Workout.id)).limit(limit).offset(offset))
-        # 4. Делаем запрос в базу
+
+        # 5. Делаем запрос в базу
         workouts = self.session.exec(query_workouts).all()
-        total_count = self.session.exec(query_count).one()
+        
         return workouts, total_count
 
     def get_statistic_workouts(self, user_id: int, period: int = 0) -> Sequence[tuple[Workout, CyclingWorkout]]:
