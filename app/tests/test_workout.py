@@ -1,4 +1,5 @@
-def test_get_workouts_list_success(authorized_client, load_workout_and_cycling):
+def test_get_workouts_list_success(authorized_client, make_workout_and_cycling, test_user_id):
+    make_workout_and_cycling(user_id=test_user_id)
     response = authorized_client.get("/workouts?limit=1&period=0")
     assert response.status_code == 200
     assert "Страница 1 из 3" in response.text
