@@ -16,7 +16,8 @@ pytest_plugins = (
     'app.tests.fixtures.coach',
     'app.tests.fixtures.statistics',
     'app.tests.fixtures.import',
-    "app.tests.fixtures.cycling_stat_calc"
+    "app.tests.fixtures.cycling_stat_calc",
+    "app.tests.fixtures.fit_running_parse"
 )
 
 ORIGINAL_DB_PATH = "data/app.db"
