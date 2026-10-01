@@ -18,7 +18,7 @@
 - `CyclingWorkout` — специфика велоспорта (`total_distance`, `avg_power`, `normalized_power`, ...),
   связана с `Workout` через `workout_id: int = Field(foreign_key="workout.id", unique=True)`.
   Связь 1:1.
-- `RunningWorkout` — по аналогии, для бега (темп, шаги и т.д.). Модель создана
+- `CyclingWorkout` — по аналогии, для бега (темп, шаги и т.д.). Модель создана
   (`app/models/training_models.py`), но пока не используется — не хватает парсера,
   репозитория, калькулятора и DTO.
 
@@ -89,7 +89,7 @@ MODELS = {"cycling": CyclingWorkout}
 ## План действий (по шагам)
 
 1. ✅ `CyclingWorkout` модель создана (`app/models/training_models.py`)
-2. ✅ `RunningWorkout` модель создана — симметрично `CyclingWorkout`, пока не используется
+2. ✅ `CyclingWorkout` модель создана — симметрично `CyclingWorkout`, пока не используется
 3. ✅ Cycling-путь доработан целиком, архитектура доказана:
    - ✅ `CyclingWorkoutRepository` — `get_workouts` / `get_statistic_workouts`,
      `join` по `workout_id`, без `Relationship`
