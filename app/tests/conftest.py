@@ -95,6 +95,13 @@ def test_user(authorized_client, db_test_session):
     user = db_test_session.exec(select(Users).where(Users.email == authorized_client.test_email)).first()
     return user
 
+@pytest.fixture()
+def second_user_id(db_test_session):
+    second_user = Users(email=f"{uuid.uuid4()}@ya.ru", hashed_password="hashed_password")
+    db_test_session.add(second_user)
+    db_test_session.commit()
+    return second_user.id
+
 
 @pytest.fixture()
 def load_athlete_profile(test_user_id, db_test_session) -> AthleteProfile:
