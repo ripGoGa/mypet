@@ -21,7 +21,7 @@ The profile is used by the AI Coach as part of the context for generating coachi
 
 ### Workout Import
 
-Workout data can be imported from CSV files.
+Workout data can be imported from FIT files.
 
 The import process:
 
@@ -29,7 +29,7 @@ The import process:
 - calculates a SHA-256 hash;
 - detects duplicate workouts;
 - stores the uploaded file;
-- parses the CSV data into a workout;
+- parses the FIT data into a workout;
 - saves the workout to the database.
 
 Multiple files can be imported at the same time. Each file is processed independently, so an error in one file does not prevent the remaining files from being imported.
@@ -108,7 +108,7 @@ Examples:
 
 Services coordinate operations between repositories and other application components.
 
-For example, `ImportService` coordinates file validation, file storage, CSV parsing, and workout persistence.
+For example, `ImportService` coordinates file validation, file storage, FIT parsing, and workout persistence.
 
 ### Repository
 
@@ -320,21 +320,21 @@ The test suite covers the main application scenarios, including:
 - workout operations;
 - statistics;
 - AI Coach;
-- CSV import;
+- FIT import;
 - file handling.
 
 The import tests also cover independent processing of multiple files, including the case where one file fails while other files are successfully imported.
 
 ---
 
-## CSV Import
+## FIT Import
 
 Workout files are imported through the application interface.
 
 The import pipeline is designed so that each uploaded file is processed independently:
 
 ```text
-CSV file
+FIT file
    ↓
 File validation
    ↓
@@ -344,7 +344,7 @@ Duplicate check
    ↓
 File storage
    ↓
-CSV parsing
+FIT parsing
    ↓
 Workout creation
    ↓
