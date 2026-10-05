@@ -1,7 +1,7 @@
 import os
 import shutil
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import datetime
 
 import pytest
 from fastapi.testclient import TestClient
@@ -9,16 +9,15 @@ from sqlmodel import Session, create_engine, select
 
 from app.db.session import get_session
 from app.main import app
-from app.models.models import AthleteProfile, UploadedFile, UserProfile, Users, Workout
-from app.models.training_models import CyclingWorkout
+from app.models.models import AthleteProfile, UserProfile, Users
 
 pytest_plugins = (
-    'app.tests.fixtures.coach',
-    'app.tests.fixtures.statistics',
-    'app.tests.fixtures.import',
+    "app.tests.fixtures.coach",
+    "app.tests.fixtures.statistics",
+    "app.tests.fixtures.import",
     "app.tests.fixtures.parse_fit_cycling",
     "app.tests.fixtures.parse_fit_running",
-    "app.tests.fixtures.sport_repo"
+    "app.tests.fixtures.sport_repo",
 )
 
 ORIGINAL_DB_PATH = "data/app.db"
@@ -67,17 +66,17 @@ def client():
 
 @pytest.fixture()
 def authorized_client(client):
-    """"Создает авторизованного пользователя"""
-    email = f'{uuid.uuid4()}@ya.ru'
-    client.post('/register', data={'email': email, 'password': 'secure_pass'})
-    client.post('/login', data={'username': email, 'password': 'secure_pass'})
+    """ "Создает авторизованного пользователя"""
+    email = f"{uuid.uuid4()}@ya.ru"
+    client.post("/register", data={"email": email, "password": "secure_pass"})
+    client.post("/login", data={"username": email, "password": "secure_pass"})
     client.test_email = email
     yield client
 
 
 @pytest.fixture()
 def db_test_session():
-    """"Создает подключение к тестовой базе"""
+    """ "Создает подключение к тестовой базе"""
     with Session(test_engine) as session:
         yield session
 
@@ -95,6 +94,7 @@ def test_user(authorized_client, db_test_session):
     user = db_test_session.exec(select(Users).where(Users.email == authorized_client.test_email)).first()
     return user
 
+
 @pytest.fixture()
 def second_user_id(db_test_session):
     second_user = Users(email=f"{uuid.uuid4()}@ya.ru", hashed_password="hashed_password")
@@ -106,12 +106,7 @@ def second_user_id(db_test_session):
 @pytest.fixture()
 def load_athlete_profile(test_user_id, db_test_session) -> AthleteProfile:
     """Создаем спортивный профиль пользователя"""
-    athlete = AthleteProfile(
-        id=test_user_id,
-        weight_kg=75.0,
-        current_ftp=250,
-        weekly_hours=8.5
-    )
+    athlete = AthleteProfile(id=test_user_id, weight_kg=75.0, current_ftp=250, weekly_hours=8.5)
     db_test_session.add(athlete)
     db_test_session.commit()
     return athlete
@@ -120,15 +115,7 @@ def load_athlete_profile(test_user_id, db_test_session) -> AthleteProfile:
 @pytest.fixture()
 def load_user_profile(test_user_id, db_test_session) -> UserProfile:
     """Создаем базовый профиль пользователя"""
-    profile = UserProfile(
-        id=test_user_id,
-        name="Igor Test",
-        birth_date=datetime(1992, 1, 1),
-        height_cm=180
-    )
+    profile = UserProfile(id=test_user_id, name="Igor Test", birth_date=datetime(1992, 1, 1), height_cm=180)
     db_test_session.add(profile)
     db_test_session.commit()
     return profile
-
-
-
