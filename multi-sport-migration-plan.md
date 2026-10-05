@@ -18,9 +18,9 @@
 - `CyclingWorkout` — специфика велоспорта (`total_distance`, `avg_power`, `normalized_power`, ...),
   связана с `Workout` через `workout_id: int = Field(foreign_key="workout.id", unique=True)`.
   Связь 1:1.
-- `CyclingWorkout` — по аналогии, для бега (темп, шаги и т.д.). Модель создана
-  (`app/models/training_models.py`), но пока не используется — не хватает парсера,
-  репозитория, калькулятора и DTO.
+- `RunningWorkout` — по аналогии, для бега (скорость в м/с, `effort_pace`, каденс, время контакта
+  с землёй и т.д.). Парсер (`parse_fit_running`), репозиторий и калькулятор готовы.
+  Не хватает DTO и подключения к `ImportService`.
 
 **Почему без `Relationship()` в SQLModel:** добавление `Relationship` в `Workout` на каждый
 новый вид спорта означало бы раздувание модели `Workout` при каждом новом спорте
@@ -43,7 +43,7 @@
 внутри одного класса, а сделать отдельные калькуляторы:
 
 - `CyclingStatsCalculator` — принимает `Sequence[tuple[Workout, CyclingWorkout]]`. Готов.
-- `RunningStatsCalculator` — принимает `Sequence[tuple[Workout, RunningWorkout]]` (будущее).
+- `RunningStatsCalculator` — принимает `Sequence[tuple[Workout, RunningWorkout]]`. Готов.
 
 Каждый калькулятор знает только про свой вид спорта.
 
@@ -52,8 +52,9 @@
 Не один "универсальный" `WorkoutsDTO` с кучей `Optional`-полей на все виды спорта
 (это тот же анти-паттерн, из-за которого шёл рефакторинг `Workout`).
 
-- `CyclingStatsDTO` — готов.
-- `RunningStatsDTO` (будущее).
+- Вело-DTO — готов (в коде класс называется `WorkoutsDTO`, в плане фигурировал как
+  `CyclingStatsDTO`; переименование — в техдолге).
+- `RunningStatsDTO` — следующий шаг.
 
 ### 5. Импорт файлов: `.fit` вместо `.csv`, реестр парсеров по спорту
 
@@ -76,9 +77,25 @@ MODELS = {"cycling": CyclingWorkout}
 ```
 
 Добавление нового спорта — это добавление ключа в оба словаря плюс сам парсер,
-без изменения кода `ImportService`.
+без изменения кода `ImportService`. Ключ `"running"` ещё предстоит добавить (шаг 5.5).
 
-### 6. UI / роутер `/statistics`
+### 6. Метрики бега: принятые решения
+
+- **Скорость и пейс.** В БД скорости хранятся в м/с (числа нужны для агрегатов). В пейс
+  (мин/км) они переводятся только на уровне отображения через отдельную функцию
+  `format_pace` (пока не реализована). Калькулятор возвращает числа, не строки.
+- **Средний пейс за период** считается как общая дистанция / общее время, а не как среднее
+  по средним скоростям тренировок: простое среднее завышает результат, потому что не
+  учитывает, сколько времени потрачено на медленные пробежки. Для пульса и каденса
+  осознанно оставлено простое среднее («типичная тренировка»).
+- **Каденс.** FIT хранит каденс бега «на одну ногу», поэтому при заполнении raw-списка
+  значение умножается на 2 (чтобы список для графика и среднее давали одно число).
+- **Не нужны для бега:** TSS, intensity factor, normalized power и счётчики тяжести
+  (light/medium/hard). Лучший пейс не реализуется.
+- **Устойчивость к `None`:** raw-списки хранят `None`, агрегаты и максимумы их пропускают,
+  чтобы одна неполная запись не роняла страницу статистики.
+
+### 7. UI / роутер `/statistics`
 
 - Пользователь задаёт приоритетный вид спорта в профиле — он показывается на главной
   вкладке статистики.
@@ -89,34 +106,47 @@ MODELS = {"cycling": CyclingWorkout}
 ## План действий (по шагам)
 
 1. ✅ `CyclingWorkout` модель создана (`app/models/training_models.py`)
-2. ✅ `CyclingWorkout` модель создана — симметрично `CyclingWorkout`, пока не используется
+2. ✅ `RunningWorkout` модель создана — симметрично `CyclingWorkout`
 3. ✅ Cycling-путь доработан целиком, архитектура доказана:
    - ✅ `CyclingWorkoutRepository` — `get_workouts` / `get_statistic_workouts`,
      `join` по `workout_id`, без `Relationship`
    - ✅ `CyclingStatsCalculator` — переписан под `Sequence[tuple[Workout, CyclingWorkout]]`
-   - ✅ `CyclingStatsDTO` — адаптирован
+   - ✅ Вело-DTO — адаптирован
    - ✅ Переход `.csv` → `.fit`: `read_fit_file` + `parse_fit_cycling` +
      `ImportService` с реестрами `PARSERS`/`MODELS`
    - ✅ Тесты и фикстуры обновлены (`test_import_files.py` переписан под FIT,
-     `test_fit_rider.py` — новый, для `read_fit_file`; весь набор — 29/29 зелёных)
+     `test_fit_rider.py` — новый, для `read_fit_file`)
 4. ✅ `data/app.db` / `data/test_app.db` пересозданы под новую схему
-5. ⬜ Реализовать `running` по доказанному паттерну — согласованный план из 7 шагов:
-   1. `parse_fit_running(session_dict, user_id, uploaded_file_id) -> tuple[Workout, dict]`
-      — по образцу `parse_fit_cycling`
-   2. `RunningWorkoutRepository` (по образцу `CyclingWorkoutRepository`):
+5. 🔄 Реализовать `running` по доказанному паттерну — согласованный план из 7 шагов:
+   1. ✅ `parse_fit_running(session_dict, user_id, uploaded_file_id) -> tuple[Workout, dict]`
+      + тест
+   2. ✅ `RunningWorkoutRepository` (по образцу `CyclingWorkoutRepository`):
       `get_workouts` / `get_statistic_workouts`
-   3. `RunningStatsCalculator` (по образцу `CyclingStatsCalculator`)
-   4. `RunningStatsDTO` (по образцу DTO для cycling)
-   5. Добавить `"running"` в `PARSERS` и `MODELS` в `ImportService`
-   6. Тесты на каждый новый компонент
-   7. Обновить этот документ по итогам
+   3. ✅ `RunningStatsCalculator` (по образцу `CyclingStatsCalculator`, см. решения в п. 6)
+   4. ⬜ `RunningStatsDTO` (по образцу вело-DTO, `raw_*`-списки допускают `None`)
+   5. ⬜ Добавить `"running"` в `PARSERS` и `MODELS` в `ImportService`
+   6. 🔄 Тесты: для парсера и репозиториев (`total_count`, изоляция по спорту и
+      пользователю) готовы; остальное — в техдолге ниже
+   7. ⬜ Функция `format_pace` и вывод пейса в UI
 
 ## Технические долги, не забыть
 
+**Бег (новое):**
+- Валидация в `parse_fit_running`: наличие `avg_speed`, `total_distance`, `total_timer_time`
+  (отклонять файл, где их нет) + тест на файл без скорости
+- Тесты на `RunningStatsCalculator`
+- Тесты репозиториев: `get_statistic_workouts` (изоляция по спорту и пользователю),
+  `period=0`, пустой результат, пагинация (limit/offset и порядок «новые первыми»)
+- Решить, должен ли `total_elapsed_time` быть `timedelta`
+- Переименовать `WorkoutsDTO` → `CyclingStatsDTO`
+
+**Общие:**
+- `Query()`-валидация в остальных роутах (например, `/statistics`), как уже сделано
+  в `/workouts`
 - `fake_uploaded_file` в тестовых фикстурах импорта всё ещё содержит `content_type="text/csv"`
   — не используется `validate_file_type` (проверяет только расширение `.fit`), но стоит
   почистить для консистентности
 - bcrypt обрезает пароли длиннее 72 байт (лимит библиотеки) — при переходе с `passlib` на
   прямой `bcrypt` это не было обработано; потенциальный скрытый баг, не исправлено
-- UI `/statistics` пока не учитывает мульти-спорт (пункт 6 архитектурных решений) —
+- UI `/statistics` пока не учитывает мульти-спорт (пункт 7 архитектурных решений) —
   актуально после реализации running
