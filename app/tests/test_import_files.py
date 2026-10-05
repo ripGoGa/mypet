@@ -1,12 +1,9 @@
 from datetime import datetime
 
-import fitparse
 import pytest
-from pandas.errors import EmptyDataError
 
 from app.core.exceptions import ParseFitError
 from app.services.file_service import FileValidationError
-from app.services.parse_csv import ParseCsvError, parse_csv_to_workout
 
 
 @pytest.mark.asyncio
