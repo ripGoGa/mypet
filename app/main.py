@@ -30,7 +30,7 @@ def on_startup() -> None:
 
 
 def ensure_data_store() -> None:
-    Path('data/csv').mkdir(parents=True, exist_ok=True)
+    Path('data/fit').mkdir(parents=True, exist_ok=True)
 
 
 on_startup()

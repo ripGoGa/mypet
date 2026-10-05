@@ -25,7 +25,7 @@ Thumbs.db
 *.log
 
 # Данные проекта (можно хранить локально, но не в репозитории)
-data/csv/
+data/fit/
 data/streams/
 app.db
 

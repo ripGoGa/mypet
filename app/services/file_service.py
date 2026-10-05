@@ -23,8 +23,8 @@ def validate_file_type(filename: str) -> None:
 
 def save_file_with_hash(content: bytes) -> tuple[str, str]:
     hash_value = hashlib.sha256(content).hexdigest()
-    filename = f"{hash_value}.csv"
-    path = Path("data/csv") / f"{filename}"
+    filename = f"{hash_value}.fit"
+    path = Path("data/fit") / f"{filename}"
     try:
         path.write_bytes(content)
     except OSError as e:
