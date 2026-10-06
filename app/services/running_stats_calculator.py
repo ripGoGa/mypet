@@ -65,7 +65,7 @@ class RunningStatsCalculator:
         return self._count_workouts
 
     @property
-    def raw_total_distance(self) -> float:
+    def total_distance(self) -> float:
         return self._total_distance
 
     @property
