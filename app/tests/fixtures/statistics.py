@@ -9,13 +9,14 @@ from app.services.statistics_service import StatisticsService
 
 
 class FakeCyclingWorkoutRepository:
-
     def __init__(self, test_workouts: Sequence[Workout], test_cycling_workouts: Sequence[CyclingWorkout]):
         self.history = []
         self.test_workouts = test_workouts
         self.test_cycling_workouts = test_cycling_workouts
 
-    def get_statistic_workouts(self, user_id: int, period: int = 0) -> Sequence[tuple[Workout, CyclingWorkout]]:
+    def get_statistic_workouts(
+        self, user_id: int, period: int = 0
+    ) -> Sequence[tuple[Workout, CyclingWorkout]]:
         self.history.append((user_id, period))
         return list(zip(self.test_workouts, self.test_cycling_workouts, strict=True))
 
@@ -147,8 +148,9 @@ def get_fake_cycling_w_repo(test_workouts, test_cycling_workouts) -> FakeCycling
 
 @pytest.fixture()
 def get_fake_statistic_service(get_fake_cycling_w_repo: FakeCyclingWorkoutRepository) -> StatisticsService:
-    return StatisticsService(cycling_repo=get_fake_cycling_w_repo, workout_repo=None)
+    return StatisticsService(cycling_repo=get_fake_cycling_w_repo)
+
 
 @pytest.fixture()
 def empty_cycling_workout_repo():
-    return FakeCyclingWorkoutRepository(test_workouts=[], test_cycling_workouts= [])
+    return FakeCyclingWorkoutRepository(test_workouts=[], test_cycling_workouts=[])

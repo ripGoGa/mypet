@@ -17,7 +17,7 @@ def test_get_user_stats_success(
 
 
 def test_zero_workout_stats(empty_cycling_workout_repo):
-    result = StatisticsService(cycling_repo=empty_cycling_workout_repo, workout_repo=None).get_user_stats(
+    result = StatisticsService(cycling_repo=empty_cycling_workout_repo).get_user_stats(
         user_id=1
     )
     assert isinstance(result, WorkoutsDTO)

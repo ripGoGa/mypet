@@ -64,9 +64,8 @@ def get_profile_service(session: Session = Depends(get_session)) -> ProfileServi
 
 
 def get_statistics_service(session: Session = Depends(get_session)) -> StatisticsService:
-    repo = WorkoutRepository(session=session)
     cycling_repo = CyclingWorkoutRepository(session=session)
-    new_statistics_service = StatisticsService(workout_repo=repo, cycling_repo=cycling_repo)
+    new_statistics_service = StatisticsService(cycling_repo=cycling_repo)
     return new_statistics_service
 
 
