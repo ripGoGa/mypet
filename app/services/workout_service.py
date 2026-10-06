@@ -13,16 +13,14 @@ class WorkoutService:
         self.workout_repo = work_repo
         self.cycling_repo = cycling_repo
 
-    def get_user_workouts(self, user_id: int, page: int, limit: int, period: int) -> (
-            tuple)[Sequence[tuple[Workout, CyclingWorkout]], int]:
-        if page < 1:
-            page = 1
-        if limit > 100 or limit < 1:
-            limit = 10
+    def get_user_workouts(
+        self, user_id: int, page: int, limit: int, period: int
+    ) -> tuple[Sequence[tuple[Workout, CyclingWorkout]], int]:
+        """ожидает page >= 1, 1 <= limit <= 100, period >= 0, проверка на корректность происходит в роуте"""
         offset = (page - 1) * limit
-        workouts, total_count = self.cycling_repo.get_workouts(user_id=user_id, period=period,
-                                                               limit=limit, offset=offset
-                                                               )
+        workouts, total_count = self.cycling_repo.get_workouts(
+            user_id=user_id, period=period, limit=limit, offset=offset
+        )
         total_pages = ceil(total_count / limit)
         return workouts, total_pages
 
@@ -31,4 +29,3 @@ class WorkoutService:
         if workout:
             return workout
         raise MissingWorkoutError
-
