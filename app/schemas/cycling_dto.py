@@ -3,7 +3,7 @@ from datetime import timedelta
 from pydantic import BaseModel
 
 
-class WorkoutsDTO(BaseModel):
+class CyclingStatsDTO(BaseModel):
     count_workouts: int
     raw_total_distance: float
     total_tss_num: float
