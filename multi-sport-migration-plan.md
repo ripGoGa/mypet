@@ -19,8 +19,8 @@
   связана с `Workout` через `workout_id: int = Field(foreign_key="workout.id", unique=True)`.
   Связь 1:1.
 - `RunningWorkout` — по аналогии, для бега (скорость в м/с, `effort_pace`, каденс, время контакта
-  с землёй и т.д.). Парсер (`parse_fit_running`), репозиторий и калькулятор готовы.
-  Не хватает DTO и подключения к `ImportService`.
+  с землёй и т.д.). Парсер (`parse_fit_running`), репозиторий, калькулятор, DTO и
+  подключение к `ImportService` готовы.
 
 **Почему без `Relationship()` в SQLModel:** добавление `Relationship` в `Workout` на каждый
 новый вид спорта означало бы раздувание модели `Workout` при каждом новом спорте
@@ -49,12 +49,11 @@
 
 ### 4. DTO: отдельный на каждый вид спорта
 
-Не один "универсальный" `WorkoutsDTO` с кучей `Optional`-полей на все виды спорта
+Не один "универсальный" `CyclingStatsDTO` с кучей `Optional`-полей на все виды спорта
 (это тот же анти-паттерн, из-за которого шёл рефакторинг `Workout`).
 
-- Вело-DTO — готов (в коде класс называется `WorkoutsDTO`, в плане фигурировал как
-  `CyclingStatsDTO`; переименование — в техдолге).
-- `RunningStatsDTO` — следующий шаг.
+- `CyclingStatsDTO` — готов (переименован из `WorkoutsDTO`, файл `cycling_dto.py`).
+- `RunningStatsDTO` — готов (`running_dto.py`), `raw_*`-списки допускают `None`.
 
 ### 5. Импорт файлов: `.fit` вместо `.csv`, реестр парсеров по спорту
 
@@ -72,12 +71,14 @@
 `ImportService` диспетчеризует по спорту через реестры:
 
 ```python
-PARSERS = {"cycling": parse_fit_cycling}
-MODELS = {"cycling": CyclingWorkout}
+PARSERS = {"cycling": parse_fit_cycling, "running": parse_fit_running}
+MODELS = {"cycling": CyclingWorkout, "running": RunningWorkout}
 ```
 
 Добавление нового спорта — это добавление ключа в оба словаря плюс сам парсер,
-без изменения кода `ImportService`. Ключ `"running"` ещё предстоит добавить (шаг 5.5).
+без изменения кода `ImportService`. Файл с неподдерживаемым видом спорта отклоняется
+через `UnsupportedSportError` (наследник `ParseFitError`): откат транзакции, файл удаляется,
+учитывается как ошибка импорта.
 
 ### 6. Метрики бега: принятые решения
 
@@ -95,13 +96,18 @@ MODELS = {"cycling": CyclingWorkout}
 - **Устойчивость к `None`:** raw-списки хранят `None`, агрегаты и максимумы их пропускают,
   чтобы одна неполная запись не роняла страницу статистики.
 
-### 7. UI / роутер `/statistics`
+### 7. `StatisticsService`, роутер `/statistics` и UI
 
-- Пользователь задаёт приоритетный вид спорта в профиле — он показывается на главной
-  вкладке статистики.
-- Остальные виды спорта — в отдельных вкладках, либо через фильтр
-  (`?sport=cycling`, `?sport=running`).
-- Пока не реализовано.
+- `StatisticsService` имеет отдельный метод на каждый вид спорта: `get_cycling_stats` и
+  `get_running_stats` (у каждого свои репозиторий, калькулятор и DTO). Общая абстракция
+  не нужна: по Rule of Three дублирование пока дешевле неверной абстракции.
+- Общая статистика по всем видам спорта не объединяется в один DTO, а разбивается по видам
+  спорта и показывается блоками на одной странице (например, за месяц 4 вело и 8 беговых
+  тренировок: один блок с вело-статистикой, другой с беговой).
+- Роутер `/statistics` пока вызывает только `get_cycling_stats`. Блок бега, `?sport=` и
+  шаблоны отложены до фронтенда.
+- Ранее обсуждались приоритетный вид спорта в профиле и вкладки/фильтр
+  (`?sport=cycling`, `?sport=running`) — нужно решить, остаются ли они вместе с блоками.
 
 ## План действий (по шагам)
 
@@ -123,11 +129,13 @@ MODELS = {"cycling": CyclingWorkout}
    2. ✅ `RunningWorkoutRepository` (по образцу `CyclingWorkoutRepository`):
       `get_workouts` / `get_statistic_workouts`
    3. ✅ `RunningStatsCalculator` (по образцу `CyclingStatsCalculator`, см. решения в п. 6)
-   4. ⬜ `RunningStatsDTO` (по образцу вело-DTO, `raw_*`-списки допускают `None`)
-   5. ⬜ Добавить `"running"` в `PARSERS` и `MODELS` в `ImportService`
-   6. 🔄 Тесты: для парсера и репозиториев (`total_count`, изоляция по спорту и
+   4. ✅ `RunningStatsDTO` (по образцу вело-DTO, `raw_*`-списки допускают `None`)
+   5. ✅ Добавить `"running"` в `PARSERS` и `MODELS` в `ImportService`
+      (+ `UnsupportedSportError` для неподдерживаемых видов спорта)
+   6. ✅ `StatisticsService`: `get_cycling_stats` и `get_running_stats`
+   7. 🔄 Тесты: для парсера и репозиториев (`total_count`, изоляция по спорту и
       пользователю) готовы; остальное — в техдолге ниже
-   7. ⬜ Функция `format_pace` и вывод пейса в UI
+   8. ⬜ Функция `format_pace` и вывод пейса в UI
 
 ## Технические долги, не забыть
 
@@ -137,16 +145,29 @@ MODELS = {"cycling": CyclingWorkout}
 - Тесты на `RunningStatsCalculator`
 - Тесты репозиториев: `get_statistic_workouts` (изоляция по спорту и пользователю),
   `period=0`, пустой результат, пагинация (limit/offset и порядок «новые первыми»)
+- Тесты `ImportService` для бега: успешный импорт `.fit` (появляются `Workout` и
+  `RunningWorkout`) и файл неподдерживаемого вида спорта (`UnsupportedSportError`:
+  откат транзакции, файл удалён, учтён как ошибка импорта)
+- Тест `RunningStatsDTO`: сборка из `RunningStatsCalculator` через `from_attributes`,
+  в том числе с `None` в списках `raw_*`
+- Тест `save_file_with_hash`: реальная запись файла в `data/fit` (текущие тесты работают
+  через фейковый сервис и этот путь не покрывают)
+- Тест страницы `/workouts/{id}`: проверять, что в HTML есть данные тренировки, а не только
+  статус 200 (после починки фронта)
 - Решить, должен ли `total_elapsed_time` быть `timedelta`
-- Переименовать `WorkoutsDTO` → `CyclingStatsDTO`
+- Тесты `get_running_stats` и фикстура `running_repo` для `StatisticsService` (сейчас в
+  фикстурах передаётся `running_repo=None`)
 
 **Общие:**
-- `Query()`-валидация в остальных роутах (например, `/statistics`), как уже сделано
-  в `/workouts`
+- `Query()`-валидация в остальных роутах: в `/workouts` и `/statistics` уже сделана
+- Верхняя граница `period` в `/statistics` и `/workouts` (возможно переполнение `timedelta`
+  и 500 на огромных значениях — не проверено)
+- `CyclingStatsDTO`: `raw_*: list[float]` не допускают `None`, нужно `list[float | None]`
+- В будущем объединить реестры `PARSERS` и `MODELS`
 - `fake_uploaded_file` в тестовых фикстурах импорта всё ещё содержит `content_type="text/csv"`
   — не используется `validate_file_type` (проверяет только расширение `.fit`), но стоит
   почистить для консистентности
 - bcrypt обрезает пароли длиннее 72 байт (лимит библиотеки) — при переходе с `passlib` на
   прямой `bcrypt` это не было обработано; потенциальный скрытый баг, не исправлено
-- UI `/statistics` пока не учитывает мульти-спорт (пункт 7 архитектурных решений) —
-  актуально после реализации running
+- UI `/statistics` пока не учитывает мульти-спорт (пункт 7 архитектурных решений): блок
+  бега и вызов `get_running_stats` в роутере — после бэкенда, вместе с фронтендом
