@@ -16,7 +16,7 @@ def main_stat(
     period: int = Query(0, ge=0),
     service: StatisticsService = Depends(get_statistics_service),
 ):
-    work_dto = service.get_user_stats(user_id=user.id, period=period).model_dump()
+    work_dto = service.get_cycling_stats(user_id=user.id, period=period).model_dump()
     work_dto["period"] = period
 
     return templates.TemplateResponse(request, "statistics.html", work_dto)

@@ -12,7 +12,7 @@ def test_get_user_stats_success(
     get_fake_cycling_w_repo: FakeCyclingWorkoutRepository,
     get_fake_statistic_service: StatisticsService,
 ):
-    result = get_fake_statistic_service.get_user_stats(user_id=42, period=7)
+    result = get_fake_statistic_service.get_cycling_stats(user_id=42, period=7)
     assert isinstance(result, CyclingStatsDTO)
     assert get_fake_cycling_w_repo.history == [(42, 7)]
     assert result.count_workouts == len(test_workouts)
@@ -25,7 +25,7 @@ def test_get_wrong_period_returns_422(
 
 
 def test_zero_workout_stats(empty_cycling_workout_repo):
-    result = StatisticsService(cycling_repo=empty_cycling_workout_repo).get_user_stats(
+    result = StatisticsService(cycling_repo=empty_cycling_workout_repo, running_repo=None).get_cycling_stats(
         user_id=1
     )
     assert isinstance(result, CyclingStatsDTO)

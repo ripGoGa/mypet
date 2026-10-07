@@ -148,7 +148,7 @@ def get_fake_cycling_w_repo(test_workouts, test_cycling_workouts) -> FakeCycling
 
 @pytest.fixture()
 def get_fake_statistic_service(get_fake_cycling_w_repo: FakeCyclingWorkoutRepository) -> StatisticsService:
-    return StatisticsService(cycling_repo=get_fake_cycling_w_repo)
+    return StatisticsService(cycling_repo=get_fake_cycling_w_repo, running_repo=None)
 
 
 @pytest.fixture()

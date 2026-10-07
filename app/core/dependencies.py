@@ -9,6 +9,7 @@ from app.models.models import Users
 from app.repository.chat_repo import ChatRepository
 from app.repository.cycling_repo import CyclingWorkoutRepository
 from app.repository.profile_repo import ProfileRepository
+from app.repository.running_repo import RunningWorkoutRepository
 from app.repository.user_repo import UserRepository
 from app.repository.workout_repo import WorkoutRepository
 from app.services.coach_service import CoachService
@@ -65,7 +66,8 @@ def get_profile_service(session: Session = Depends(get_session)) -> ProfileServi
 
 def get_statistics_service(session: Session = Depends(get_session)) -> StatisticsService:
     cycling_repo = CyclingWorkoutRepository(session=session)
-    new_statistics_service = StatisticsService(cycling_repo=cycling_repo)
+    running_repo = RunningWorkoutRepository(session=session)
+    new_statistics_service = StatisticsService(cycling_repo=cycling_repo, running_repo=running_repo)
     return new_statistics_service
 
 
