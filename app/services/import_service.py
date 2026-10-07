@@ -1,9 +1,10 @@
 import hashlib
 from datetime import UTC, datetime
 
-from app.core.exceptions import ParseFitError
+from app.core.exceptions import ParseFitError, UnsupportedSportError
 from app.models import CyclingWorkout
 from app.models.models import UploadedFile, Users
+from app.models.training_models import RunningWorkout
 from app.repository.workout_repo import WorkoutRepository
 from app.services.file_service import (
     FileAlreadyExistsError,
@@ -13,10 +14,14 @@ from app.services.file_service import (
     validate_file_type,
 )
 from app.services.fit_cycling_parse import parse_fit_cycling
+from app.services.fit_running_parse import parse_fit_running
 from app.services.read_fit_file import read_fit_file
 
-PARSERS = {"cycling": parse_fit_cycling}
-MODELS = {"cycling": CyclingWorkout}
+PARSERS = {
+    "cycling": parse_fit_cycling,
+    "running": parse_fit_running,
+}
+MODELS = {"cycling": CyclingWorkout, "running": RunningWorkout}
 
 
 class ImportService:
@@ -44,6 +49,8 @@ class ImportService:
                 )
                 self.workout_repo.add_uploaded_file(uploaded_file)
                 session_dict, sport = read_fit_file(file_path=file_path)
+                if sport not in PARSERS:
+                    raise UnsupportedSportError
                 workout, sport_dict = PARSERS[sport](
                     session_dict=session_dict, user_id=user.id, uploaded_file_id=uploaded_file.id
                 )

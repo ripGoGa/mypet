@@ -43,5 +43,10 @@ class MultiSessionError(ParseFitError):
 class ZeroSessionError(ParseFitError):
     """Файл не содержит сессии"""
 
+
 class NoSportError(ParseFitError):
     """Файл сессии не содержит данных о спорте"""
+
+
+class UnsupportedSportError(ParseFitError):
+    """Не поддерживаемый вид спорта"""
