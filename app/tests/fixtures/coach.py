@@ -3,7 +3,6 @@ import pytest
 from app.core.exceptions import AIProviderNotAvailable
 from app.repository.chat_repo import ChatRepository
 from app.repository.cycling_repo import CyclingWorkoutRepository
-from app.repository.workout_repo import WorkoutRepository
 from app.services.coach_service import CoachService
 
 
@@ -13,7 +12,7 @@ class FakeLLMProvider:
 
     async def send_message(self, messages: list[dict[str, str]]) -> str:
         self.history_messages.append(messages)
-        return 'Ответ LLM'
+        return "Ответ LLM"
 
 
 class BrokenFakeLLMProvider:
@@ -32,21 +31,17 @@ def fake_llm_provider():
 
 @pytest.fixture()
 def get_test_coach_service(db_test_session) -> CoachService:
-    workout_repo = WorkoutRepository(session=db_test_session)
     chat_repo = ChatRepository(session=db_test_session)
     llm_provider = FakeLLMProvider()
     cycling_repo = CyclingWorkoutRepository(session=db_test_session)
-    new_coach_service = CoachService(workout_repo=workout_repo, chat_repo=chat_repo,
-                                     llm_provider=llm_provider, cycling_repo=cycling_repo)
+    new_coach_service = CoachService(chat_repo=chat_repo, llm_provider=llm_provider, cycling_repo=cycling_repo)
     return new_coach_service
 
 
 @pytest.fixture()
 def get_test_broken_coach_service(db_test_session) -> CoachService:
-    workout_repo = WorkoutRepository(session=db_test_session)
     chat_repo = ChatRepository(session=db_test_session)
     llm_provider = BrokenFakeLLMProvider()
     cycling_repo = CyclingWorkoutRepository(session=db_test_session)
-    new_coach_service = CoachService(workout_repo=workout_repo, chat_repo=chat_repo,
-                                     llm_provider=llm_provider, cycling_repo=cycling_repo)
+    new_coach_service = CoachService(chat_repo=chat_repo, llm_provider=llm_provider, cycling_repo=cycling_repo)
     return new_coach_service

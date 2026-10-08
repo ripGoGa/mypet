@@ -7,14 +7,12 @@ from app.infrastructure.llm.llm_protocol import LLMProvider
 from app.models.models import ChatMessage, Users
 from app.repository.chat_repo import ChatRepository
 from app.repository.cycling_repo import CyclingWorkoutRepository
-from app.repository.workout_repo import WorkoutRepository
 from app.services.cycling_stats_calculator import CyclingStatsCalculator
 
 
 class CoachService:
-    def __init__(self, workout_repo: WorkoutRepository, chat_repo: ChatRepository, llm_provider: LLMProvider,
+    def __init__(self, chat_repo: ChatRepository, llm_provider: LLMProvider,
                  cycling_repo: CyclingWorkoutRepository):
-        self.workout_repo = workout_repo
         self.llm_provider = llm_provider
         self.system_prompt = self._load_prompt('System_Persona.txt')
         self.user_profile = self._load_prompt('User_Profile.txt')

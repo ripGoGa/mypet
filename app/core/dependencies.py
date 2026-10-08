@@ -23,18 +23,18 @@ from app.services.workout_service import WorkoutService
 
 def get_current_user(request: Request, session: Session = Depends(get_session)):
     """Проверяет токен на соответствие"""
-    token = request.cookies.get('access_token')
+    token = request.cookies.get("access_token")
     if not token:
-        raise HTTPException(status_code=401, detail='Ошибка авторизации')
+        raise HTTPException(status_code=401, detail="Ошибка авторизации")
     try:
         # Пробует декодировать подпись токена с помощью секретного ключа
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user = session.exec(select(Users).where(Users.email == payload['sub'])).first()
+        user = session.exec(select(Users).where(Users.email == payload["sub"])).first()
         if not user:
-            raise HTTPException(status_code=401, detail='Ошибка авторизации')
+            raise HTTPException(status_code=401, detail="Ошибка авторизации")
         return user
     except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail='Ошибка авторизации') from None
+        raise HTTPException(status_code=401, detail="Ошибка авторизации") from None
 
 
 def get_chat_repo(session: Session = Depends(get_session)) -> ChatRepository:
@@ -43,12 +43,10 @@ def get_chat_repo(session: Session = Depends(get_session)) -> ChatRepository:
 
 
 def get_coach_service(session: Session = Depends(get_session)) -> CoachService:
-    workout_repo = WorkoutRepository(session=session)
     chat_repo = ChatRepository(session=session)
     llm_provider = OllamaProvider()
     cycling_repo = CyclingWorkoutRepository(session=session)
-    new_coach_service = CoachService(workout_repo=workout_repo, chat_repo=chat_repo,
-                                     llm_provider=llm_provider, cycling_repo=cycling_repo)
+    new_coach_service = CoachService(chat_repo=chat_repo, llm_provider=llm_provider, cycling_repo=cycling_repo)
     return new_coach_service
 
 
