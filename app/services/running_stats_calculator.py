@@ -32,7 +32,9 @@ class RunningStatsCalculator:
             # Наполнение сумматоров (Тут 0 безопасен, так как мы просто плюсуем к общему объему)
             self._total_distance += running.total_distance if running.total_distance else 0.0
             self._total_ccall += running.total_calories if running.total_calories else 0
-            self._total_moving_time += running.moving_time if running.moving_time else timedelta(0)
+            self._total_moving_time += (
+                timedelta(seconds=running.total_timer_time) if running.total_timer_time else timedelta(0)
+            )
 
             # Поиск максимумов (Обновляем ТОЛЬКО если значение прилетело из базы, игнорируя None)
             if running.total_distance is not None:
@@ -46,9 +48,10 @@ class RunningStatsCalculator:
             self._raw_distance.append(running.total_distance)
             self._raw_speed.append(running.avg_speed)
             self._raw_heartrate.append(running.avg_heart_rate)
-            self._raw_cadence.append(running.avg_running_cadence * 2
-                                                if running.avg_running_cadence  is not None
-                                                else None)
+            # FIT-file хранит каденс только на одну ногу, поэтому значение умножается на 2
+            self._raw_cadence.append(
+                running.avg_running_cadence * 2 if running.avg_running_cadence is not None else None
+            )
             self._raw_max_hr.append(running.max_heart_rate)
             self._raw_ccall.append(running.total_calories)
 

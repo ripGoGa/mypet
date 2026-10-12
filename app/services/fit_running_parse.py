@@ -15,7 +15,6 @@ def parse_fit_running(session_dict: dict, user_id: int, uploaded_file_id: int) -
 
 
     running_w_dict = dict()
-    running_w_dict["moving_time"] = timedelta(seconds=session_dict.get("total_timer_time"))
     running_w_dict["avg_heart_rate"] = session_dict.get("avg_heart_rate")
     running_w_dict["avg_power"] = session_dict.get("avg_power")
     running_w_dict["avg_running_cadence"] = session_dict.get("avg_running_cadence")
