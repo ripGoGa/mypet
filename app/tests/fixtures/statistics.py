@@ -5,6 +5,7 @@ import pytest
 
 from app.models import CyclingWorkout
 from app.models.models import Workout
+from app.models.training_models import RunningWorkout
 from app.services.statistics_service import StatisticsService
 
 
@@ -21,8 +22,25 @@ class FakeCyclingWorkoutRepository:
         return list(zip(self.test_workouts, self.test_cycling_workouts, strict=True))
 
 
+class FakeRunningWorkoutRepository:
+    def __init__(
+        self,
+        test_workouts: Sequence[Workout],
+        test_running_workouts: Sequence[RunningWorkout],
+    ):
+        self.history = []
+        self.test_workouts = test_workouts
+        self.test_running_workouts = test_running_workouts
+
+    def get_statistic_workouts(
+        self, user_id: int, period: int = 0
+    ) -> Sequence[tuple[Workout, RunningWorkout]]:
+        self.history.append((user_id, period))
+        return list(zip(self.test_workouts, self.test_running_workouts, strict=True))
+
+
 @pytest.fixture()
-def test_workouts():
+def test_workouts_for_cycling():
     user_id = 42
 
     return [
@@ -54,6 +72,31 @@ def test_workouts():
             id=5,
             user_id=user_id,
             sport="cycling",
+            duration=timedelta(hours=1, minutes=15),
+        ),
+    ]
+
+
+@pytest.fixture()
+def test_workouts_for_running():
+    user_id = 42
+    return [
+        Workout(
+            id=6,
+            user_id=user_id,
+            sport="running",
+            duration=timedelta(hours=2),
+        ),
+        Workout(
+            id=7,
+            user_id=user_id,
+            sport="running",
+            duration=timedelta(minutes=45),
+        ),
+        Workout(
+            id=8,
+            user_id=user_id,
+            sport="running",
             duration=timedelta(hours=1, minutes=15),
         ),
     ]
@@ -141,16 +184,117 @@ def test_cycling_workouts():
 
 
 @pytest.fixture()
-def get_fake_cycling_w_repo(test_workouts, test_cycling_workouts) -> FakeCyclingWorkoutRepository:
-    repo = FakeCyclingWorkoutRepository(test_workouts, test_cycling_workouts)
+def test_running_workouts():
+    return [
+        RunningWorkout(
+            id=6,
+            workout_id=6,
+            total_elapsed_time=2400.41,
+            total_timer_time=2400.0,
+            total_distance=6.11,
+            total_calories=376,
+            max_heart_rate=139,
+            min_heart_rate=64,
+            avg_heart_rate=124,
+            avg_temperature=32,
+            total_ascent=0,
+            total_descent=5,
+            total_strides=3536,
+            max_running_cadence=91,
+            avg_running_cadence=88,
+            avg_step_length=870.0,
+            enhanced_max_speed=2.857,
+            max_speed=2.857,
+            enhanced_avg_speed=2.547,
+            avg_speed=2.547,
+            avg_power=189,
+            avg_stance_time=254.0,
+            avg_stance_time_balance=0.0,
+            avg_vertical_oscillation=76.0,
+            avg_vertical_ratio=8.7,
+        ),
+        RunningWorkout(
+            id=7,
+            workout_id=7,
+            total_elapsed_time=2400.41,
+            total_timer_time=2400.0,
+            total_distance=6.11,
+            total_calories=376,
+            max_heart_rate=139,
+            min_heart_rate=64,
+            avg_heart_rate=124,
+            avg_temperature=32,
+            total_ascent=0,
+            total_descent=5,
+            total_strides=3536,
+            max_running_cadence=91,
+            avg_running_cadence=88,
+            avg_step_length=870.0,
+            enhanced_max_speed=2.857,
+            max_speed=2.857,
+            enhanced_avg_speed=2.547,
+            avg_speed=2.547,
+            avg_power=189,
+            avg_stance_time=254.0,
+            avg_stance_time_balance=0.0,
+            avg_vertical_oscillation=76.0,
+            avg_vertical_ratio=8.7,
+        ),
+        RunningWorkout(
+            id=8,
+            workout_id=8,
+            total_elapsed_time=2410.41,
+            total_timer_time=2410.0,
+            total_distance=6.12,
+            total_calories=386,
+            max_heart_rate=139,
+            min_heart_rate=70,
+            avg_heart_rate=128,
+            avg_temperature=33,
+            total_ascent=1,
+            total_descent=5,
+            total_strides=3544,
+            max_running_cadence=96,
+            avg_running_cadence=89,
+            avg_step_length=871.0,
+            enhanced_max_speed=2.867,
+            max_speed=2.957,
+            enhanced_avg_speed=2.847,
+            avg_speed=2.547,
+            avg_power=190,
+            avg_stance_time=253.0,
+            avg_stance_time_balance=0.0,
+            avg_vertical_oscillation=75.0,
+            avg_vertical_ratio=8.6,
+        ),
+    ]
+
+
+@pytest.fixture()
+def get_fake_cycling_w_repo(test_workouts_for_cycling, test_cycling_workouts) -> FakeCyclingWorkoutRepository:
+    repo = FakeCyclingWorkoutRepository(test_workouts_for_cycling, test_cycling_workouts)
     return repo
 
 
 @pytest.fixture()
-def get_fake_statistic_service(get_fake_cycling_w_repo: FakeCyclingWorkoutRepository) -> StatisticsService:
-    return StatisticsService(cycling_repo=get_fake_cycling_w_repo, running_repo=None)
+def get_fake_running_w_repo(test_workouts_for_running, test_running_workouts) -> FakeRunningWorkoutRepository:
+    repo = FakeRunningWorkoutRepository(test_workouts_for_running, test_running_workouts)
+    return repo
+
+
+@pytest.fixture()
+def get_fake_statistic_service(
+    get_fake_cycling_w_repo: FakeCyclingWorkoutRepository,
+    get_fake_running_w_repo: FakeRunningWorkoutRepository,
+) -> StatisticsService:
+    return StatisticsService(cycling_repo=get_fake_cycling_w_repo, running_repo=get_fake_running_w_repo)
 
 
 @pytest.fixture()
 def empty_cycling_workout_repo():
     return FakeCyclingWorkoutRepository(test_workouts=[], test_cycling_workouts=[])
+
+
+@pytest.fixture()
+def empty_running_workout_repo():
+    return FakeRunningWorkoutRepository(test_workouts=[], test_running_workouts=[])
