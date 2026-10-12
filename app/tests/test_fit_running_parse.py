@@ -15,6 +15,6 @@ def test_parse_fit_running_success(running_dict) -> None:
     assert clean_running_dict["effort_pace"] == 2.5439999103546143
     assert clean_running_dict["avg_stance_time"] == 254.0
     assert clean_running_dict["total_elapsed_time"] == 2400.41
-    assert clean_running_dict["total_timer_time"] == datetime.timedelta(seconds=2400.0)
+    assert clean_running_dict["total_timer_time"] == 2400.0
     assert running_workout.avg_step_length == 870.0
     assert running_workout.avg_stance_time_balance == 0.0
