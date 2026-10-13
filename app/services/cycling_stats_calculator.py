@@ -41,7 +41,6 @@ class CyclingStatsCalculator:
         self.hard_count = 0
 
         for workout, cycling in workouts:
-
             # Наполнение сумматоров (Тут 0 безопасен, так как мы просто плюсуем к общему объему)
             self._total_distance += cycling.total_distance if cycling.total_distance else 0.0
             self._total_tss_num += cycling.training_stress_score if cycling.training_stress_score else 0.0
@@ -74,7 +73,7 @@ class CyclingStatsCalculator:
 
             # Форматирование дат
             if workout.started_at:
-                date_str = workout.started_at.strftime('%Y-%m-%d')
+                date_str = workout.started_at.strftime("%Y-%m-%d")
             else:
                 date_str = "Unknown"
             self._raw_chart_dates.append(date_str)

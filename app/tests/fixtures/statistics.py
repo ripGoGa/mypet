@@ -15,9 +15,7 @@ class FakeCyclingWorkoutRepository:
         self.test_workouts = test_workouts
         self.test_cycling_workouts = test_cycling_workouts
 
-    def get_statistic_workouts(
-        self, user_id: int, period: int = 0
-    ) -> Sequence[tuple[Workout, CyclingWorkout]]:
+    def get_statistic_workouts(self, user_id: int, period: int = 0) -> Sequence[tuple[Workout, CyclingWorkout]]:
         self.history.append((user_id, period))
         return list(zip(self.test_workouts, self.test_cycling_workouts, strict=True))
 
@@ -32,9 +30,7 @@ class FakeRunningWorkoutRepository:
         self.test_workouts = test_workouts
         self.test_running_workouts = test_running_workouts
 
-    def get_statistic_workouts(
-        self, user_id: int, period: int = 0
-    ) -> Sequence[tuple[Workout, RunningWorkout]]:
+    def get_statistic_workouts(self, user_id: int, period: int = 0) -> Sequence[tuple[Workout, RunningWorkout]]:
         self.history.append((user_id, period))
         return list(zip(self.test_workouts, self.test_running_workouts, strict=True))
 

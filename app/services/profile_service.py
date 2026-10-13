@@ -8,9 +8,7 @@ class ProfileService:
     def __init__(self, profile_repo: ProfileRepository):
         self.profile_repo = profile_repo
 
-    def create_new_profile(
-        self, user_data: ProfileCreateDTO, user_id: int
-    ) -> tuple[UserProfile, AthleteProfile]:
+    def create_new_profile(self, user_data: ProfileCreateDTO, user_id: int) -> tuple[UserProfile, AthleteProfile]:
         if self.profile_repo.get_user_profile(user_id):
             raise ProfileAlreadyExistsError
         user_profile = UserProfile(

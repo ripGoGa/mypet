@@ -61,6 +61,7 @@ def make_workout_and_cycling(db_test_session):
             db_test_session.add(cycling)
             db_test_session.commit()
         return workouts
+
     return _make
 
 
@@ -117,4 +118,5 @@ def make_workout_and_running(db_test_session):
             db_test_session.add(running)
             db_test_session.commit()
         return workouts
+
     return _make

@@ -93,11 +93,7 @@ class RunningStatsCalculator:
 
     @property
     def avg_speed_num(self) -> float:
-        return (
-            self._total_distance * 1000 / self._total_moving_time.total_seconds()
-            if self._total_moving_time
-            else 0.0
-        )
+        return self._total_distance * 1000 / self._total_moving_time.total_seconds() if self._total_moving_time else 0.0
 
     @property
     def avg_heartrate_num(self) -> float:

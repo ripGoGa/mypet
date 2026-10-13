@@ -13,7 +13,6 @@ def parse_fit_running(session_dict: dict, user_id: int, uploaded_file_id: int) -
         source_file_id=uploaded_file_id,
     )
 
-
     running_w_dict = dict()
     running_w_dict["avg_heart_rate"] = session_dict.get("avg_heart_rate")
     running_w_dict["avg_power"] = session_dict.get("avg_power")

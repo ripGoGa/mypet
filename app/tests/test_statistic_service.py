@@ -29,9 +29,7 @@ def test_get_wrong_period_returns_422(
 
 
 def test_zero_workout_stats(empty_cycling_workout_repo, empty_running_workout_repo):
-    stat_service = StatisticsService(
-        cycling_repo=empty_cycling_workout_repo, running_repo=empty_running_workout_repo
-    )
+    stat_service = StatisticsService(cycling_repo=empty_cycling_workout_repo, running_repo=empty_running_workout_repo)
     result_cycling = stat_service.get_cycling_stats(user_id=1)
     result_running = stat_service.get_running_stats(user_id=1)
     assert isinstance(result_cycling, CyclingStatsDTO)

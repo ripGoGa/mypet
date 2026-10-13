@@ -7,12 +7,12 @@ from sqlmodel import Field, Relationship, SQLModel
 
 
 class UploadedFile(SQLModel, table=True):
-    __table_args__ = (UniqueConstraint('sha256', 'user_id'),)
+    __table_args__ = (UniqueConstraint("sha256", "user_id"),)
     id: int = Field(default=None, primary_key=True)
     original_name: str
     sha256: str
     uploaded_at: datetime
-    workouts: List['Workout'] = Relationship(back_populates='source_file')
+    workouts: List["Workout"] = Relationship(back_populates="source_file")
     user_id: int
 
 
@@ -22,47 +22,47 @@ class Workout(SQLModel, table=True):
     started_at: Optional[datetime]
     duration: timedelta
 
-    source_file_id: Optional[int] = Field(default=None, foreign_key='uploadedfile.id')
-    source_file: Optional['UploadedFile'] = Relationship(back_populates='workouts')
-    user_id: Optional[int] = Field(foreign_key='users.id')
+    source_file_id: Optional[int] = Field(default=None, foreign_key="uploadedfile.id")
+    source_file: Optional["UploadedFile"] = Relationship(back_populates="workouts")
+    user_id: Optional[int] = Field(foreign_key="users.id")
 
 
 class UserProfile(SQLModel, table=True):
-    id: Optional[int] = Field(primary_key=True, foreign_key='users.id')
+    id: Optional[int] = Field(primary_key=True, foreign_key="users.id")
     name: str
     birth_date: Optional[date]
     height_cm: Optional[int]
     updated_at: datetime = Field(default_factory=datetime.now)
-    user: Optional['Users'] = Relationship(back_populates='user_profile')
+    user: Optional["Users"] = Relationship(back_populates="user_profile")
 
 
 class AthleteProfile(SQLModel, table=True):
-    id: Optional[int] = Field(primary_key=True, foreign_key='users.id')
+    id: Optional[int] = Field(primary_key=True, foreign_key="users.id")
     weight_kg: Optional[float]
     current_ftp: Optional[int]
     limitations: Optional[str]
     weekly_hours: Optional[float]  # Сколько времени есть на тренировки в неделю
     gear: Optional[str]  # какое оборудование есть у пользователя(велосипед, станки..)
     environment_location: Optional[str]  # окружение, локация
-    user: Optional['Users'] = Relationship(back_populates='athlete_profile')
+    user: Optional["Users"] = Relationship(back_populates="athlete_profile")
 
 
 class ChatMessage(SQLModel, table=True):
     id: Optional[int] = Field(primary_key=True, default=None)
-    user_id: int = Field(foreign_key='users.id')
+    user_id: int = Field(foreign_key="users.id")
     role: str  # user или assistant
     content: str
     created_at: datetime = Field(default_factory=datetime.now)
-    user: Optional['Users'] = Relationship(back_populates='messages')
+    user: Optional["Users"] = Relationship(back_populates="messages")
 
 
 class Users(SQLModel, table=True):
     id: Optional[int] = Field(primary_key=True, default=None)
     email: str = Field(unique=True)
     hashed_password: str
-    messages: List['ChatMessage'] = Relationship(back_populates='user')
-    athlete_profile: Optional['AthleteProfile'] = Relationship(back_populates='user')
-    user_profile: Optional['UserProfile'] = Relationship(back_populates='user')
+    messages: List["ChatMessage"] = Relationship(back_populates="user")
+    athlete_profile: Optional["AthleteProfile"] = Relationship(back_populates="user")
+    user_profile: Optional["UserProfile"] = Relationship(back_populates="user")
 
 
 class UserCreate(BaseModel):

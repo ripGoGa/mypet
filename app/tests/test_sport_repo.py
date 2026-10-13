@@ -27,13 +27,9 @@ def test_get_workouts_total_count_excludes_other_users(
     cycling_repo = CyclingWorkoutRepository(db_test_session)
     running_repo = RunningWorkoutRepository(db_test_session)
     cycling_workouts_test_user = cycling_repo.get_workouts(user_id=test_user_id, limit=10, offset=0, period=60)
-    cycling_workouts_other_user = cycling_repo.get_workouts(
-        user_id=second_user_id, limit=10, offset=0, period=30
-    )
+    cycling_workouts_other_user = cycling_repo.get_workouts(user_id=second_user_id, limit=10, offset=0, period=30)
     running_workouts_test_user = running_repo.get_workouts(user_id=test_user_id, limit=10, offset=0, period=60)
-    running_workouts_other_user = running_repo.get_workouts(
-        user_id=second_user_id, limit=10, offset=0, period=30
-    )
+    running_workouts_other_user = running_repo.get_workouts(user_id=second_user_id, limit=10, offset=0, period=30)
     assert cycling_workouts_test_user[1] == 3
     assert running_workouts_test_user[1] == 1
 

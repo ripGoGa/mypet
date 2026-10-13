@@ -12,8 +12,9 @@ class ChatRepository:
 
     def get_chat_history(self, user_id: int) -> Sequence[ChatMessage]:
         week_ago = datetime.now(UTC) - timedelta(days=7)
-        messages = self.session.exec(select(ChatMessage).where(ChatMessage.user_id == user_id).where(
-            ChatMessage.created_at >= week_ago)).all()
+        messages = self.session.exec(
+            select(ChatMessage).where(ChatMessage.user_id == user_id).where(ChatMessage.created_at >= week_ago)
+        ).all()
         return messages
 
     def save_message(self, message: ChatMessage) -> ChatMessage:
@@ -27,6 +28,3 @@ class ChatRepository:
     def get_all_chat_history(self, user_id: int) -> Sequence[ChatMessage]:
         messages = self.session.exec(select(ChatMessage).where(ChatMessage.user_id == user_id)).all()
         return messages
-
-
-

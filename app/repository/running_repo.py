@@ -38,9 +38,7 @@ class RunningWorkoutRepository:
 
         return workouts, total_count
 
-    def get_statistic_workouts(
-        self, user_id: int, period: int = 0
-    ) -> Sequence[tuple[Workout, RunningWorkout]]:
+    def get_statistic_workouts(self, user_id: int, period: int = 0) -> Sequence[tuple[Workout, RunningWorkout]]:
         # 1. Чистый запрос
         query_workouts = (
             select(Workout, RunningWorkout)

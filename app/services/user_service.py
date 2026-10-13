@@ -24,4 +24,3 @@ class UserService:
         if verify_password(plain_password=password, hashed_password=user.hashed_password):
             return user
         raise UserEmailPasswordError
-

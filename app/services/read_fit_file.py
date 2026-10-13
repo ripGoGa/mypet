@@ -20,4 +20,3 @@ def read_fit_file(file_path: str) -> Tuple[dict, str]:
 
     except fitparse.FitParseError as err:
         raise ParseFitError from err
-

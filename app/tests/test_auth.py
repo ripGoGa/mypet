@@ -20,9 +20,7 @@ def test_registration(email, password):
 
 
 def test_successful_login():
-    client.post(
-        "/register", data={"email": "runner_99@ya.ru", "password": "secure_pass"}, follow_redirects=False
-    )
+    client.post("/register", data={"email": "runner_99@ya.ru", "password": "secure_pass"}, follow_redirects=False)
     response = client.post(
         "/login", data={"username": "runner_99@ya.ru", "password": "secure_pass"}, follow_redirects=False
     )
@@ -31,9 +29,7 @@ def test_successful_login():
 
 
 def test_unsuccessful_login():
-    client.post(
-        "/register", data={"email": "runner_99@ya.ru", "password": "secure_pass"}, follow_redirects=False
-    )
+    client.post("/register", data={"email": "runner_99@ya.ru", "password": "secure_pass"}, follow_redirects=False)
     response = client.post(
         "/login", data={"username": "runner_99@ya.ru", "password": "secure_pas"}, follow_redirects=False
     )

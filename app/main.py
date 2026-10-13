@@ -30,37 +30,38 @@ def on_startup() -> None:
 
 
 def ensure_data_store() -> None:
-    Path('data/fit').mkdir(parents=True, exist_ok=True)
+    Path("data/fit").mkdir(parents=True, exist_ok=True)
 
 
 on_startup()
 ensure_data_store()
 
 
-@app.get('/', response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse)
 async def hello_root(request: Request, session=Depends(get_session)):
     # Пытаемся узнать имя пользователя для приветствия
-    token = request.cookies.get('access_token')
+    token = request.cookies.get("access_token")
     user_profile = None
     if token:
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            user = session.exec(select(Users).where(Users.email == payload['sub'])).first()
+            user = session.exec(select(Users).where(Users.email == payload["sub"])).first()
             user_profile = user.user_profile if user else None
         except jwt.InvalidTokenError:
             pass
 
-    return templates.TemplateResponse(request, 'index.html', {'user_profile': user_profile})
+    return templates.TemplateResponse(request, "index.html", {"user_profile": user_profile})
 
 
-@app.get('/me')
+@app.get("/me")
 def me(user=Depends(get_current_user)) -> dict:
-    return {'id': user.id, 'email': user.email}
+    return {"id": user.id, "email": user.email}
 
 
 @app.exception_handler(HTTPException)
 def error(request: Request, exc: HTTPException):
     status_code = exc.status_code
     detail = exc.detail
-    return templates.TemplateResponse(request, 'error.html', {'detail': detail, 'status_code': status_code},
-                                      status_code=status_code)
+    return templates.TemplateResponse(
+        request, "error.html", {"detail": detail, "status_code": status_code}, status_code=status_code
+    )

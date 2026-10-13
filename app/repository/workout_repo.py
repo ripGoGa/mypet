@@ -10,8 +10,7 @@ class WorkoutRepository:
         self.session = session
 
     def get_one_workout(self, user_id: int, workout_id: int) -> Optional[Workout]:
-        workout = self.session.exec(select(Workout).where(Workout.id == workout_id,
-                                                          Workout.user_id == user_id)).first()
+        workout = self.session.exec(select(Workout).where(Workout.id == workout_id, Workout.user_id == user_id)).first()
         return workout
 
     def add_uploaded_file(self, uploaded_file: UploadedFile) -> UploadedFile:
@@ -21,8 +20,8 @@ class WorkoutRepository:
 
     def get_by_hash(self, sha256: str, user_id: int) -> Optional[UploadedFile]:
         existing = self.session.exec(
-            select(UploadedFile).where(UploadedFile.sha256 == sha256,
-                                       UploadedFile.user_id == user_id)).first()
+            select(UploadedFile).where(UploadedFile.sha256 == sha256, UploadedFile.user_id == user_id)
+        ).first()
         return existing
 
     def add_workout(self, workout: Workout) -> Workout:
