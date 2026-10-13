@@ -1,1 +1,1 @@
-from app.models.training_models import CyclingWorkout
+from app.models.training_models import CyclingWorkout, RunningWorkout

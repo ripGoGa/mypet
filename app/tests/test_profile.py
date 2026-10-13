@@ -28,9 +28,8 @@ def test_create_profile_double_error(authorized_client):
         "birth_date": "1991-10-15",
         "height_cm": 181,
     }
-    response_1 = authorized_client.post("/profile/create", data=profile_data, follow_redirects=False)
+    authorized_client.post("/profile/create", data=profile_data, follow_redirects=False)
     response_2 = authorized_client.post("/profile/create", data=profile_data, follow_redirects=False)
-    print(response_2.text)
     assert response_2.status_code == 400
     assert "Профиль уже существует" in response_2.text
 

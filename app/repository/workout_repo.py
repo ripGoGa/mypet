@@ -1,7 +1,5 @@
-from datetime import UTC, datetime, timedelta
-from typing import Optional, Sequence
+from typing import Optional
 
-from sqlalchemy import desc, func
 from sqlmodel import Session, select
 
 from app.models.models import UploadedFile, Workout
