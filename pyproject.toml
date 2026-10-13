@@ -1,18 +1,37 @@
 [tool.ruff]
-
 line-length = 120
+target-version = "py312"
 
 [tool.ruff.lint]
-
 select = [
     "E",
     "F",
     "B",
-    "I"
+    "I",
 ]
 
-[tool.ruff.lint.flake8-bugbear]
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
 
+[tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = [
     "fastapi.Depends",
+    "fastapi.Query",
+    "fastapi.Form",
+    "fastapi.File",
+    "fastapi.Body",
+    "fastapi.Path",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["app/tests"]
+filterwarnings = [
+    "ignore:datetime.datetime.utcfromtimestamp.*:DeprecationWarning:fitparse.processors",
 ]
