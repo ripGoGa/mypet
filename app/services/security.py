@@ -2,6 +2,7 @@ import datetime
 
 import bcrypt
 import jwt
+
 from app.core.config import key_settings
 
 SECRET_KEY = key_settings.secret_key

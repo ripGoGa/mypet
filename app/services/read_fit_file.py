@@ -1,6 +1,7 @@
 from typing import Tuple
 
 import fitparse
+
 from app.core.exceptions import MultiSessionError, NoSportError, ParseFitError, ZeroSessionError
 
 
