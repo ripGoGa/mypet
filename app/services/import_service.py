@@ -77,10 +77,9 @@ class ImportService:
                 if file_path:
                     delete_file(file_path=file_path)
 
-            except Exception as e:
+            except Exception:
                 self.workout_repo.rollback()
                 type_err_count += 1
-                print(f"Неизвестная ошибка при загрузке {file.filename}: {e}")  # Для дебага в консоли
                 if file_path:
                     delete_file(file_path=file_path)
         return success_count, dup_count, type_err_count
