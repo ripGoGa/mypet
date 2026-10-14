@@ -171,3 +171,8 @@ MODELS = {"cycling": CyclingWorkout, "running": RunningWorkout}
   прямой `bcrypt` это не было обработано; потенциальный скрытый баг, не исправлено
 - UI `/statistics` пока не учитывает мульти-спорт (пункт 7 архитектурных решений): блок
   бега и вызов `get_running_stats` в роутере — после бэкенда, вместе с фронтендом
+- Логирование: изучить `logging` и заменить им `print` (`CoachService._load_prompt`) и
+  молчаливое проглатывание ошибок в общем `except Exception` в `ImportService`
+  (сейчас при неожиданной ошибке причина нигде не видна)
+- ruff B904: в `except` использовать `raise ... from err` / `from None`
+  (ollama_provider.py ×3, login.py, profile.py, register.py, workout.py, `CoachService._load_prompt`)
