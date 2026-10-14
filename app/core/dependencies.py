@@ -42,27 +42,25 @@ def get_chat_repo(session: Session = Depends(get_session)) -> ChatRepository:
     return new_chat_repo
 
 
-def get_coach_service(session: Session = Depends(get_session)) -> CoachService:
-    chat_repo = ChatRepository(session=session)
-    llm_provider = OllamaProvider()
-    cycling_repo = CyclingWorkoutRepository(session=session)
-    new_coach_service = CoachService(chat_repo=chat_repo, llm_provider=llm_provider, cycling_repo=cycling_repo)
-    return new_coach_service
-
-
-def get_import_service(session: Session = Depends(get_session)) -> ImportService:
+def get_import_service(
+    session: Session = Depends(get_session),
+) -> ImportService:
     workout_repo = WorkoutRepository(session=session)
     new_import_service = ImportService(workout_repo=workout_repo)
     return new_import_service
 
 
-def get_profile_service(session: Session = Depends(get_session)) -> ProfileService:
+def get_profile_service(
+    session: Session = Depends(get_session),
+) -> ProfileService:
     repo = ProfileRepository(session=session)
     new_profile_service = ProfileService(profile_repo=repo)
     return new_profile_service
 
 
-def get_statistics_service(session: Session = Depends(get_session)) -> StatisticsService:
+def get_statistics_service(
+    session: Session = Depends(get_session),
+) -> StatisticsService:
     cycling_repo = CyclingWorkoutRepository(session=session)
     running_repo = RunningWorkoutRepository(session=session)
     new_statistics_service = StatisticsService(cycling_repo=cycling_repo, running_repo=running_repo)
@@ -75,8 +73,24 @@ def get_user_service(session: Session = Depends(get_session)) -> UserService:
     return new_user_service
 
 
-def get_workout_service(session: Session = Depends(get_session)) -> WorkoutService:
+def get_workout_service(
+    session: Session = Depends(get_session),
+) -> WorkoutService:
     w_repo = WorkoutRepository(session=session)
     cycl_repo = CyclingWorkoutRepository(session=session)
     new_work_service = WorkoutService(work_repo=w_repo, cycling_repo=cycl_repo)
     return new_work_service
+
+
+def get_coach_service(
+    session: Session = Depends(get_session),
+    stat_service: StatisticsService = Depends(get_statistics_service),
+) -> CoachService:
+    chat_repo = ChatRepository(session=session)
+    llm_provider = OllamaProvider()
+    new_coach_service = CoachService(
+        chat_repo=chat_repo,
+        llm_provider=llm_provider,
+        stat_service=stat_service,
+    )
+    return new_coach_service
