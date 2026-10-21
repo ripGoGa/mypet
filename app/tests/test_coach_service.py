@@ -2,20 +2,18 @@ import pytest
 
 from app.core.exceptions import AIProviderNotAvailable
 from app.models.models import ChatMessage
+from app.tests.fixtures.coach import BrokenFakeLLMProvider
 
 
+@pytest.mark.usefixtures("load_athlete_profile", "load_user_profile")
 @pytest.mark.asyncio
 async def test_generate_coach_response_success(
-    authorized_client,
-    load_athlete_profile,
-    load_user_profile,
-    get_test_coach_service,
-    db_test_session,
+    make_coach_service,
     test_user,
 ):
-    user = test_user
-    answer = await get_test_coach_service.generate_coach_response(user_message="fdfdfd", user=user)
-    chat_history = get_test_coach_service.chat_repo.get_all_chat_history(user_id=user.id)
+    test_coach_service = make_coach_service()
+    answer = await test_coach_service.generate_coach_response(user_message="fdfdfd", user=test_user)
+    chat_history = test_coach_service.chat_repo.get_all_chat_history(user_id=test_user.id)
     assert answer == "Ответ LLM"
     assert len(chat_history) == 2
     assert chat_history[0].role == "user"
@@ -24,29 +22,24 @@ async def test_generate_coach_response_success(
     assert chat_history[1].content == "Ответ LLM"
 
 
+@pytest.mark.usefixtures("load_athlete_profile", "load_user_profile")
 @pytest.mark.asyncio
-async def test_generate_coach_error(
-    authorized_client,
-    load_athlete_profile,
-    load_user_profile,
-    get_test_broken_coach_service,
-    db_test_session,
-    test_user,
-):
+async def test_generate_coach_error(make_coach_service, test_user):
     with pytest.raises(AIProviderNotAvailable):
-        await get_test_broken_coach_service.generate_coach_response(user_message="user message", user=test_user)
+        broken_coach_service = make_coach_service(llm_provider=BrokenFakeLLMProvider())
+        await broken_coach_service.generate_coach_response(user_message="user message", user=test_user)
 
-    chat_history = get_test_broken_coach_service.chat_repo.get_all_chat_history(user_id=test_user.id)
+    chat_history = broken_coach_service.chat_repo.get_all_chat_history(user_id=test_user.id)
     assert len(chat_history) == 0
 
 
 @pytest.mark.asyncio
-async def test_coach_service_get_chat_history(authorized_client, test_user, db_test_session, get_test_coach_service):
-    user = test_user
-    get_test_coach_service.chat_repo.save_message(ChatMessage(user_id=user.id, role="user", content="fdfdfd"))
-    get_test_coach_service.chat_repo.save_message(ChatMessage(user_id=user.id, role="assistant", content="hi"))
-    get_test_coach_service.chat_repo.commit()
-    chat_history = get_test_coach_service.get_chat_history(user_id=user.id)
+async def test_coach_service_get_chat_history(make_coach_service, test_user):
+    test_coach_service = make_coach_service()
+    test_coach_service.chat_repo.save_message(ChatMessage(user_id=test_user.id, role="user", content="fdfdfd"))
+    test_coach_service.chat_repo.save_message(ChatMessage(user_id=test_user.id, role="assistant", content="hi"))
+    test_coach_service.chat_repo.commit()
+    chat_history = test_coach_service.get_chat_history(user_id=test_user.id)
     assert len(chat_history) == 2
     assert chat_history[0].role == "user"
     assert chat_history[0].content == "fdfdfd"

@@ -1,9 +1,10 @@
 import pytest
 
 from app.core.exceptions import AIProviderNotAvailable
+from app.infrastructure.llm.llm_protocol import LLMProvider
 from app.repository.chat_repo import ChatRepository
-from app.repository.cycling_repo import CyclingWorkoutRepository
 from app.services.coach_service import CoachService
+from app.services.statistics_service import StatisticsService
 
 
 class FakeLLMProvider:
@@ -24,24 +25,15 @@ class BrokenFakeLLMProvider:
         raise AIProviderNotAvailable
 
 
-@pytest.fixture()
-def fake_llm_provider():
-    return FakeLLMProvider()
+@pytest.fixture
+def make_coach_service(db_test_session, get_fake_statistic_service):
+    def _create_coach_service(
+        *, llm_provider: LLMProvider | None = None, stat_service: StatisticsService | None = None
+    ) -> CoachService:
+        return CoachService(
+            chat_repo=ChatRepository(session=db_test_session),
+            llm_provider=llm_provider or FakeLLMProvider(),
+            stat_service=stat_service or get_fake_statistic_service,
+        )
 
-
-@pytest.fixture()
-def get_test_coach_service(db_test_session) -> CoachService:
-    chat_repo = ChatRepository(session=db_test_session)
-    llm_provider = FakeLLMProvider()
-    cycling_repo = CyclingWorkoutRepository(session=db_test_session)
-    new_coach_service = CoachService(chat_repo=chat_repo, llm_provider=llm_provider, cycling_repo=cycling_repo)
-    return new_coach_service
-
-
-@pytest.fixture()
-def get_test_broken_coach_service(db_test_session) -> CoachService:
-    chat_repo = ChatRepository(session=db_test_session)
-    llm_provider = BrokenFakeLLMProvider()
-    cycling_repo = CyclingWorkoutRepository(session=db_test_session)
-    new_coach_service = CoachService(chat_repo=chat_repo, llm_provider=llm_provider, cycling_repo=cycling_repo)
-    return new_coach_service
+    return _create_coach_service
