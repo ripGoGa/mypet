@@ -88,3 +88,17 @@ def test_build_workouts_empty(make_coach_service, empty_cycling_workout_repo, em
     result = coach_service._build_workouts(user=Users(id=42))
 
     assert "Тренировки не найдены." == result
+
+
+@pytest.mark.usefixtures("load_athlete_profile", "load_user_profile")
+@pytest.mark.asyncio
+async def test_generate_coach_response_sends_workout_summary_to_llm(make_coach_service, test_user):
+    coach_service = make_coach_service()
+
+    await coach_service.generate_coach_response(user=test_user, user_message="user message")
+
+    user_message = coach_service.llm_provider.history_messages[-1][-1]
+    assert user_message["role"] == "user"
+    assert coach_service.llm_provider.history_messages[-1][0]["role"] == "system"
+    assert "Статистика вело тренировок" in user_message["content"]
+    assert "Статистика беговых тренировок" in user_message["content"]
