@@ -1,5 +1,8 @@
 ### CURRENT CONTEXT
 - Today's Date: {current_date}
-- Goal: Professional progress for an amateur athlete.
-- Recent Workouts Summary:{recent_workouts_summary}
-- User Question: {user_message}
+
+### RECENT WORKOUTS (LAST 7 DAYS)
+{recent_workouts_summary}
+
+### USER QUESTION
+{user_message}
