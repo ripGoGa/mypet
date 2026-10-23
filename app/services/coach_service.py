@@ -86,15 +86,15 @@ class CoachService:
                 f"-Общий километраж: {format_stats(cycling_stats.raw_total_distance, 'км.')}",
                 f"-Суммарный тренировочный стресс (TSS): {format_stats(cycling_stats.total_tss_num)}",
                 f"-Общее время в движении: {format_time(cycling_stats.total_moving_time)}",
-                f"-Средние ватты {format_stats(cycling_stats.avg_watts_num, 'Вт.')}",
-                f"-Средний пульс {format_stats(cycling_stats.avg_heartrate_num, 'уд/мин')}",
-                f"-Средний каданс {format_stats(cycling_stats.avg_cadence_num, 'об./мин')}",
-                f"-Максимальный IF {format_stats(cycling_stats.max_in_factor)}",
+                f"-Средние ватты: {format_stats(cycling_stats.avg_watts_num, 'Вт.')}",
+                f"-Средний пульс: {format_stats(cycling_stats.avg_heartrate_num, 'уд/мин')}",
+                f"-Средний каданс: {format_stats(cycling_stats.avg_cadence_num, 'об./мин')}",
+                f"-Максимальный IF: {format_stats(cycling_stats.max_in_factor)}",
                 "Распределение нагрузки:",
                 f"-Тяжёлые тренировки: {cycling_stats.hard_count}",
                 f"-Средние тренировки: {cycling_stats.medium_count}",
                 f"-Легкие тренировки: {cycling_stats.light_count}",
-                f"-Всего тренировок {cycling_stats.count_workouts}",
+                f"-Всего тренировок: {cycling_stats.count_workouts}",
             ]
             final_prompt.append("\n".join(blocks))
 
@@ -103,11 +103,11 @@ class CoachService:
                 f"Статистика беговых тренировок за {period} дней",
                 f"-Общий километраж: {format_stats(running_stats.total_distance, 'км')}",
                 f"-Общее время бега: {format_time(running_stats.total_moving_time)}",
-                f"-Средний каданс {format_stats(running_stats.avg_cadence_num, 'шагов/мин')}",
-                f"-Средняя скорость {format_pace(running_stats.avg_speed_num)}",
-                f"-Средний пульс {format_stats(running_stats.avg_heartrate_num, 'уд/мин')}",
-                f"-Максимальная дистанция {format_stats(running_stats.max_distance, 'км')}",
-                f"-Всего тренировок {running_stats.count_workouts}",
+                f"-Средний каданс: {format_stats(running_stats.avg_cadence_num, 'шагов/мин')}",
+                f"-Средний темп: {format_pace(running_stats.avg_speed_num)}",
+                f"-Средний пульс: {format_stats(running_stats.avg_heartrate_num, 'уд/мин')}",
+                f"-Максимальная дистанция: {format_stats(running_stats.max_distance, 'км')}",
+                f"-Всего тренировок: {running_stats.count_workouts}",
             ]
             final_prompt.append("\n".join(blocks))
 

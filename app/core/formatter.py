@@ -10,7 +10,7 @@ def format_pace(speed: float | None) -> str:
 
     seconds_1km = int(1000 / speed)
     minutes, seconds = divmod(seconds_1km, 60)
-    return f"{minutes}:{seconds:02d}"
+    return f"{minutes}:{seconds:02d} мин/км"
 
 
 def format_stats(num: int | float | None, metric: str = "") -> str:
