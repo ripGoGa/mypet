@@ -1,13 +1,13 @@
 # AI Cycling Coach
 
-A personal web application for cyclists that combines workout tracking, training statistics, and AI-powered coaching.
+A personal web application for cyclists and runners that combines workout tracking, training statistics, and AI-powered coaching.
 
 The project is built with Python and FastAPI and uses a local LLM through Ollama. The main goal is to provide a simple environment where an athlete can store training data, review recent activity, and communicate with an AI coach using their personal profile and training history.
 
 ## Current Features
 
 ### Authentication
-~~~~
+
 - User registration
 - User login and logout
 - Password authentication
@@ -21,7 +21,7 @@ The profile is used by the AI Coach as part of the context for generating coachi
 
 ### Workout Import
 
-Workout data can be imported from FIT files.
+Cycling and running workouts can be imported from FIT files. Files with other sports are rejected.
 
 The import process:
 
@@ -36,13 +36,13 @@ Multiple files can be imported at the same time. Each file is processed independ
 
 ### Workout History
 
-Users can view their previously imported workouts.
+Users can view their previously imported workouts. The workout list currently shows cycling workouts; running workouts will be added to the interface.
 
 Workout data is associated with the authenticated user, so users only have access to their own training data.
 
 ### Statistics
 
-The application provides a summary of workout data for a selected period.
+The application provides a summary of workout data for a selected period. Statistics are calculated separately for each sport (cycling and running). The web interface currently displays cycling statistics; running statistics are already used by the AI Coach.
 
 Statistics are calculated from the user's stored workouts and can be used by the AI Coach as part of the training context.
 
@@ -53,7 +53,7 @@ The application includes an AI Coach powered by a local LLM through Ollama.
 The AI Coach receives several types of context before generating a response:
 
 - athlete profile;
-- workout summary for the last 7 days;
+- workout summary for the last 7 days, with a separate block for each sport;
 - previous chat history;
 - system prompt;
 - user prompt;
@@ -318,9 +318,10 @@ The test suite covers the main application scenarios, including:
 - authentication;
 - user profiles;
 - workout operations;
-- statistics;
-- AI Coach;
-- FIT import;
+- statistics for cycling and running;
+- AI Coach, including the workout summary sent to the LLM;
+- FIT import for cycling and running;
+- formatting of values for the AI Coach prompt;
 - file handling.
 
 The import tests also cover independent processing of multiple files, including the case where one file fails while other files are successfully imported.
@@ -381,6 +382,8 @@ AI Coach
 
 The current development focus has been on establishing a clear backend architecture and covering the main application scenarios with tests.
 
+The backend now supports running workouts alongside cycling: FIT import, per-sport statistics, and an AI Coach that receives a separate summary for each sport. Showing running workouts in the user interface is the next step.
+
 ---
 
 ## Roadmap
@@ -388,7 +391,8 @@ The current development focus has been on establishing a clear backend architect
 ### Short Term
 
 - Update and improve the user interface.
-- Improve the AI Coach prompts and coaching quality.
+- Show running workouts and running statistics in the user interface.
+- Improve the AI Coach coaching quality.
 - Add workout data visualizations.
 - Improve the project documentation and deployment configuration.
 
@@ -397,7 +401,6 @@ The current development focus has been on establishing a clear backend architect
 - Add progress charts.
 - Add distance and time visualizations.
 - Add training intensity zones.
-- Add support for running workouts.
 - Add support for external LLM APIs.
 - Migrate from SQLite to PostgreSQL.
 - Add Docker configuration.
