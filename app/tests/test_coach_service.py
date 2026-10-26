@@ -1,4 +1,4 @@
-import pytest
+import pytest, re
 
 from app.core.exceptions import AIProviderNotAvailable
 from app.models.models import ChatMessage, Users
@@ -102,3 +102,16 @@ async def test_generate_coach_response_sends_workout_summary_to_llm(make_coach_s
     assert coach_service.llm_provider.history_messages[-1][0]["role"] == "system"
     assert "Статистика вело тренировок" in user_message["content"]
     assert "Статистика беговых тренировок" in user_message["content"]
+
+@pytest.mark.usefixtures("load_athlete_profile", "load_user_profile")
+@pytest.mark.asyncio
+async def test_generate_coach_response_prompt_has_no_unfilled_placeholders(make_coach_service, test_user):
+    """Проверяем только системное сообщение"""
+    coach_service = make_coach_service()
+
+    await coach_service.generate_coach_response(user=test_user, user_message="user message")
+
+    system_message = coach_service.llm_provider.history_messages[-1][0]
+    text = system_message["content"]
+    assert "{" not in text
+    assert "}" not in text
