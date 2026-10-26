@@ -1,4 +1,4 @@
-import pytest, re
+import pytest
 
 from app.core.exceptions import AIProviderNotAvailable
 from app.models.models import ChatMessage, Users
@@ -102,6 +102,7 @@ async def test_generate_coach_response_sends_workout_summary_to_llm(make_coach_s
     assert coach_service.llm_provider.history_messages[-1][0]["role"] == "system"
     assert "Статистика вело тренировок" in user_message["content"]
     assert "Статистика беговых тренировок" in user_message["content"]
+
 
 @pytest.mark.usefixtures("load_athlete_profile", "load_user_profile")
 @pytest.mark.asyncio
