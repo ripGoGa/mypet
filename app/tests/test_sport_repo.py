@@ -1,4 +1,4 @@
-from app.models import CyclingWorkout
+from app.models import CyclingWorkout, RunningWorkout
 from app.repository.cycling_repo import CyclingWorkoutRepository
 from app.repository.running_repo import RunningWorkoutRepository
 
@@ -79,5 +79,50 @@ def test_cycling_get_by_workout_id_returns_none_for_other_user(
     cycling_repo = CyclingWorkoutRepository(db_test_session)
 
     get_second_user_workout = cycling_repo.get_by_workout_id(workout_id=second_user_workout[0].id, user_id=test_user_id)
+
+    assert get_second_user_workout is None
+
+
+def test_running_get_by_workout_id_returns_own_workout(db_test_session, test_user_id, make_workout_and_running):
+    workouts = make_workout_and_running(user_id=test_user_id, range_limit=30)
+    running_repo = RunningWorkoutRepository(db_test_session)
+
+    running_workout = running_repo.get_by_workout_id(workout_id=workouts[0].id, user_id=test_user_id)
+
+    assert isinstance(running_workout, RunningWorkout)
+    assert running_workout.workout_id == workouts[0].id
+
+
+def test_running_get_by_workout_id_returns_none_for_missing_id(db_test_session, test_user_id, make_workout_and_running):
+    make_workout_and_running(user_id=test_user_id, range_limit=30)
+    running_repo = RunningWorkoutRepository(db_test_session)
+
+    not_existed_workout = running_repo.get_by_workout_id(workout_id=0, user_id=test_user_id)
+
+    assert not_existed_workout is None
+
+
+def test_running_get_by_workout_id_returns_none_for_cycling_workout(
+    db_test_session, test_user_id, make_workout_and_cycling, make_workout_and_running
+):
+    make_workout_and_running(user_id=test_user_id, range_limit=10)
+    cycling_workouts = make_workout_and_cycling(user_id=test_user_id, range_limit=30)
+    running_repo = RunningWorkoutRepository(db_test_session)
+
+    not_existed_running_workout = running_repo.get_by_workout_id(
+        workout_id=cycling_workouts[0].id, user_id=test_user_id
+    )
+
+    assert not_existed_running_workout is None
+
+
+def test_running_get_by_workout_id_returns_none_for_other_user(
+    db_test_session, test_user_id, second_user_id, make_workout_and_running
+):
+    make_workout_and_running(user_id=test_user_id, range_limit=10)
+    second_user_workout = make_workout_and_running(user_id=second_user_id, range_limit=31)
+    running_repo = RunningWorkoutRepository(db_test_session)
+
+    get_second_user_workout = running_repo.get_by_workout_id(workout_id=second_user_workout[0].id, user_id=test_user_id)
 
     assert get_second_user_workout is None

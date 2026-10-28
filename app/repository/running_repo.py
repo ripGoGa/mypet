@@ -50,3 +50,14 @@ class RunningWorkoutRepository:
             query_workouts = query_workouts.where(Workout.started_at >= target_date)
         result = self.session.exec(query_workouts).all()
         return result
+
+    def get_by_workout_id(self, workout_id: int, user_id: int) -> RunningWorkout | None:
+
+        query_workout = (
+            select(RunningWorkout)
+            .where(RunningWorkout.workout_id == workout_id)
+            .join(Workout, Workout.id == RunningWorkout.workout_id)
+            .where(Workout.user_id == user_id)
+        )
+        result = self.session.exec(query_workout).first()
+        return result
