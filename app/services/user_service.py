@@ -1,4 +1,4 @@
-from app.core.exceptions import UserAlreadyExistError, UserEmailPasswordError
+from app.core.exceptions import UserAlreadyExistsError, UserEmailPasswordError
 from app.models.models import Users
 from app.repository.user_repo import UserRepository
 from app.services.security import get_password_hash, verify_password
@@ -10,7 +10,7 @@ class UserService:
 
     def register_new_user(self, email: str, password: str):
         if self.user_repo.get_by_email(email):
-            raise UserAlreadyExistError
+            raise UserAlreadyExistsError
         hashed_pas = get_password_hash(password)
         new_user = Users(email=email, hashed_password=hashed_pas)
         self.user_repo.add_user(new_user)

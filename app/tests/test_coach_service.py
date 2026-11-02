@@ -1,6 +1,6 @@
 import pytest
 
-from app.core.exceptions import AIProviderNotAvailable
+from app.core.exceptions import AIProviderNotAvailableError
 from app.models.models import ChatMessage, Users
 from app.services.statistics_service import StatisticsService
 from app.tests.fixtures.coach import BrokenFakeLLMProvider
@@ -27,7 +27,7 @@ async def test_generate_coach_response_success(
 @pytest.mark.asyncio
 async def test_generate_coach_error(make_coach_service, test_user):
     broken_coach_service = make_coach_service(llm_provider=BrokenFakeLLMProvider())
-    with pytest.raises(AIProviderNotAvailable):
+    with pytest.raises(AIProviderNotAvailableError):
         await broken_coach_service.generate_coach_response(user_message="user message", user=test_user)
 
     chat_history = broken_coach_service.chat_repo.get_all_chat_history(user_id=test_user.id)

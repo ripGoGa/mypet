@@ -1,6 +1,6 @@
 import httpx
 
-from app.core.exceptions import AIProvideInternalError, AIProviderNotAvailable, AIProviderTimeOut
+from app.core.exceptions import AIProviderInternalError, AIProviderNotAvailableError, AIProviderTimeOutError
 
 
 class OllamaProvider:
@@ -24,9 +24,9 @@ class OllamaProvider:
                 data = response.json()
                 return data.get("message", {}).get("content", "")
         except httpx.ConnectError:
-            raise AIProviderNotAvailable
+            raise AIProviderNotAvailableError
         except httpx.TimeoutException:
-            raise AIProviderTimeOut
+            raise AIProviderTimeOutError
         except Exception as e:
             print(f"Ошибка Chat: {e}")
-            raise AIProvideInternalError
+            raise AIProviderInternalError

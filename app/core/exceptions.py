@@ -1,38 +1,40 @@
-class ProfileAlreadyExistsError(Exception):
+class AppError(Exception):
+    """База для всех исключений приложения"""
+
+
+class ProfileAlreadyExistsError(AppError):
     """Ошибка в создании пользователя"""
 
-    pass
 
-
-class UserAlreadyExistError(Exception):
+class UserAlreadyExistsError(AppError):
     """Данный пользователь уже существует"""
 
 
-class UserEmailPasswordError(Exception):
+class UserEmailPasswordError(AppError):
     """Пользователь не найден или не верный пароль"""
 
 
-class MissingWorkoutError(Exception):
+class MissingWorkoutError(AppError):
     """Тренировка не найдена"""
 
 
-class AIProviderNotAvailable(Exception):
-    """ "Сервис ИИ не доступен"""
+class AIProviderNotAvailableError(AppError):
+    """Сервис ИИ не доступен"""
 
 
-class AIProviderTimeOut(Exception):
-    """ "Превышено время ожидания"""
+class AIProviderTimeOutError(AppError):
+    """Превышено время ожидания"""
 
 
-class AIProvideInternalError(Exception):
-    """ "Внутренняя ошибка ИИ"""
+class AIProviderInternalError(AppError):
+    """Внутренняя ошибка ИИ"""
 
 
-class DownloadPromptError(Exception):
-    """ "Произошла ошибка файл промпта не найден"""
+class DownloadPromptError(AppError):
+    """Произошла ошибка файл промпта не найден"""
 
 
-class ParseFitError(Exception):
+class ParseFitError(AppError):
     """Ошибка в парсере FIT-файлов"""
 
 

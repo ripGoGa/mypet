@@ -1,6 +1,6 @@
 import pytest
 
-from app.core.exceptions import AIProviderNotAvailable
+from app.core.exceptions import AIProviderNotAvailableError
 from app.infrastructure.llm.llm_protocol import LLMProvider
 from app.repository.chat_repo import ChatRepository
 from app.services.coach_service import CoachService
@@ -22,7 +22,7 @@ class BrokenFakeLLMProvider:
 
     async def send_message(self, messages: list[dict[str, str]]) -> str:
         self.history_messages.append(messages)
-        raise AIProviderNotAvailable
+        raise AIProviderNotAvailableError
 
 
 @pytest.fixture
