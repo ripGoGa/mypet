@@ -1,6 +1,7 @@
 from datetime import timedelta
 from typing import Sequence
 
+from app.core.cycling_training_intensity import classify_training_intensity
 from app.models import CyclingWorkout
 from app.models.models import Workout
 
@@ -79,13 +80,12 @@ class CyclingStatsCalculator:
             self._raw_chart_dates.append(date_str)
 
             # Наполнение счетчиков
-            if cycling.training_stress_score is None:
-                pass
-            elif cycling.training_stress_score <= 70:
+            intensity = classify_training_intensity(cycling.training_stress_score)
+            if intensity == "light":
                 self.light_count += 1
-            elif cycling.training_stress_score < 101:
+            elif intensity == "medium":
                 self.medium_count += 1
-            elif cycling.training_stress_score >= 101:
+            elif intensity == "hard":
                 self.hard_count += 1
 
     # Общие объемы и Максимумы
