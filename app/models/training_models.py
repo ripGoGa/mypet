@@ -63,4 +63,4 @@ class RunningWorkout(SQLModel, table=True):
     total_calories: Optional[int]
     total_elapsed_time: Optional[float]
     total_strides: Optional[int]
-    total_timer_time: Optional[float]
+    total_timer_time: Optional[float]  # время в движении
