@@ -170,8 +170,34 @@ MODELS = {"cycling": CyclingWorkout, "running": RunningWorkout}
       подпись «Средний темп» с единицей мин/км
    5. ✅ Тест-инвариант: в системном сообщении нет фигурных скобок (персона не проходит
       через `.format()`, поэтому забытый плейсхолдер там не вызывает ошибку)
-7. ⬜ `WorkoutService` под мульти-спорт: список тренировок по всем видам спорта и
-   `get_user_workout` с данными своего вида спорта (бэкенд для страниц списка и деталей)
+7. 🔄 `WorkoutService` под мульти-спорт (бэкенд для страниц списка и деталей). Решения:
+   список показывает только общие поля `Workout` (вид спорта, дата, длительность) по всем
+   видам спорта; метрики вида спорта загружаются на странице деталей одной тренировки
+   и отдаются отдельным DTO деталей на каждый вид спорта.
+   1. ✅ `get_by_workout_id(workout_id, user_id)` в `CyclingWorkoutRepository` и
+      `RunningWorkoutRepository`: JOIN с `Workout` и фильтр по владельцу (защита от IDOR
+      на уровне репозитория) + тесты, включая «чужая тренировка»
+   2. ✅ `WorkoutRepository.get_workouts(user_id, limit, offset, period)`: общая лента по
+      всем видам спорта, сортировка `started_at DESC, id DESC`, общее количество тем же
+      набором условий + тесты (оба вида спорта, только свои, порядок, пагинация, период, пусто)
+   3. ✅ Исключения: корневой `AppError`, единые имена с суффиксом `Error`,
+      `CorruptedDataError` для ошибок данных (ответ 500); для «не найдено» —
+      существующий `MissingWorkoutError` (ответ 404)
+   4. 🔄 DTO деталей (`app/schemas/*_workout_detail_dto.py`) с `from_models(workout, sport_model)`:
+      - ✅ `classify_training_intensity` по TSS вынесена в `app/core/cycling_training_intensity.py`
+        (пороги прежние: до 70 включительно — light, меньше 101 — medium, иначе hard),
+        используется в `CyclingStatsCalculator` и в вело-DTO, тест с граничными значениями
+      - ✅ `CyclingWorkoutDetailDTO` + тесты сборки
+      - 🔄 `RunningWorkoutDetailDTO`: сборка готова (каденс ×2, `moving_time` из
+        `total_timer_time`, обязательное), тесты в работе
+   5. ⬜ `WorkoutService`: конструктор со словарём спортивных репозиториев вместо
+      `cycling_repo`; список через `WorkoutRepository.get_workouts`; деталь:
+      `get_one_workout` → репозиторий по `sport` → DTO по `sport`;
+      `MissingWorkoutError` / `CorruptedDataError` (в т. ч. из `ValidationError` при сборке DTO)
+   6. ⬜ Сборка в `get_workout_service` (словарь репозиториев с сессией запроса)
+   7. ⬜ Роуты `/workouts` и `/workouts/{id}` на новых методах, страницы 404 и 500 с
+      правильным `status_code`, решение про глобальный `exception_handler`
+   8. ⬜ Скачивание файла тренировки (`FileResponse`) с проверкой владельца файла
 8. ⬜ Фронтенд: блок бега на `/statistics`, списки и детали тренировок, вывод пейса
 9. ⬜ Pull Request `feature/running-workouts` → `main` (после п. 7, не дожидаясь фронтенда)
 
