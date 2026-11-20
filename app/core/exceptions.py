@@ -17,8 +17,10 @@ class UserEmailPasswordError(AppError):
 class MissingWorkoutError(AppError):
     """Тренировка не найдена"""
 
+
 class CorruptedDataError(AppError):
     """Нарушена целостность данных в базе данных"""
+
 
 class AIProviderNotAvailableError(AppError):
     """Сервис ИИ не доступен"""
