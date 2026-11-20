@@ -78,7 +78,8 @@ def get_workout_service(
 ) -> WorkoutService:
     w_repo = WorkoutRepository(session=session)
     cycl_repo = CyclingWorkoutRepository(session=session)
-    new_work_service = WorkoutService(work_repo=w_repo, cycling_repo=cycl_repo)
+    run_repo = RunningWorkoutRepository(session=session)
+    new_work_service = WorkoutService(work_repo=w_repo, cycling_repo=cycl_repo, running_repo=run_repo)
     return new_work_service
 
 
