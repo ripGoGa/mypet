@@ -183,18 +183,28 @@ MODELS = {"cycling": CyclingWorkout, "running": RunningWorkout}
    3. ✅ Исключения: корневой `AppError`, единые имена с суффиксом `Error`,
       `CorruptedDataError` для ошибок данных (ответ 500); для «не найдено» —
       существующий `MissingWorkoutError` (ответ 404)
-   4. 🔄 DTO деталей (`app/schemas/*_workout_detail_dto.py`) с `from_models(workout, sport_model)`:
+   4. ✅ DTO деталей (`app/schemas/*_workout_detail_dto.py`) с `from_models(workout, sport_model)`:
       - ✅ `classify_training_intensity` по TSS вынесена в `app/core/cycling_training_intensity.py`
         (пороги прежние: до 70 включительно — light, меньше 101 — medium, иначе hard),
         используется в `CyclingStatsCalculator` и в вело-DTO, тест с граничными значениями
       - ✅ `CyclingWorkoutDetailDTO` + тесты сборки
-      - 🔄 `RunningWorkoutDetailDTO`: сборка готова (каденс ×2, `moving_time` из
-        `total_timer_time`, обязательное), тесты в работе
-   5. ⬜ `WorkoutService`: конструктор со словарём спортивных репозиториев вместо
-      `cycling_repo`; список через `WorkoutRepository.get_workouts`; деталь:
-      `get_one_workout` → репозиторий по `sport` → DTO по `sport`;
-      `MissingWorkoutError` / `CorruptedDataError` (в т. ч. из `ValidationError` при сборке DTO)
-   6. ⬜ Сборка в `get_workout_service` (словарь репозиториев с сессией запроса)
+      - ✅ `RunningWorkoutDetailDTO` (каденс ×2, `moving_time` из `total_timer_time`,
+        обязательное) + тесты: копирование полей, преобразования, `None` в метриках,
+        отказ без времени таймера, отказ для не бегового `Workout`
+      - ✅ Фабрики моделей для тестов вынесены в `app/tests/fixtures/model_factories.py`
+   5. 🔄 `WorkoutService`:
+      - ✅ Реестр `SportHandlers` (репозиторий + класс DTO деталей) по виду спорта,
+        создаётся в конструкторе (репозитории привязаны к сессии запроса)
+      - ✅ `get_user_workout`: `get_one_workout` → связка по `sport` → запись вида спорта →
+        DTO. Нет тренировки у пользователя (в т. ч. чужая) — `MissingWorkoutError` (404);
+        неизвестный вид спорта, нет записи вида спорта, `ValidationError` при сборке DTO
+        (через `from e`) — `CorruptedDataError` (500)
+      - ✅ Юнит-тесты на стабах и шпионах репозиториев (6 сценариев) и интеграционные тесты
+        на тестовой БД через `get_workout_service` (бег, вело, чужая тренировка)
+      - ⬜ Список через `WorkoutRepository.get_workouts`: сейчас список временно читает
+        вело-репозиторий через реестр (`sport_dict["cycling"]`); перевод меняет данные для
+        `workouts.html`, поэтому вместе с фронтендом
+   6. ✅ Сборка в `get_workout_service`: передаётся `RunningWorkoutRepository`
    7. ⬜ Роуты `/workouts` и `/workouts/{id}` на новых методах, страницы 404 и 500 с
       правильным `status_code`, решение про глобальный `exception_handler`
    8. ⬜ Скачивание файла тренировки (`FileResponse`) с проверкой владельца файла
@@ -263,10 +273,26 @@ MODELS = {"cycling": CyclingWorkout, "running": RunningWorkout}
     (`NOT NULL` в БД; без миграций — пересоздание БД, поэтому отложено);
   - `parse_fit_cycling`: отклонять при импорте FIT-файл без дистанции или скорости с
     понятной ошибкой (аналогично долгу про валидацию в `parse_fit_running`);
-  - сервис деталей: если такая тренировка всё же окажется в БД, `ValidationError` при
-    сборке DTO превращать в `CorruptedDataError` (ответ 500, подробности в лог)
+  - ✅ сервис деталей: `ValidationError` при сборке DTO превращается в `CorruptedDataError`
+    (ответ 500); запись подробностей в лог — вместе с долгом про `logging`
   - проверить на практике: FIT с велотренажёра без датчика скорости может не содержать
     дистанции — такие файлы будут отклоняться при импорте
 - Инвариант данных: в модели `Workout` поля `started_at` и `source_file_id` — `Optional`,
   а DTO деталей требует их обязательными. Решить, бывает ли тренировка без даты или без
   файла; если нет — сделать их `NOT NULL` в модели
+
+**`WorkoutService` и DTO деталей (после шага 7.5):**
+- Читаемые сообщения `CorruptedDataError`: сейчас позиционные аргументы
+  `(workout_id, user_id, ...)`, третий разнородный (вид спорта или метка причины).
+  Сделать именованные атрибуты (`workout_id`, `user_id`, `reason`) и понятный текст для лога;
+  пользователю отдавать общий текст. После этого добавить `match=` в тесты ошибок сервиса
+- Алиас видов спорта: `app/schemas/sport_alias.py` (не в git) переименовать в `Sport`
+  (`Literal["cycling", "running"]`) и использовать в аннотации реестра
+  `dict[Sport, SportHandlers]`
+- Protocol для репозиториев видов спорта (метод `get_by_workout_id`): сейчас поле
+  `SportHandlers.repo` — объединение конкретных классов, стабы в тестах не совпадают с типами
+- «Ноль против `None`» в `RunningWorkoutDetailDTO`: условия `if x` превращают каденс `0` в
+  «нет данных», а `total_timer_time == 0.0` — в отказ сборки. Решить осознанно
+  (`is not None` или оставить) и закрепить тестом
+- Перевод списка тренировок на `WorkoutRepository.get_workouts` и удаление временного
+  `sport_dict["cycling"]` из `get_user_workouts` (см. шаг 7.5)
