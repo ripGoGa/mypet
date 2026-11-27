@@ -1,39 +1,66 @@
 {% extends "base.html" %}
-{% block title %} Детали тренировки{% endblock %}
+{% block title %}Тренировка // AI Coach{% endblock %}
+
 {% block content %}
-    <h1>Детали тренировки</h1>
+{% set sport_labels = {"cycling": "Велосипед", "running": "Бег"} %}
+{% set intensity_labels = {"light": "Лёгкая", "medium": "Средняя", "hard": "Тяжёлая"} %}
 
-    <h2>Основная информация</h2>
-    <p>Дата: {{ workout.source_file.uploaded_at }}</p>
-    <p>Длительность: {{ workout.duration }}</p>
-    <p>Время в движении: {{ workout.moving_time }}</p>
-    <p>Дистанция: {{ workout.distance_km }} км</p>
+{% macro metric(label, value) %}
+<div class="col-6 col-md-3">
+    <div class="card h-100">
+        <div class="card-header">{{ label }}</div>
+        <div class="card-body">
+            <div style="font-family: monospace; font-size: 1.4rem; font-weight: 700;">{{ value }}</div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
 
-    <h2>Метрики мощности</h2>
-    <p>Средняя мощность: {{ workout.avg_watts }} Вт</p>
-    <p>Normalized Power: {{ workout.normalized_power }} Вт</p>
-    <p>Intensity Factor: {{ workout.intensity_factor }}</p>
-    <p>TSS: {{ workout.training_stress_score }}</p>
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="text-uppercase fw-bold" style="letter-spacing: 2px; font-size: 1.4rem;">
+            WORKOUT // {{ sport_labels.get(workout.sport, workout.sport) }}
+        </h1>
+        <p class="text-muted small text-uppercase">{{ workout.started_at.strftime("%d.%m.%Y %H:%M") }}</p>
+    </div>
+</div>
 
-    <h2>Пульс</h2>
-    {% if workout.avg_heartrate %}
-        <p>Средний пульс: {{ workout.avg_heartrate }} уд/мин</p>
-        <p>Максимальный пульс: {{ workout.max_heartrate }} уд/мин</p>
-    {% else %}
-        <p>Данные о пульсе отсутствуют</p>
-    {% endif %}
+{# Общие показатели #}
+<div class="card-header border-0 mb-2 text-uppercase fw-bold">Основное</div>
+<div class="row g-3 mb-4">
+    {{ metric("Длительность", workout.duration | duration) }}
+    {{ metric("Время в движении", workout.moving_time | duration) }}
+    {{ metric("Дистанция", workout.distance | stats("км")) }}
+    {{ metric("Калории", workout.calories | stats("ккал")) }}
+</div>
 
-    <h2>Каденс и скорость</h2>
-    {% if workout.avg_cadence %}
-        <p>Средний каденс: {{ workout.avg_cadence }} об/мин</p>
-    {% else %}
-        <p>Данные о каденсе отсутствуют</p>
-    {% endif %}
-    <p>Средняя скорость: {{ workout.avg_speed }} км/ч</p>
-    <p>Средняя скорость без остановок: {{ workout.avg_speed_without_stop }} км/ч</p>
+{% if workout.sport == "cycling" %}
+    <div class="card-header border-0 mb-2 text-uppercase fw-bold">Мощность и нагрузка</div>
+    <div class="row g-3 mb-4">
+        {{ metric("Средняя мощность", workout.avg_watts | stats("Вт")) }}
+        {{ metric("Normalized Power", workout.normalized_power | stats("Вт")) }}
+        {{ metric("Intensity Factor", workout.intensity_factor | stats) }}
+        {{ metric("TSS", workout.tss | stats) }}
+        {{ metric("Нагрузка", intensity_labels.get(workout.training_intensity, "нет данных")) }}
+    </div>
 
-    <h2>Калории</h2>
-    <p>Калории: {{ workout.calories_burned }} ккал</p>
+    <div class="card-header border-0 mb-2 text-uppercase fw-bold">Скорость, каденс, пульс</div>
+    <div class="row g-3 mb-4">
+        {{ metric("Средняя скорость", workout.avg_speed | stats("км/ч")) }}
+        {{ metric("Средний каденс", workout.avg_cadence | stats("об/мин")) }}
+        {{ metric("Макс. каденс", workout.max_cadence | stats("об/мин")) }}
+        {{ metric("Средний пульс", workout.avg_heartrate | stats("уд/мин")) }}
+        {{ metric("Макс. пульс", workout.max_heartrate | stats("уд/мин")) }}
+    </div>
+{% elif workout.sport == "running" %}
+    <div class="card-header border-0 mb-2 text-uppercase fw-bold">Темп, каденс, пульс</div>
+    <div class="row g-3 mb-4">
+        {{ metric("Средний темп", workout.avg_speed | pace) }}
+        {{ metric("Средний каденс", workout.avg_cadence | stats("шаг/мин")) }}
+        {{ metric("Средний пульс", workout.avg_heartrate | stats("уд/мин")) }}
+        {{ metric("Макс. пульс", workout.max_heartrate | stats("уд/мин")) }}
+    </div>
+{% endif %}
 
-    <a href="/workouts">← Назад к списку</a>
+<a href="/workouts" class="btn btn-outline-dark rounded-0 text-uppercase fw-bold px-4 py-2" style="letter-spacing: 1px;">&larr; Назад к списку</a>
 {% endblock %}
