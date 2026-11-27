@@ -7,6 +7,7 @@ from sqlmodel import select
 from starlette.requests import Request
 
 from app.core.dependencies import get_current_user
+from app.core.exceptions import CorruptedDataError, MissingWorkoutError
 from app.core.templating import templates
 from app.db.session import create_db_and_tables, get_session
 from app.models.models import Users
@@ -59,9 +60,24 @@ def me(user=Depends(get_current_user)) -> dict:
 
 
 @app.exception_handler(HTTPException)
-def error(request: Request, exc: HTTPException):
+def error_http(request: Request, exc: HTTPException):
     status_code = exc.status_code
     detail = exc.detail
     return templates.TemplateResponse(
         request, "error.html", {"detail": detail, "status_code": status_code}, status_code=status_code
+    )
+
+
+@app.exception_handler(MissingWorkoutError)
+def error_missing(request: Request, exc: MissingWorkoutError):
+    return templates.TemplateResponse(
+        request, "error.html", {"detail": "Тренировка не найдена", "status_code": 404}, status_code=404
+    )
+
+
+# Добавить логирование причины ошибки
+@app.exception_handler(CorruptedDataError)
+def error_corrupted(request: Request, exc: CorruptedDataError):
+    return templates.TemplateResponse(
+        request, "error.html", {"detail": "Ошибка данных", "status_code": 500}, status_code=500
     )

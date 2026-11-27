@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from starlette.requests import Request
 
 from app.core.dependencies import get_current_user, get_workout_service
-from app.core.exceptions import MissingWorkoutError
 from app.core.templating import templates
 from app.models.models import Users
 from app.services.workout_service import WorkoutService
@@ -17,10 +16,7 @@ async def workout_detail(
     user: Users = Depends(get_current_user),
     service: WorkoutService = Depends(get_workout_service),
 ):
-    try:
-        workout = service.get_user_workout(workout_id=workout_id, user_id=user.id)
-    except MissingWorkoutError:
-        raise HTTPException(status_code=404, detail="Тренировка не найдена")
+    workout = service.get_user_workout(workout_id=workout_id, user_id=user.id)
     return templates.TemplateResponse(request, "workout_detail.html", {"workout": workout})
 
 
