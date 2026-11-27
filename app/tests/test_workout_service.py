@@ -1,6 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
+from app.core.dependencies import get_workout_service
 from app.core.exceptions import CorruptedDataError, MissingWorkoutError
 from app.models import CyclingWorkout, RunningWorkout
 from app.models.models import Workout
@@ -139,3 +140,37 @@ def test_workout_service_raises_corrupted_data_when_dto_error():
     assert isinstance(exc_info.value.__cause__, ValidationError)
     assert cycling_repo.calls == []
     assert running_repo.calls == [(11, 1)]
+
+
+def test_get_user_workout_returns_running_dto_from_db(db_test_session, test_user_id, make_workout_and_running):
+    running_workouts = make_workout_and_running(user_id=test_user_id, range_limit=10)
+    service = get_workout_service(session=db_test_session)
+
+    result_running = service.get_user_workout(workout_id=running_workouts[0].id, user_id=test_user_id)
+
+    assert isinstance(result_running, RunningWorkoutDetailDTO)
+    assert result_running.workout_id == running_workouts[0].id
+
+
+def test_get_user_workout_returns_cycling_dto_from_db(db_test_session, test_user_id, make_workout_and_cycling):
+    cycling_workouts = make_workout_and_cycling(user_id=test_user_id, range_limit=10)
+    service = get_workout_service(session=db_test_session)
+
+    result_cycling = service.get_user_workout(workout_id=cycling_workouts[0].id, user_id=test_user_id)
+
+    assert isinstance(result_cycling, CyclingWorkoutDetailDTO)
+    assert result_cycling.workout_id == cycling_workouts[0].id
+
+
+def test_get_user_workout_raises_missing_for_other_users_workout(
+    db_test_session, test_user_id, second_user_id, make_workout_and_cycling
+):
+    second_user_workouts = make_workout_and_cycling(user_id=second_user_id, range_limit=10)
+    make_workout_and_cycling(user_id=test_user_id, range_limit=10)
+
+    service = get_workout_service(session=db_test_session)
+
+    assert second_user_workouts[0].id is not None
+
+    with pytest.raises(MissingWorkoutError):
+        service.get_user_workout(user_id=test_user_id, workout_id=second_user_workouts[0].id)
